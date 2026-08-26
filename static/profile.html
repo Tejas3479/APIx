@@ -80,35 +80,43 @@
     .settings-head h2 { font-size: 16px; font-weight: 700; color: var(--navy-900); margin: 0; }
   </style>
 </head>
-<body>
+  <!-- Top Announcement Ribbon -->
+  <div class="announcement-ribbon">
+    🏛️ MoSPI / NSO Official Base Revision (2024=100) Transport Intelligence · Powered by Jevons-GEKS Multilateral Engine
+  </div>
 
-  <!-- Top Navbar -->
-  <header class="navbar" style="background: rgba(10, 10, 10, 0.92); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); position: sticky; top: 0; z-index: 100;">
-    <div style="max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; width: 100%;">
-      <a href="/" class="nav-brand" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
-        <span style="font-weight: 900; font-size: 22px; color: var(--primary); letter-spacing: -0.04em;">APIx</span>
-        <span class="badge" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.16); font-size: 11px;">Analyst Profile</span>
+  <!-- Top Glassmorphic Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">
+        <span class="nav-brand-title">APIx</span>
+        <span class="brand-tag">MoSPI · CPI Portal</span>
       </a>
 
-      <nav class="nav-links">
-        <a href="/dashboard" class="nav-link">Index Dashboard</a>
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="/" class="nav-link">Overview</a>
+        <a href="/dashboard" class="nav-link">Dashboard</a>
         <a href="/benchmark" class="nav-link">Route Discovery</a>
         <a href="/routes" class="nav-link">Route Basket</a>
-        <a href="/scraper" class="nav-link">Scraper Telemetry</a>
+        <a href="/scraper" class="nav-link">Scraper Health</a>
       </nav>
 
-      <div class="nav-right" style="display: flex; align-items: center; gap: 10px;">
-        <button onclick="logout()" class="btn-secondary" style="font-size: 12px; padding: 5px 12px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+      <div class="nav-right">
+        <button onclick="logout()" class="btn-dash btn-dash-secondary" style="font-size: 12px; padding: 5px 12px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
           Sign Out
         </button>
         <button class="btn-theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
-          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
+        <div id="officerBadge" class="officer-pill">
+          <span class="pulse-live"></span>
+          <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">Dr. S. K. Mukherjee (NSO)</span>
+        </div>
       </div>
     </div>
   </header>
 
-  <main style="max-width: 1180px; margin: 30px auto; padding: 0 20px;">
+  <main class="page-container page-enter" style="max-width: 1320px; margin: 30px auto; padding: 0 24px;">
     
     <div class="profile-grid">
       <!-- Profile Card -->
