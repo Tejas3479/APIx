@@ -355,7 +355,7 @@
       <div class="nav-right">
         <div class="nav-status">
           <span class="status-dot"></span>
-          <span id="nav-health-status">ENGINE ACTIVE · 3/3 SLOTS</span>
+          <span id="nav-health-status">ENGINE ACTIVE</span>
         </div>
         <button class="btn-theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
           <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -580,7 +580,7 @@
         const freeSlots = (d.playwright_slots_free !== undefined) ? d.playwright_slots_free : 3;
         const el = document.getElementById('nav-health-status');
         const kpi = document.getElementById('kpi-slots-val');
-        if (el) el.textContent = 'ENGINE ACTIVE · ' + freeSlots + '/3 SLOTS READY';
+        if (el) el.textContent = 'ENGINE ACTIVE';
         if (kpi) kpi.textContent = freeSlots + '/3 Ready';
       } catch (e) {
         console.error('Health poll error:', e);
