@@ -178,19 +178,67 @@
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   text-decoration: none;
 }
-.nav-brand-title {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 800;
-  font-size: 21px;
-  color: var(--heat-100);
-  letter-spacing: -0.03em;
-  transition: transform 0.2s ease;
+.brand-emblem {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #fa5d19 0%, #ea580c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(250, 93, 25, 0.4);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  flex-shrink: 0;
 }
-.nav-brand:hover .nav-brand-title {
-  transform: scale(1.03);
+.nav-brand:hover .brand-emblem {
+  transform: scale(1.06) rotate(-2deg);
+  box-shadow: 0 4px 16px rgba(250, 93, 25, 0.6);
+}
+.nav-brand-title, .brand-title-premium {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: 21px;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  transition: color 0.2s ease;
+}
+.nav-brand-title span, .brand-title-premium span {
+  color: var(--heat-100);
+}
+.brand-tag-premium {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(250, 93, 25, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border: 1px solid rgba(250, 93, 25, 0.35);
+  box-shadow: 0 0 12px rgba(250, 93, 25, 0.12);
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fed7aa;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+.brand-tag-premium .tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--heat-100);
+  box-shadow: 0 0 8px var(--heat-100);
+  animation: apix-blink 1.8s steps(1) infinite;
+}
+.nav-brand:hover .brand-tag-premium {
+  border-color: var(--heat-100);
+  background: rgba(250, 93, 25, 0.2);
+  box-shadow: 0 0 16px rgba(250, 93, 25, 0.35);
+  color: #ffffff;
 }
 .brand-tag {
   background: var(--heat-8);
