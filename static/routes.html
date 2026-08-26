@@ -470,6 +470,7 @@
   </div>
 
   <script src="/app.js"></script>
+  <script src="/ui.js"></script>
   <script>
     let currentRoutes = [];
 
@@ -480,14 +481,6 @@
       toast.textContent = msg;
       container.appendChild(toast);
       setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
-    }
-
-    // fallback if app.js doesn't provide esc or escapeHtml
-    function escapeHtml(s) {
-      if (typeof window.esc === 'function') return window.esc(s);
-      const d = document.createElement('div');
-      d.textContent = s;
-      return d.innerHTML;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
