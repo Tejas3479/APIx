@@ -12,7 +12,7 @@ class APIxError(Exception):
 class APIxClient:
     """Synchronous client for the APIx Real-Time Airfare Price Index API."""
 
-    def __init__(self, api_key: str | None = None, bearer_token: str | None = None, base_url: str = "http://localhost:8001"):
+    def __init__(self, api_key: str | None = None, bearer_token: str | None = None, base_url: str = "http://localhost:8000"):
         self.base_url = base_url.rstrip("/")
         self.headers = {}
         if api_key:
@@ -92,7 +92,7 @@ class APIxClient:
 class AsyncAPIxClient:
     """Asynchronous client for the APIx Real-Time Airfare Price Index API."""
 
-    def __init__(self, api_key: str | None = None, bearer_token: str | None = None, base_url: str = "http://localhost:8001"):
+    def __init__(self, api_key: str | None = None, bearer_token: str | None = None, base_url: str = "http://localhost:8000"):
         self.base_url = base_url.rstrip("/")
         self.headers = {}
         if api_key:

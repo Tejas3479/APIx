@@ -14,7 +14,7 @@ npm install apix-client
 import { APIxClient } from 'apix-client';
 
 const client = new APIxClient({
-  baseUrl: 'http://localhost:8001',
+  baseUrl: 'http://localhost:8000',
 });
 
 async function main() {

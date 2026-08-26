@@ -14,7 +14,7 @@ pip install apix-client
 from apix_client import APIxClient
 
 # Initialize client
-client = APIxClient(base_url="http://localhost:8001")
+client = APIxClient(base_url="http://localhost:8000")
 
 # 1. Retrieve headline index statistics
 stats = client.get_dashboard_stats()

@@ -3,7 +3,7 @@ services:
     build: .
     container_name: apix-api
     ports:
-      - "8001:8000"
+      - "8000:8000"
     environment:
       - PORT=8000
       - DEMO_MODE=true

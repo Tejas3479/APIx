@@ -6,9 +6,9 @@
 
 ## 1. Quick Connection Reference
 
-- **Base URL (Local/Demo):** `http://localhost:8001`
-- **Swagger Interactive Documentation:** `http://localhost:8001/docs`
-- **OpenAPI JSON Spec:** `http://localhost:8001/openapi.json`
+- **Base URL (Local/Demo):** `http://localhost:8000`
+- **Swagger Interactive Documentation:** `http://localhost:8000/docs`
+- **OpenAPI JSON Spec:** `http://localhost:8000/openapi.json`
 - **Authentication:** `Bearer <JWT_TOKEN>` or `x-api-key: <API_KEY>` header (in demo mode, `AUTH_DISABLED=true` allows direct queries).
 
 ---
@@ -72,7 +72,7 @@ import pandas as pd
 import requests
 
 # Fetch daily index series
-url = "http://localhost:8001/api/v1/index/daily?limit=30"
+url = "http://localhost:8000/api/v1/index/daily?limit=30"
 response = requests.get(url, headers={"Accept": "application/json"})
 data = response.json()
 
@@ -92,7 +92,7 @@ library(httr)
 library(jsonlite)
 library(dplyr)
 
-res <- GET("http://localhost:8001/api/v1/index/daily?limit=30")
+res <- GET("http://localhost:8000/api/v1/index/daily?limit=30")
 data <- fromJSON(content(res, as = "text"))
 
 df <- as_tibble(data) %>%

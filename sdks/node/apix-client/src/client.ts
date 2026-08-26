@@ -17,7 +17,7 @@ export class APIxClient {
   private client: AxiosInstance;
 
   constructor(options: ClientOptions = {}) {
-    const baseUrl = options.baseUrl || 'http://localhost:8001';
+    const baseUrl = options.baseUrl || 'http://localhost:8000';
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };

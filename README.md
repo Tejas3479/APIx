@@ -157,25 +157,25 @@ cp .env.example .env
 
 ### Run the Server
 ```bash
-python -m uvicorn app:app --host 0.0.0.0 --port 8001
+python -m uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 
 ### Access the Application
 | Page | URL |
 |:---|:---|
-| 🏠 Landing Portal | `http://localhost:8001/` |
-| 📊 Analytics Dashboard | `http://localhost:8001/dashboard` |
-| 🔍 Route Fare Survey | `http://localhost:8001/benchmark` |
-| ⚙️ Route Basket Config | `http://localhost:8001/routes` |
-| 🖥️ Scraper Telemetry | `http://localhost:8001/scraper` |
-| 📚 Interactive API Docs | `http://localhost:8001/docs` |
+| 🏠 Landing Portal | `http://localhost:8000/` |
+| 📊 Analytics Dashboard | `http://localhost:8000/dashboard` |
+| 🔍 Route Fare Survey | `http://localhost:8000/benchmark` |
+| ⚙️ Route Basket Config | `http://localhost:8000/routes` |
+| 🖥️ Scraper Telemetry | `http://localhost:8000/scraper` |
+| 📚 Interactive API Docs | `http://localhost:8000/docs` |
 
 > **Demo Mode:** APIx ships with `DEMO_MODE=true` and a pre-seeded dataset of ~4,800 realistic fare quotes across 30 days. All dashboards and indices work immediately — no API keys required.
 
 ### Docker Deployment
 ```bash
 docker compose up --build
-# App available at http://localhost:8001
+# App available at http://localhost:8000
 ```
 
 ---

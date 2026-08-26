@@ -14,7 +14,7 @@ flowchart LR
     end
 
     subgraph Host["Server Environment (VPS / Container)"]
-        CONTAINER["APIx Engine Process (:8001)"]
+        CONTAINER["APIx Engine Process (:8000)"]
         
         subgraph Inside["Internal Components"]
             FASTAPI["FastAPI Application"]
@@ -27,7 +27,7 @@ flowchart LR
     end
 
     CLIENT -->|HTTPS| NGINX
-    NGINX -->|Proxy Pass :8001| CONTAINER
+    NGINX -->|Proxy Pass :8000| CONTAINER
     CONTAINER --> FASTAPI
     FASTAPI --> INDEX
     FASTAPI --> DECOMP
@@ -113,7 +113,7 @@ User=$USER
 WorkingDirectory=$PWD
 Environment=API_KEYS=your-secret-key
 Environment=MAX_PLAYWRIGHT_INSTANCES=3
-ExecStart=$PWD/.venv/bin/uvicorn app:app --host 0.0.0.0 --port 8001
+ExecStart=$PWD/.venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000
 Restart=on-failure
 
 [Install]

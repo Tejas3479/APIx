@@ -1,6 +1,6 @@
 # APIx — Real-Time Airfare Price Index API Reference
 
-**Base URL:** `http://localhost:8001`  
+**Base URL:** `http://localhost:8000`  
 **Target Agency / Standard:** Ministry of Statistics & Programme Implementation (MoSPI) / National Statistical Office (NSO) — CPI (Base 2024=100) Revision  
 **Authentication:** 
 - **Institutional & Analytical Endpoints:** Header `x-api-key: <api-key>` or `Authorization: Bearer <jwt-token>`
