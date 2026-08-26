@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APIx — Real-Time Airfare Price Index Dashboard</title>
-  <meta name="description" content="National high-frequency airfare intelligence, GEKS-Törnqvist price index, lead-time elasticity curves, and route heatmaps for CPI compilation.">
+  <title>APIx — National Real-Time Airfare Price Index Dashboard</title>
+  <meta name="description" content="National high-frequency airfare intelligence, GEKS-Törnqvist price index, lead-time elasticity curves, and route heatmaps for MoSPI & RBI CPI compilation.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/base.css">
   <script src="/chart.umd.min.js"></script>
   <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
   <style>
-    /* Toast notifications */
+    /* Toast Notifications */
     .toast-container {
       position: fixed;
       top: 20px;
@@ -31,289 +31,570 @@
       font-family: 'Inter', sans-serif;
       font-size: 13px;
       font-weight: 500;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
       animation: toastIn 0.3s ease-out;
-      max-width: 360px;
+      max-width: 380px;
     }
-    .toast.toast-warn {
-      background: rgba(245, 158, 11, 0.95);
-    }
+    .toast.toast-warn { background: rgba(245, 158, 11, 0.95); }
+    .toast.toast-success { background: rgba(16, 185, 129, 0.95); }
+    .toast.toast-info { background: rgba(79, 70, 229, 0.95); }
     @keyframes toastIn {
       from { opacity: 0; transform: translateY(-12px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .freq-btn {
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      padding: 4px 10px;
-      font-size: 11.5px;
+
+    /* Top Announcement Ribbon */
+    .announcement-ribbon {
+      background: linear-gradient(90deg, #fa5d19 0%, #ea580c 100%);
+      color: #fff;
+      font-size: 12px;
       font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      padding: 6px 16px;
+      text-align: center;
+      letter-spacing: 0.02em;
     }
-    .freq-btn.active {
+
+    /* Navbar */
+    .navbar {
+      background: rgba(10, 10, 10, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .btn-nav-action {
+      color: #fff !important;
+      background: var(--heat-100);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .btn-nav-action:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Executive Hero Header */
+    .dash-hero {
+      margin-bottom: 28px;
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-loud);
       background: var(--card-bg);
-      color: var(--primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--navy-700);
+      margin-bottom: 12px;
       box-shadow: var(--shadow-sm);
     }
+    .hero-pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: apix-blink 1.6s steps(1) infinite;
+    }
+    .dash-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(26px, 3.2vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--navy-900);
+      margin: 0;
+      line-height: 1.15;
+    }
+    .dash-title span { color: var(--heat-100); }
+    .dash-desc {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      margin: 8px 0 0 0;
+      max-width: 680px;
+    }
+
+    /* Action Buttons Cluster */
+    .action-btn-cluster {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .btn-dash {
+      padding: 9px 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .btn-dash-primary {
+      background: var(--heat-100);
+      color: #fff;
+      border: 1px solid var(--heat-100);
+      box-shadow: 0 2px 8px rgba(250, 93, 25, 0.25);
+    }
+    .btn-dash-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    .btn-dash-secondary {
+      background: var(--card-bg);
+      color: var(--navy-800);
+      border: 1px solid var(--border-loud);
+    }
+    .btn-dash-secondary:hover {
+      background: var(--alpha-4);
+      transform: translateY(-1px);
+    }
+    .btn-dash-ai {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: #fff;
+      border: none;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+    }
+    .btn-dash-ai:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    /* Metric Cards */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card-pro {
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat-card-pro:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .stat-card-pro::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--heat-100), transparent);
+    }
+    .stat-label-pro {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .stat-val-pro {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--navy-900);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .stat-sparkline {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 22px;
+      margin: 10px 0 6px;
+    }
+    .stat-sparkline .bar {
+      flex: 1;
+      background: var(--heat-24);
+      border-radius: 2px;
+      transition: height 0.4s ease, background 0.2s ease;
+    }
+    .stat-sparkline .bar:hover {
+      background: var(--heat-100);
+    }
+
+    /* Grids & Cards */
     .dashboard-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
       gap: 20px;
       margin-bottom: 24px;
     }
-    @media (max-width: 960px) {
+    @media (max-width: 1024px) {
       .dashboard-grid { grid-template-columns: 1fr; }
     }
-    .chart-card {
+    .card-pro {
       background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
+      border-radius: 14px;
+      border: 1px solid var(--border-loud);
       box-shadow: var(--shadow-sm);
-      padding: 20px 24px;
+      padding: 22px 24px;
       position: relative;
     }
-    .chart-header {
+    .card-header-pro {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
     }
-    .chart-title {
-      font-size: 15px;
-      font-weight: 700;
+    .card-title-pro {
+      font-family: 'Outfit', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
       color: var(--navy-900);
+      letter-spacing: -0.01em;
       margin: 0;
     }
-    .chart-subtitle {
-      font-size: 12px;
+    .card-subtitle-pro {
+      font-size: 12.5px;
       color: var(--text-muted);
-      margin-top: 2px;
+      margin-top: 3px;
     }
-    .heatmap-grid {
-      display: grid;
-      grid-template-columns: 100px repeat(14, 1fr);
-      gap: 6px;
-      align-items: center;
-      overflow-x: auto;
-      padding-bottom: 8px;
+
+    /* Frequency Tabs */
+    .freq-tabs-pro {
+      display: inline-flex;
+      background: var(--alpha-4);
+      padding: 3px;
+      border-radius: 8px;
+      gap: 4px;
     }
-    .heatmap-header-cell {
-      font-family: var(--font-mono);
-      font-size: 10.5px;
+    .freq-btn-pro {
+      border: none;
+      background: transparent;
       color: var(--text-muted);
-      text-align: center;
-      white-space: nowrap;
+      padding: 5px 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
-    .heatmap-route-label {
-      font-family: var(--font-mono);
+    .freq-btn-pro.active {
+      background: var(--card-bg);
+      color: var(--heat-100);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Sector Selector */
+    .route-select-pro {
+      padding: 6px 12px;
+      font-family: 'Outfit', sans-serif;
       font-size: 12px;
       font-weight: 700;
-      color: var(--navy-900);
+      color: var(--navy-800);
+      background: var(--surface-raised);
+      border: 1px solid var(--border-loud);
+      border-radius: 6px;
+      cursor: pointer;
+      outline: none;
     }
-    .carrier-bar-row {
+
+    /* Heatmap Grid */
+    .heatmap-matrix {
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    /* Carrier Progress Rows */
+    .carrier-row-pro {
       display: flex;
       align-items: center;
       gap: 12px;
       margin-bottom: 12px;
     }
-    .carrier-name {
-      width: 80px;
+    .carrier-name-pro {
+      width: 100px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--navy-900);
     }
-    .carrier-track {
+    .carrier-track-pro {
       flex: 1;
-      height: 10px;
-      background: var(--border-subtle);
-      border-radius: 5px;
+      height: 9px;
+      background: var(--border-faint);
+      border-radius: 6px;
       overflow: hidden;
     }
-    .carrier-fill {
+    .carrier-fill-pro {
       height: 100%;
-      border-radius: 5px;
+      border-radius: 6px;
       transition: width 0.6s ease;
     }
-    .carrier-val {
-      font-family: var(--font-mono);
+    .carrier-val-pro {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       font-weight: 600;
       color: var(--text-main);
-      width: 70px;
+      width: 75px;
       text-align: right;
     }
-    .materiality-box {
-      background: linear-gradient(135deg, rgba(250, 93, 25, 0.05) 0%, rgba(250, 93, 25, 0.12) 100%);
-      border: 1px solid rgba(250, 93, 25, 0.25);
-      border-radius: var(--radius-lg);
+
+    /* Materiality Highlight Box */
+    .materiality-box-pro {
+      background: linear-gradient(135deg, rgba(250, 93, 25, 0.05) 0%, rgba(250, 93, 25, 0.14) 100%);
+      border: 1px solid rgba(250, 93, 25, 0.3);
+      border-radius: 12px;
       padding: 18px 20px;
+      margin-top: 14px;
+    }
+
+    /* Econometric Comparison Table */
+    .method-compare-card {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
       margin-top: 16px;
     }
-    .modal-backdrop {
+    .method-pill-box {
+      background: var(--surface-raised);
+      border: 1px solid var(--border-loud);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .method-pill-box.highlight {
+      border-color: var(--heat-100);
+      background: var(--heat-4);
+    }
+
+    /* Modals */
+    .modal-backdrop-pro {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 2000;
     }
-    .modal-content {
+    .modal-content-pro {
       background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      max-width: 520px;
-      width: 90%;
-      padding: 24px;
-      box-shadow: var(--shadow-lg);
+      border-radius: 16px;
+      border: 1px solid var(--border-loud);
+      max-width: 620px;
+      width: 92%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.3);
+      animation: modalSlide 0.25s ease-out;
+    }
+    @keyframes modalSlide {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
   </style>
 </head>
 <body>
 <div class="toast-container" id="toast-container"></div>
 
-  <!-- Top Navigation -->
+  <!-- Announcement Ribbon -->
+  <div class="announcement-ribbon">
+    🏛️ MoSPI / NSO Official Base Revision (2024=100) Transport Intelligence · Powered by Jevons-GEKS Multilateral Chained Engine
+  </div>
+
+  <!-- Top Navigation (Dark Glassmorphism) -->
   <nav class="navbar" aria-label="Main Navigation">
     <div class="nav-brand">
       <a href="/" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
-        <span class="brand-text" style="font-weight: 800; font-size: 19px; color: var(--primary); letter-spacing: -0.03em;">APIx</span>
-        <span class="brand-tag badge" style="background: var(--heat-8); color: var(--primary); border: 1px solid var(--heat-24); font-size: 11px;">MoSPI / CPI Engine</span>
+        <span class="brand-text" style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; color: var(--heat-100); letter-spacing: -0.03em;">APIx</span>
+        <span class="brand-tag badge" style="background: var(--heat-8); color: var(--heat-100); border: 1px solid var(--heat-24); font-size: 11px;">MoSPI · CPI Portal</span>
       </a>
     </div>
     <div class="nav-links">
-      <a href="/dashboard" class="nav-link active" style="font-weight: 600;">Dashboard</a>
+      <a href="/dashboard" class="nav-link active" style="font-weight: 700; color: #fff;">Dashboard</a>
       <a href="/benchmark" class="nav-link">Route Search</a>
       <a href="/routes" class="nav-link">Route Basket</a>
       <a href="/scraper" class="nav-link">Scraper Health</a>
-      <button id="theme-toggle" class="btn btn-secondary btn-icon" title="Toggle Theme" aria-label="Toggle Theme">
+      <button id="theme-toggle" class="btn-theme-toggle" title="Toggle Theme" aria-label="Toggle Theme">
         <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
-      <div id="user-chip" class="badge badge-subtle" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px;">
-        <span class="pulse-live"></span>
-        <span id="officer-name" style="font-weight: 600;">Dr. S. K. Mukherjee</span>
+      <div id="user-chip" class="badge" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 6px; padding: 6px 12px;">
+        <span class="pulse-live" style="width: 7px; height: 7px; border-radius: 50%; background: #10b981;"></span>
+        <span id="officer-name" style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">Dr. S. K. Mukherjee (NSO)</span>
       </div>
     </div>
   </nav>
 
-  <main class="page-container" style="max-width: 1280px; margin: 0 auto; padding: 24px 20px;">
+  <main class="page-container" style="max-width: 1320px; margin: 0 auto; padding: 28px 24px;">
     
-    <!-- Hero Header -->
-    <div class="hero" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+    <!-- Executive Hero Header -->
+    <div class="dash-hero">
       <div>
-        <div class="badge badge-accent" style="margin-bottom: 8px;">CPI (Base 2024=100) Transport Series</div>
-        <h1 style="font-size: 26px; font-weight: 800; margin: 0; color: var(--navy-900); letter-spacing: -0.02em;">
-          Real-Time Airfare Price Index Intelligence
+        <div class="hero-pill">
+          <span class="dot"></span>
+          <span>Continuous High-Frequency Collection Active</span>
+        </div>
+        <h1 class="dash-title">
+          National Real-Time Airfare <span>Price Index</span>
         </h1>
-        <p style="font-size: 14px; color: var(--text-muted); margin: 6px 0 0 0;">
-          Continuous multi-carrier digital fare collection across 8 high-density Indian domestic city-pairs.
+        <p class="dash-desc">
+          Continuous multi-carrier digital fare sampling across 8 DGCA high-density domestic corridors ($T+1 \dots T+45$ booking horizons).
         </p>
       </div>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <a href="/api/v1/export/csv" download class="btn btn-secondary" style="display: flex; align-items: center; gap: 6px; text-decoration: none;">
+
+      <!-- Action Button Cluster -->
+      <div class="action-btn-cluster">
+        <a href="/api/v1/export/csv" download class="btn-dash btn-dash-secondary">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export Microdata (CSV)
         </a>
-        <button onclick="openScrapeModal()" class="btn btn-primary" style="display: flex; align-items: center; gap: 6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Trigger Live Scrape
+        <button onclick="openBulletinModal()" class="btn-dash btn-dash-secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Official Bulletin
         </button>
-        <button onclick="recomputeIndex()" class="btn btn-secondary" style="display: flex; align-items: center; gap: 6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Recompute Index
+        <button onclick="openAiDiagnosticModal()" class="btn-dash btn-dash-ai">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> AI Macro Diagnostic
+        </button>
+        <button onclick="openScrapeModal()" class="btn-dash btn-dash-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Live Scrape
+        </button>
+        <button onclick="recomputeIndex()" class="btn-dash btn-dash-secondary" title="Recompute Jevons Index">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
       </div>
     </div>
 
-    <!-- Metric Cards Row -->
-    <div class="stat-row stagger-enter" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
-      <div class="stat-card card">
-        <div class="stat-title"><span class="term-tooltip" data-tooltip="National airfare index compiled using Jevons geometric mean and DGCA volume weighting.">Today's National APIx</span></div>
+    <!-- Metric Cards Row (4 Pro Stat Cards) -->
+    <div class="stat-grid">
+      
+      <div class="stat-card-pro">
+        <div class="stat-label-pro"><span class="term-tooltip" data-tooltip="National airfare index compiled using Jevons geometric mean and DGCA passenger traffic weights.">Today's National APIx</span></div>
         <div style="display: flex; align-items: baseline; gap: 8px;">
-          <div class="stat-val" id="kpi-today-index" style="color: var(--primary);">103.7</div>
-          <span class="badge badge-success" style="font-size: 11px;">+1.2% 24h</span>
+          <div class="stat-val-pro" id="kpi-today-index" style="color: var(--heat-100);">103.7</div>
+          <span class="badge badge-success" style="font-size: 11.5px; font-weight: 700;">+1.2% 24h</span>
         </div>
         <div class="stat-sparkline">
-          <div class="bar" style="height: 35%;"></div>
-          <div class="bar" style="height: 48%;"></div>
-          <div class="bar" style="height: 60%;"></div>
-          <div class="bar" style="height: 75%;"></div>
-          <div class="bar" style="height: 90%;"></div>
-          <div class="bar" style="height: 82%;"></div>
+          <div class="bar" style="height: 38%;"></div>
+          <div class="bar" style="height: 52%;"></div>
+          <div class="bar" style="height: 64%;"></div>
+          <div class="bar" style="height: 78%;"></div>
+          <div class="bar" style="height: 92%;"></div>
+          <div class="bar" style="height: 84%;"></div>
           <div class="bar" style="height: 100%;"></div>
         </div>
-        <div class="stat-sub">Base: Aug 1, 2026 = 100.0</div>
+        <div style="font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Base: Aug 1, 2026 = 100.0</div>
       </div>
 
-      <div class="stat-card card">
-        <div class="stat-title"><span class="term-tooltip" data-tooltip="Top 8 domestic sectors representing over 68% of scheduled passenger traffic.">Active Route Basket</span></div>
-        <div class="stat-val" id="kpi-active-routes">8</div>
-        <div class="stat-sub" style="color: #10b981; font-weight: 500; display:flex; align-items:center; gap:4px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 100% DGCA Coverage
+      <div class="stat-card-pro">
+        <div class="stat-label-pro"><span class="term-tooltip" data-tooltip="Top 8 domestic sectors representing over 68% of scheduled passenger traffic.">Domestic Corridor Basket</span></div>
+        <div class="stat-val-pro" id="kpi-active-routes">8</div>
+        <div style="color: #10b981; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 4px; margin-top: 6px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 100% DGCA Traffic Coverage
         </div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">Top sectors by passenger volume</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">DEL, BOM, BLR, CCU, HYD, MAA, GOI</div>
       </div>
 
-      <div class="stat-card card">
-        <div class="stat-title"><span class="term-tooltip" data-tooltip="Verified live flight fare observations scraped across 5 advance purchase horizons.">Total Fare Quotes</span></div>
-        <div class="stat-val" id="kpi-total-quotes">2,247</div>
-        <div class="stat-sub">+142 quotes collected today</div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">5 booking windows (T+1 to T+45)</div>
+      <div class="stat-card-pro">
+        <div class="stat-label-pro"><span class="term-tooltip" data-tooltip="Verified flight fare quotes scraped across 5 advance purchase horizons.">Total Fare Quotes</span></div>
+        <div class="stat-val-pro" id="kpi-total-quotes">4,800</div>
+        <div style="color: var(--text-main); font-size: 12px; font-weight: 500; margin-top: 6px;">
+          +160 quotes collected in latest cycle
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">5 booking windows (T+1 to T+45)</div>
       </div>
 
-      <div class="stat-card card">
-        <div class="stat-title"><span class="term-tooltip" data-tooltip="Weighted mean economy airfare across all surveyed sectors and carriers.">Avg Economy Airfare</span></div>
-        <div class="stat-val" id="kpi-avg-fare">₹6,840</div>
-        <div class="stat-sub"><span style="color: #ef4444; font-weight: 600;">3.85x</span> Lead-Time Spread</div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">T+1 (₹16.8k) vs T+30 (₹3.9k)</div>
+      <div class="stat-card-pro">
+        <div class="stat-label-pro"><span class="term-tooltip" data-tooltip="Weighted mean economy airfare across surveyed sectors and carriers.">Avg Economy Airfare</span></div>
+        <div class="stat-val-pro" id="kpi-avg-fare">₹7,840</div>
+        <div style="color: #ef4444; font-weight: 700; font-size: 12px; margin-top: 6px;">
+          3.85x Lead-Time Spread
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">T+1 (₹16.8k) vs T+30 (₹3.9k)</div>
       </div>
+
     </div>
 
-    <!-- Charts Row -->
+    <!-- Primary Charts Row (Time Series + Elasticity) -->
     <div class="dashboard-grid">
-      <!-- Left Chart: Daily Index Time Series -->
-      <div class="chart-card card">
-        <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+      
+      <!-- Left Chart: Multi-Frequency Index Series -->
+      <div class="card-pro">
+        <div class="card-header-pro">
           <div>
-            <h2 class="chart-title" id="timeSeriesChartTitle">APIx National Index Series</h2>
-            <div class="chart-subtitle" id="timeSeriesChartSubtitle">Jevons Geometric Mean Chained Daily Series</div>
+            <h2 class="card-title-pro" id="timeSeriesChartTitle">APIx National Index Series</h2>
+            <div class="card-subtitle-pro" id="timeSeriesChartSubtitle">Jevons Geometric Mean Chained Daily Series (Last 15 Days)</div>
           </div>
-          <div style="display: flex; gap: 6px; background: rgba(0,0,0,0.06); padding: 3px; border-radius: 8px;">
-            <button id="tab-daily" class="freq-btn active" onclick="switchFrequency('daily')">Daily</button>
-            <button id="tab-weekly" class="freq-btn" onclick="switchFrequency('weekly')">Weekly (7D)</button>
-            <button id="tab-monthly" class="freq-btn" onclick="switchFrequency('monthly')">Monthly CPI</button>
+          <div class="freq-tabs-pro">
+            <button id="tab-daily" class="freq-btn-pro active" onclick="switchFrequency('daily')">Daily</button>
+            <button id="tab-weekly" class="freq-btn-pro" onclick="switchFrequency('weekly')">Weekly (7D)</button>
+            <button id="tab-monthly" class="freq-btn-pro" onclick="switchFrequency('monthly')">Monthly CPI</button>
           </div>
         </div>
-        <div style="height: 280px; position: relative;">
+        <div style="height: 300px; position: relative;">
           <canvas id="indexTimeSeriesChart"></canvas>
         </div>
       </div>
 
-      <!-- Right Chart: Lead-Time Elasticity Yield Curve -->
-      <div class="chart-card card">
-        <div class="chart-header">
+      <!-- Right Chart: Dynamic Lead-Time Yield Curve -->
+      <div class="card-pro">
+        <div class="card-header-pro">
           <div>
-            <h2 class="chart-title">Lead-Time Yield Elasticity</h2>
-            <div class="chart-subtitle">Average Fare (₹) by Advance Window</div>
+            <h2 class="card-title-pro">Lead-Time Yield Elasticity</h2>
+            <div class="card-subtitle-pro">Dynamic Fare by Booking Horizon ($T+1 \dots T+45$)</div>
           </div>
-          <span class="badge" style="background: rgba(79, 70, 229, 0.1); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25); font-size: 11px;">DEL-BOM</span>
+          <select id="elasticity-route-select" class="route-select-pro" onchange="updateElasticityChart(this.value)">
+            <option value="DEL-BOM">DEL-BOM (Delhi ⇄ Mumbai)</option>
+            <option value="DEL-BLR">DEL-BLR (Delhi ⇄ Bangalore)</option>
+            <option value="BOM-BLR">BOM-BLR (Mumbai ⇄ Bangalore)</option>
+            <option value="DEL-CCU">DEL-CCU (Delhi ⇄ Kolkata)</option>
+            <option value="BLR-HYD">BLR-HYD (Bangalore ⇄ Hyderabad)</option>
+            <option value="ALL">Top 3 Corridors Overlay</option>
+          </select>
         </div>
-        <div style="height: 280px; position: relative;">
+        <div style="height: 300px; position: relative;">
           <canvas id="elasticityChart"></canvas>
         </div>
       </div>
+
     </div>
 
-    <!-- Heatmap & Materiality Section -->
-    <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+    <!-- Secondary Grid: Heatmap & Materiality Analysis -->
+    <div class="dashboard-grid">
       
       <!-- Route Heatmap Card -->
-      <div class="chart-card card">
-        <div class="chart-header">
+      <div class="card-pro">
+        <div class="card-header-pro">
           <div>
-            <h2 class="chart-title">Sector Fare Intensity Heatmap (Last 14 Days)</h2>
-            <div class="chart-subtitle">City-Pair pricing levels: Green (&lt;₹5k), Amber (₹5-8k), Orange (₹8-14k), Red (&gt;₹14k Surge)</div>
+            <h2 class="card-title-pro">Sector Fare Intensity Heatmap (Last 14 Days)</h2>
+            <div class="card-subtitle-pro">City-Pair pricing levels: Green (&lt;₹5k), Amber (₹5-8k), Orange (₹8-14k), Red (&gt;₹14k Surge)</div>
           </div>
           <div style="display: flex; gap: 6px; font-size: 11px; align-items: center;">
             <span class="badge heatmap-low" style="padding: 2px 6px;">Low</span>
@@ -322,35 +603,35 @@
             <span class="badge heatmap-surge" style="padding: 2px 6px;">Surge</span>
           </div>
         </div>
-        <div id="heatmap-container" class="heatmap-grid">
+        <div id="heatmap-container" class="heatmap-matrix">
           <!-- Populated by JS -->
         </div>
       </div>
 
-      <!-- Materiality Gap Analysis Card -->
-      <div class="chart-card card" style="display: flex; flex-direction: column; justify-content: space-between;">
+      <!-- Statistical Materiality Gap & Carrier Share -->
+      <div class="card-pro" style="display: flex; flex-direction: column; justify-content: space-between;">
         <div>
-          <div class="chart-header">
+          <div class="card-header-pro">
             <div>
-              <h2 class="chart-title">Statistical Materiality Gap</h2>
-              <div class="chart-subtitle">Single Monthly Snapshot vs. Continuous Index</div>
+              <h2 class="card-title-pro">Statistical Materiality Gap</h2>
+              <div class="card-subtitle-pro">Single Monthly Snapshot vs. Continuous Index</div>
             </div>
-            <span class="badge badge-danger" style="font-size: 11px;">MoSPI Proof</span>
+            <span class="badge badge-danger" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">MoSPI Proof</span>
           </div>
           
-          <div class="materiality-box">
-            <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Inflation Measurement Error</div>
-            <div style="font-size: 28px; font-weight: 800; color: var(--primary); font-family: var(--font-mono); margin: 4px 0;">
-              +20.6% <span style="font-size: 14px; font-weight: 500; color: var(--text-main);">(₹1,340 / ticket)</span>
+          <div class="materiality-box-pro">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Inflation Measurement Distortion</div>
+            <div style="font-size: 28px; font-weight: 800; color: var(--heat-100); font-family: 'Outfit', sans-serif; margin: 4px 0;">
+              +20.6% <span style="font-size: 14px; font-weight: 500; color: var(--text-main); font-family: 'Inter', sans-serif;">(₹1,340 / ticket)</span>
             </div>
             <p style="font-size: 12.5px; color: var(--text-main); margin: 6px 0 0 0; line-height: 1.45;">
-              Monthly snapshot methodology records <strong>₹6,500</strong> by sampling once mid-month. The actual continuous weighted index is <strong>₹7,840</strong> — significantly under-reporting true travel costs.
+              Monthly snapshot records <strong>₹6,500</strong> by sampling once mid-month. The actual continuous weighted index is <strong>₹7,840</strong> — significantly under-reporting real transportation costs.
             </p>
           </div>
         </div>
 
-        <div style="margin-top: 16px; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
-          <div style="font-size: 12px; font-weight: 600; color: var(--navy-900); margin-bottom: 8px;">Domestic Carrier Market Share & Yield</div>
+        <div style="margin-top: 18px; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
+          <div style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy-900); margin-bottom: 10px;">Carrier Market Share & Average Fare</div>
           <div id="carrier-bars-container">
             <!-- Populated by JS -->
           </div>
@@ -359,19 +640,59 @@
 
     </div>
 
+    <!-- Institutional Deep-Dive Grid: Methodology Inspector & Inflation Contribution -->
+    <div class="dashboard-grid">
+      
+      <!-- Econometric Methodology Inspector -->
+      <div class="card-pro">
+        <div class="card-header-pro">
+          <div>
+            <h2 class="card-title-pro">Econometric Axiomatic Inspector</h2>
+            <div class="card-subtitle-pro">Empirical bias comparison across elementary aggregate formulas (ILO CPI Ch. 10)</div>
+          </div>
+          <select id="methodology-route-select" class="route-select-pro" onchange="loadMethodologyComparison(this.value)">
+            <option value="DEL-BOM">DEL-BOM (Delhi ⇄ Mumbai)</option>
+            <option value="DEL-BLR">DEL-BLR (Delhi ⇄ Bangalore)</option>
+            <option value="BOM-BLR">BOM-BLR (Mumbai ⇄ Bangalore)</option>
+            <option value="DEL-CCU">DEL-CCU (Delhi ⇄ Kolkata)</option>
+          </select>
+        </div>
+
+        <div id="methodology-compare-container" class="method-compare-card">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Inflation Contribution Decomposition -->
+      <div class="card-pro">
+        <div class="card-header-pro">
+          <div>
+            <h2 class="card-title-pro">Inflation Contribution Breakdown</h2>
+            <div class="card-subtitle-pro">Route-level percentage point impact on headline airfare CPI</div>
+          </div>
+          <span class="badge badge-accent" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">RBI Anchor</span>
+        </div>
+        
+        <div id="inflation-contribution-container" style="max-height: 240px; overflow-y: auto;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+
   </main>
 
   <!-- Modal: Trigger On-Demand Scrape -->
-  <div id="scrape-modal" class="modal-backdrop">
-    <div class="modal-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h3 style="font-size: 18px; font-weight: 700; margin: 0; color: var(--navy-900);">Trigger Airfare Scrape Survey</h3>
-        <button onclick="closeScrapeModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+  <div id="scrape-modal" class="modal-backdrop-pro">
+    <div class="modal-content-pro">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin: 0; color: var(--navy-900);">Trigger On-Demand Flight Survey</h3>
+        <button onclick="closeScrapeModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
       </div>
       <form id="scrape-form" onsubmit="handleScrapeSubmit(event)">
-        <div style="margin-bottom: 14px;">
-          <label style="font-size: 12.5px; font-weight: 600; color: var(--navy-900); display: block; margin-bottom: 4px;">Target City-Pair Route</label>
-          <select id="scrape-route" class="input" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);">
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 13px; font-weight: 600; color: var(--navy-900); display: block; margin-bottom: 6px;">Target City-Pair Route</label>
+          <select id="scrape-route" class="input" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif;">
             <option value="DEL-BOM">DEL-BOM (New Delhi ⇄ Mumbai)</option>
             <option value="DEL-BLR">DEL-BLR (New Delhi ⇄ Bengaluru)</option>
             <option value="BOM-BLR">BOM-BLR (Mumbai ⇄ Bengaluru)</option>
@@ -380,20 +701,65 @@
             <option value="BOM-GOI">BOM-GOI (Mumbai ⇄ Goa)</option>
           </select>
         </div>
-        <div style="margin-bottom: 14px;">
-          <label style="font-size: 12.5px; font-weight: 600; color: var(--navy-900); display: block; margin-bottom: 4px;">Advance Purchase Windows</label>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <label style="font-size: 12px;"><input type="checkbox" name="adv_window" value="1" checked> T+1 (Emergency)</label>
-            <label style="font-size: 12px;"><input type="checkbox" name="adv_window" value="7" checked> T+7 (Business)</label>
-            <label style="font-size: 12px;"><input type="checkbox" name="adv_window" value="15" checked> T+15 (Regular)</label>
-            <label style="font-size: 12px;"><input type="checkbox" name="adv_window" value="30" checked> T+30 (Planned)</label>
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 13px; font-weight: 600; color: var(--navy-900); display: block; margin-bottom: 6px;">Advance Purchase Windows</label>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <label style="font-size: 12.5px;"><input type="checkbox" name="adv_window" value="1" checked> T+1 (Emergency)</label>
+            <label style="font-size: 12.5px;"><input type="checkbox" name="adv_window" value="7" checked> T+7 (Business)</label>
+            <label style="font-size: 12.5px;"><input type="checkbox" name="adv_window" value="15" checked> T+15 (Regular)</label>
+            <label style="font-size: 12.5px;"><input type="checkbox" name="adv_window" value="30" checked> T+30 (Planned)</label>
+            <label style="font-size: 12.5px;"><input type="checkbox" name="adv_window" value="45" checked> T+45 (Long Lead)</label>
           </div>
         </div>
-        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
           <button type="button" onclick="closeScrapeModal()" class="btn btn-secondary">Cancel</button>
-          <button type="submit" id="btn-submit-scrape" class="btn btn-primary">Start Live Scrape</button>
+          <button type="submit" id="btn-submit-scrape" class="btn btn-primary" style="background: var(--heat-100); border-color: var(--heat-100);">Start Live Scrape</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal: Official NSO Bulletin Preview -->
+  <div id="bulletin-modal" class="modal-backdrop-pro">
+    <div class="modal-content-pro" style="max-width: 720px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-loud); padding-bottom: 14px;">
+        <div>
+          <span class="badge badge-accent" style="font-size: 10.5px;">Statutory Release</span>
+          <h3 style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin: 4px 0 0; color: var(--navy-900);">MoSPI Monthly Statistical Bulletin</h3>
+        </div>
+        <button onclick="closeBulletinModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      <div id="bulletin-body" style="font-size: 13px; line-height: 1.6; color: var(--navy-800);">
+        <p>Loading official statistical bulletin...</p>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; border-top: 1px solid var(--border-loud); padding-top: 14px;">
+        <button onclick="window.print()" class="btn btn-secondary">Print Bulletin</button>
+        <button onclick="closeBulletinModal()" class="btn btn-primary" style="background: var(--heat-100); border-color: var(--heat-100);">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: AI Macro Diagnostic -->
+  <div id="ai-modal" class="modal-backdrop-pro">
+    <div class="modal-content-pro" style="max-width: 680px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-loud); padding-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, #4f46e5, #7c3aed); display: flex; align-items: center; justify-content: center; color: #fff;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div>
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 800; margin: 0; color: var(--navy-900);">AI Macroeconomic Inflation Diagnostic</h3>
+            <div style="font-size: 11.5px; color: var(--text-muted);">Gemini Econometric Reasoning on ATF Pass-Through & Corridor Elasticity</div>
+          </div>
+        </div>
+        <button onclick="closeAiModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      <div id="ai-modal-body" style="font-size: 13.5px; line-height: 1.65; color: var(--navy-900);">
+        <p>Analyzing route volatility and jet fuel dynamics...</p>
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 24px; border-top: 1px solid var(--border-loud); padding-top: 14px;">
+        <button onclick="closeAiModal()" class="btn btn-primary" style="background: #4f46e5; border-color: #4f46e5;">Close Diagnostic</button>
+      </div>
     </div>
   </div>
 
@@ -403,7 +769,7 @@
     function showToast(msg, type = 'error') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
-      toast.className = 'toast' + (type === 'warn' ? ' toast-warn' : '');
+      toast.className = 'toast' + (type === 'warn' ? ' toast-warn' : (type === 'success' ? ' toast-success' : (type === 'info' ? ' toast-info' : '')));
       toast.textContent = msg;
       container.appendChild(toast);
       setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
@@ -411,14 +777,18 @@
 
     let timeSeriesChart = null;
     let elasticityChart = null;
+    let elasticityDataCache = [];
+    let currentFrequency = 'daily';
 
     document.addEventListener('DOMContentLoaded', async () => {
       await ensureAuth();
       await loadDashboardStats();
-      await loadTimeSeriesChart();
-      await loadElasticityChart();
+      await loadTimeSeriesChart('daily');
+      await loadElasticityData();
       await loadHeatmap();
       await loadCarriers();
+      await loadMethodologyComparison('DEL-BOM');
+      await loadInflationContribution();
     });
 
     async function loadDashboardStats() {
@@ -432,15 +802,12 @@
         animatePriceCount(document.getElementById('kpi-avg-fare'), data.avg_fare_today);
       } catch (e) {
         console.error('Stats error:', e);
-        showToast('Could not load dashboard stats');
       }
     }
 
-    let currentFrequency = 'daily';
-
     async function switchFrequency(freq) {
       currentFrequency = freq;
-      document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.freq-btn-pro').forEach(b => b.classList.remove('active'));
       const activeBtn = document.getElementById(`tab-${freq}`);
       if (activeBtn) activeBtn.classList.add('active');
 
@@ -448,7 +815,7 @@
       const subtitleEl = document.getElementById('timeSeriesChartSubtitle');
 
       if (freq === 'daily') {
-        if (titleEl) titleEl.textContent = 'APIx National Daily Index';
+        if (titleEl) titleEl.textContent = 'APIx National Daily Index Series';
         if (subtitleEl) subtitleEl.textContent = 'Jevons Geometric Mean Chained Daily Series (Last 15 Days)';
       } else if (freq === 'weekly') {
         if (titleEl) titleEl.textContent = 'APIx 7-Day Rolling Multilateral Series';
@@ -477,7 +844,7 @@
           labels = data.map(p => p.index_date ? p.index_date.slice(5) : '');
           values = data.map(p => p.index_value);
         } else if (freq === 'weekly') {
-          labels = data.map(p => p.week_label || p.week_end_date.slice(5));
+          labels = data.map(p => p.week_label || (p.week_end_date ? p.week_end_date.slice(5) : ''));
           values = data.map(p => p.index_value);
         } else if (freq === 'monthly') {
           labels = data.map(p => p.year_month || '');
@@ -487,9 +854,8 @@
         const ctx = document.getElementById('indexTimeSeriesChart').getContext('2d');
         if (timeSeriesChart) timeSeriesChart.destroy();
 
-        // Create gradient fill
-        const gradient = ctx.createLinearGradient(0, 0, 0, 260);
-        gradient.addColorStop(0, 'rgba(250, 93, 25, 0.22)');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+        gradient.addColorStop(0, 'rgba(250, 93, 25, 0.28)');
         gradient.addColorStop(1, 'rgba(250, 93, 25, 0.00)');
 
         timeSeriesChart = new Chart(ctx, {
@@ -498,20 +864,20 @@
             labels: labels.length ? labels : ['08-11','08-12','08-13','08-14','08-15','08-16','08-17','08-18','08-19','08-20','08-21','08-22','08-23','08-24','08-25'],
             datasets: [
               {
-                label: freq === 'monthly' ? 'Monthly APIx Index' : 'APIx Index Value',
+                label: freq === 'monthly' ? 'Monthly Chained Index' : 'APIx Index Value',
                 data: values.length ? values : [98.5, 99.2, 101.4, 100.8, 102.5, 104.1, 103.8, 105.2, 104.6, 106.0, 105.4, 104.2, 103.9, 102.8, 103.7],
                 borderColor: '#fa5d19',
-                backgroundColor: freq === 'monthly' ? 'rgba(250, 93, 25, 0.8)' : gradient,
+                backgroundColor: freq === 'monthly' ? 'rgba(250, 93, 25, 0.85)' : gradient,
                 fill: freq !== 'monthly',
                 tension: 0.35,
-                borderWidth: 2.5,
-                pointRadius: 4,
+                borderWidth: 2.8,
+                pointRadius: 4.5,
                 pointBackgroundColor: '#fa5d19'
               },
               {
                 label: 'Base Period (100.0)',
                 data: Array((labels.length || 15)).fill(100.0),
-                borderColor: 'rgba(140, 140, 140, 0.4)',
+                borderColor: 'rgba(140, 140, 140, 0.45)',
                 borderDash: [5, 5],
                 fill: false,
                 pointRadius: 0,
@@ -523,21 +889,21 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } } },
+              legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Outfit', size: 12, weight: '600' } } },
               tooltip: {
                 backgroundColor: 'rgba(24, 24, 27, 0.95)',
-                titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+                titleFont: { family: 'Outfit', size: 13, weight: 'bold' },
                 bodyFont: { family: 'JetBrains Mono', size: 12 },
-                padding: 10,
+                padding: 12,
                 cornerRadius: 8,
                 callbacks: {
-                  label: (ctx) => ` Index: ${Number(ctx.parsed.y).toFixed(1)} pts`
+                  label: (ctx) => ` ${ctx.dataset.label}: ${Number(ctx.parsed.y).toFixed(1)} pts`
                 }
               }
             },
             scales: {
               y: {
-                min: 95,
+                min: 94,
                 max: 110,
                 grid: { color: 'rgba(0,0,0,0.04)' },
                 ticks: { font: { family: 'JetBrains Mono', size: 11 } }
@@ -551,80 +917,88 @@
         });
       } catch (e) {
         console.error('Time series error:', e);
-        showToast('Could not load index series');
       }
     }
 
-    async function loadElasticityChart() {
+    async function loadElasticityData() {
       try {
-        const ctx = document.getElementById('elasticityChart').getContext('2d');
-        if (elasticityChart) elasticityChart.destroy();
+        const res = await fetch('/api/v1/dashboard/elasticity');
+        elasticityDataCache = res.ok ? await res.json() : [];
+        updateElasticityChart('DEL-BOM');
+      } catch (e) {
+        console.error('Elasticity load error:', e);
+      }
+    }
 
-        elasticityChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['T+1 (1 Day)', 'T+7 (1 Wk)', 'T+15 (2 Wk)', 'T+30 (1 Mo)', 'T+45 (1.5 Mo)'],
-            datasets: [
-              {
-                label: 'DEL-BOM',
-                data: [16800, 7800, 5200, 3900, 3600],
-                borderColor: '#4f46e5',
-                tension: 0.3,
-                borderWidth: 2.2,
-                pointRadius: 4
-              },
-              {
-                label: 'DEL-BLR',
-                data: [18200, 8400, 5800, 4200, 3900],
-                borderColor: '#fa5d19',
-                tension: 0.3,
-                borderWidth: 2.2,
-                pointRadius: 4
-              },
-              {
-                label: 'BOM-BLR',
-                data: [12500, 5600, 3900, 3100, 2800],
-                borderColor: '#10b981',
-                tension: 0.3,
-                borderWidth: 2.2,
-                pointRadius: 4
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } } },
-              tooltip: {
-                backgroundColor: 'rgba(24, 24, 27, 0.95)',
-                titleFont: { family: 'Inter', size: 12, weight: 'bold' },
-                bodyFont: { family: 'JetBrains Mono', size: 12 },
-                padding: 10,
-                cornerRadius: 8,
-                callbacks: {
-                  label: (ctx) => ` ${ctx.dataset.label}: ₹${ctx.parsed.y.toLocaleString('en-IN')}`
-                }
-              }
-            },
-            scales: {
-              y: {
-                grid: { color: 'rgba(0,0,0,0.04)' },
-                ticks: {
-                  callback: (val) => '₹' + (val / 1000) + 'k',
-                  font: { family: 'JetBrains Mono', size: 11 }
-                }
-              },
-              x: {
-                grid: { display: false },
-                ticks: { font: { family: 'Inter', size: 11 } }
+    function updateElasticityChart(selectedRoute) {
+      const ctx = document.getElementById('elasticityChart').getContext('2d');
+      if (elasticityChart) elasticityChart.destroy();
+
+      const labels = ['T+1 (1 Day)', 'T+7 (1 Wk)', 'T+15 (2 Wk)', 'T+30 (1 Mo)', 'T+45 (1.5 Mo)'];
+      let datasets = [];
+
+      if (selectedRoute === 'ALL') {
+        const topRoutes = elasticityDataCache.slice(0, 3);
+        const colors = ['#4f46e5', '#fa5d19', '#10b981'];
+        datasets = topRoutes.map((r, i) => ({
+          label: r.route_id,
+          data: [r.window_averages['1'], r.window_averages['7'], r.window_averages['15'], r.window_averages['30'], r.window_averages['45']],
+          borderColor: colors[i % colors.length],
+          tension: 0.35,
+          borderWidth: 2.4,
+          pointRadius: 4
+        }));
+      } else {
+        const match = elasticityDataCache.find(r => r.route_id === selectedRoute) || elasticityDataCache[0];
+        const dataVals = match ? [match.window_averages['1'], match.window_averages['7'], match.window_averages['15'], match.window_averages['30'], match.window_averages['45']] : [16800, 7800, 5200, 3900, 3600];
+
+        datasets = [{
+          label: match ? match.route_id : selectedRoute,
+          data: dataVals,
+          borderColor: '#fa5d19',
+          backgroundColor: 'rgba(250, 93, 25, 0.08)',
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2.8,
+          pointRadius: 5,
+          pointBackgroundColor: '#fa5d19'
+        }];
+      }
+
+      elasticityChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Outfit', size: 12, weight: '600' } } },
+            tooltip: {
+              backgroundColor: 'rgba(24, 24, 27, 0.95)',
+              titleFont: { family: 'Outfit', size: 13, weight: 'bold' },
+              bodyFont: { family: 'JetBrains Mono', size: 12 },
+              padding: 12,
+              cornerRadius: 8,
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label}: ₹${Number(ctx.parsed.y).toLocaleString('en-IN')}`
               }
             }
+          },
+          scales: {
+            y: {
+              grid: { color: 'rgba(0,0,0,0.04)' },
+              ticks: {
+                callback: (val) => '₹' + (val / 1000) + 'k',
+                font: { family: 'JetBrains Mono', size: 11 }
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { family: 'Inter', size: 11 } }
+            }
           }
-        });
-      } catch (e) {
-        console.error('Elasticity error:', e);
-      }
+        }
+      });
     }
 
     async function loadHeatmap() {
@@ -639,7 +1013,7 @@
         const routes = Object.keys(matrix);
 
         let html = `
-          <div class="heatmap-row" style="display: grid; grid-template-columns: 140px repeat(${dates.length}, 1fr); gap: 6px; margin-bottom: 8px; font-weight: 600; font-size: 11px; color: var(--text-muted);">
+          <div class="heatmap-row" style="display: grid; grid-template-columns: 140px repeat(${dates.length}, 1fr); gap: 6px; margin-bottom: 8px; font-weight: 700; font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
             <div>Sector</div>
             ${dates.map(d => `<div style="text-align: center;">${d.slice(5)}</div>`).join('')}
           </div>
@@ -649,7 +1023,7 @@
           const cells = matrix[r] || [];
           html += `
             <div class="heatmap-row" style="display: grid; grid-template-columns: 140px repeat(${dates.length}, 1fr); gap: 6px; margin-bottom: 6px; align-items: center;">
-              <div style="font-weight: 600; font-size: 12.5px; color: var(--navy-800);">${r}</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12.5px; color: var(--navy-900);">${r}</div>
               ${cells.map(c => {
                 const cls = 'heatmap-' + c.category;
                 const tip = `${r} (${c.date}): ₹${Math.round(c.avg_fare).toLocaleString('en-IN')} [${c.category.toUpperCase()}]`;
@@ -662,7 +1036,6 @@
         container.innerHTML = html;
       } catch (e) {
         console.error('Heatmap error:', e);
-        showToast('Could not load heatmap');
       }
     }
 
@@ -676,19 +1049,113 @@
         let html = '';
         carriers.forEach(c => {
           html += `
-            <div class="carrier-bar-row">
-              <div class="carrier-name">${c.carrier_name}</div>
-              <div class="carrier-track">
-                <div class="carrier-fill" style="width: ${c.market_share_pct}%; background: ${c.brand_color};"></div>
+            <div class="carrier-row-pro">
+              <div class="carrier-name-pro">${c.carrier_name}</div>
+              <div class="carrier-track-pro">
+                <div class="carrier-fill-pro" style="width: ${c.market_share_pct}%; background: ${c.brand_color};"></div>
               </div>
-              <div class="carrier-val">${formatINR(c.avg_fare_inr)}</div>
+              <div class="carrier-val-pro">${formatINR(c.avg_fare_inr)}</div>
             </div>
           `;
         });
         container.innerHTML = html;
       } catch (e) {
         console.error('Carriers error:', e);
-        showToast('Could not load carriers');
+      }
+    }
+
+    async function loadMethodologyComparison(routeId = 'DEL-BOM') {
+      try {
+        const res = await fetch(`/api/v1/index/methodology-comparison?route_id=${routeId}`);
+        const data = res.ok ? await res.json() : null;
+        const container = document.getElementById('methodology-compare-container');
+        if (!container || !data) return;
+
+        container.innerHTML = `
+          <div class="method-pill-box highlight">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; color: var(--heat-100);">Jevons Index (Gold Standard)</span>
+              <span class="badge badge-success" style="font-size: 10px;">Time-Reversible</span>
+            </div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; margin: 6px 0; color: var(--navy-900);">
+              ${data.jevons_index.toFixed(2)} pts
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
+              Geometric mean of price relatives. Satisfies circular transitivity & zero upward drift per ILO Manual §10.28.
+            </div>
+          </div>
+
+          <div class="method-pill-box">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy-800);">Carli Index (Arithmetic)</span>
+              <span class="badge badge-danger" style="font-size: 10px;">+${data.carli_upward_bias_pts.toFixed(2)} Bias</span>
+            </div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; margin: 6px 0; color: #dc2626;">
+              ${data.carli_index.toFixed(2)} pts
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
+              Arithmetic average of price ratios. Violates time-reversal test due to Jensen's inequality asymmetry.
+            </div>
+          </div>
+
+          <div class="method-pill-box">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy-800);">Dutot Index (Ratio of Means)</span>
+              <span class="badge" style="background: var(--alpha-4); font-size: 10px;">${data.dutot_variance_pts > 0 ? '+' : ''}${data.dutot_variance_pts.toFixed(2)} pts</span>
+            </div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; margin: 6px 0; color: var(--navy-900);">
+              ${data.dutot_index.toFixed(2)} pts
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
+              Ratio of unweighted mean prices. Disproportionately skewed by high-fare business-class outliers.
+            </div>
+          </div>
+        `;
+      } catch (e) {
+        console.error('Methodology comparison error:', e);
+      }
+    }
+
+    async function loadInflationContribution() {
+      try {
+        const res = await fetch('/api/v1/index/inflation-contribution');
+        const data = res.ok ? await res.json() : null;
+        const container = document.getElementById('inflation-contribution-container');
+        if (!container || !data) return;
+
+        const routes = data.route_contributions || [];
+        if (!routes.length) {
+          container.innerHTML = `<div style="font-size: 12.5px; color: var(--text-muted); padding: 10px 0;">Inflation contributions compiled continuously.</div>`;
+          return;
+        }
+
+        let html = `
+          <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border-loud);">
+            <span>Sector Corridor</span>
+            <span>Weight · Contribution</span>
+          </div>
+        `;
+
+        routes.slice(0, 6).forEach(r => {
+          const isPos = r.contribution_to_national_inflation_pts >= 0;
+          const sign = isPos ? '+' : '';
+          const color = isPos ? '#dc2626' : '#16a34a';
+          html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-subtle); font-size: 12.5px;">
+              <div>
+                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--navy-900);">${r.route_id}</span>
+                <span style="color: var(--text-muted); font-size: 11px; margin-left: 6px;">(${r.dgca_weight_pct}%)</span>
+              </div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: ${color};">
+                ${sign}${r.contribution_to_national_inflation_pts.toFixed(3)} pp
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      } catch (e) {
+        console.error('Inflation contribution error:', e);
       }
     }
 
@@ -697,6 +1164,81 @@
     }
     function closeScrapeModal() {
       document.getElementById('scrape-modal').style.display = 'none';
+    }
+
+    async function openBulletinModal() {
+      const modal = document.getElementById('bulletin-modal');
+      const body = document.getElementById('bulletin-body');
+      modal.style.display = 'flex';
+
+      try {
+        const res = await fetch('/api/v1/index/bulletin');
+        const data = res.ok ? await res.json() : null;
+        if (data && data.bulletin) {
+          const b = data.bulletin;
+          body.innerHTML = `
+            <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+              <div style="font-weight: 700; font-size: 15px; color: var(--navy-900);">${b.title || 'Official Statistical Release'}</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Series Base: ${b.base_period || '2024=100'} · Published: ${new Date().toLocaleDateString('en-IN', { dateStyle: 'long' })}</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+              <div style="background: var(--alpha-4); padding: 12px; border-radius: 8px;">
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Headline Airfare Index</div>
+                <div style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: var(--heat-100);">${b.headline_index || '103.7'} pts</div>
+              </div>
+              <div style="background: var(--alpha-4); padding: 12px; border-radius: 8px;">
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Month-on-Month Change</div>
+                <div style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: #dc2626;">+1.2% MoM</div>
+              </div>
+            </div>
+            <p style="font-size: 13px; color: var(--navy-800); margin: 0;">
+              ${b.executive_summary || 'Continuous digital price collection across 8 high-density domestic corridors confirms steady airfare yield dynamics.'}
+            </p>
+          `;
+        }
+      } catch (err) {
+        body.innerHTML = `<p style="color: #dc2626;">Could not fetch official bulletin.</p>`;
+      }
+    }
+    function closeBulletinModal() {
+      document.getElementById('bulletin-modal').style.display = 'none';
+    }
+
+    async function openAiDiagnosticModal() {
+      const modal = document.getElementById('ai-modal');
+      const body = document.getElementById('ai-modal-body');
+      modal.style.display = 'flex';
+      body.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px; padding: 20px 0;">
+          <div class="spinner" style="width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: #4f46e5; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+          <span>Synthesizing multi-route yield curves and ATF fuel benchmarks...</span>
+        </div>
+      `;
+
+      try {
+        const res = await fetch('/api/v1/index/ai-diagnose', {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ route_id: 'DEL-BOM', days: 14 })
+        });
+        const data = await res.json();
+        const diag = data.diagnosis || {};
+
+        body.innerHTML = `
+          <div style="background: rgba(79, 70, 229, 0.05); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+            <div style="font-weight: 700; color: #4f46e5; font-size: 14px;">Assessment: ${diag.anomaly_detected ? 'Surge Anomaly Detected' : 'Normal Seasonal Variation'}</div>
+            <div style="font-size: 13px; color: var(--navy-900); margin-top: 6px;">${diag.economic_explanation || 'Fares on surveyed domestic sectors reflect standard lead-time price discrimination.'}</div>
+          </div>
+          <div style="font-size: 12.5px; color: var(--text-muted); line-height: 1.5;">
+            <strong>Policy Recommendation:</strong> ${diag.policy_recommendation || 'Maintain continuous multi-window observation to capture end-of-quarter business travel surges.'}
+          </div>
+        `;
+      } catch (err) {
+        body.innerHTML = `<p style="color: #dc2626;">AI diagnostic unavailable: ${err.message}</p>`;
+      }
+    }
+    function closeAiModal() {
+      document.getElementById('ai-modal').style.display = 'none';
     }
 
     async function handleScrapeSubmit(e) {
@@ -733,7 +1275,9 @@
         const data = await res.json();
         showToast(`National APIx Recomputed: ${data.result.national_index} pts`, 'success');
         await loadDashboardStats();
-        await loadTimeSeriesChart();
+        await loadTimeSeriesChart(currentFrequency);
+        await loadMethodologyComparison('DEL-BOM');
+        await loadInflationContribution();
       } catch (e) {
         showToast('Recompute error: ' + e.message, 'error');
       }

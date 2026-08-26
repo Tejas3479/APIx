@@ -24,6 +24,17 @@ from services.data_cleaner import DataCleaner
 
 logger = logging.getLogger("apix.index_engine")
 
+BASE_PERIOD_FARES: dict[str, float] = {
+    "DEL-BOM": 5850.0,
+    "DEL-BLR": 6200.0,
+    "BOM-BLR": 4100.0,
+    "DEL-CCU": 5600.0,
+    "BLR-HYD": 3400.0,
+    "DEL-HYD": 4900.0,
+    "MAA-DEL": 5900.0,
+    "BOM-GOI": 3800.0,
+}
+
 
 class AirfareIndexEngine:
     """Core mathematical engine for CPI airfare index construction."""
@@ -472,6 +483,8 @@ class AirfareIndexEngine:
           Contribution_r = w_r * (I_r - Base_r)
         """
         calc_date = target_date or datetime.now(timezone.utc).date()
+        contributions: list[dict[str, Any]] = []
+        total_inflation_points = 0.0
 
         async with async_session_maker() as session:
             routes = (await session.execute(select(RouteConfig))).scalars().all()
@@ -485,6 +498,42 @@ class AirfareIndexEngine:
                 .limit(len(routes))
             )
             route_indices = (await session.execute(stmt)).scalars().all()
+
+            if not route_indices:
+                # Dynamic fallback from FareQuote if RouteIndex not yet compiled
+                for r in routes:
+                    q_stmt = select(FareQuote.total_fare).where(FareQuote.route_id == r.id).where(FareQuote.total_fare > 0)
+                    fares = (await session.execute(q_stmt)).scalars().all()
+                    if fares:
+                        avg_f = float(np.mean(fares))
+                        base_p = BASE_PERIOD_FARES.get(r.id, 5000.0)
+                        sub_idx = round((avg_f / base_p) * 100.0, 2)
+                        delta_pts = sub_idx - 100.0
+                        contrib_pts = round(r.dgca_weight * delta_pts, 3)
+                        total_inflation_points += contrib_pts
+                        contributions.append(
+                            {
+                                "route_id": r.id,
+                                "route_name": f"{r.origin_city} ⇄ {r.destination_city}",
+                                "dgca_weight_pct": round(r.dgca_weight * 100.0, 1),
+                                "route_subindex": sub_idx,
+                                "subindex_inflation_pts": round(delta_pts, 2),
+                                "contribution_to_national_inflation_pts": contrib_pts,
+                                "avg_fare_inr": round(avg_f, 2),
+                            }
+                        )
+
+        if not route_indices and contributions:
+            contributions.sort(key=lambda x: abs(x["contribution_to_national_inflation_pts"]), reverse=True)
+            return {
+                "reference_date": calc_date.isoformat(),
+                "headline_national_inflation_pts": round(total_inflation_points, 2),
+                "route_contributions": contributions,
+                "policy_summary": (
+                    f"Top driver of airfare inflation: {contributions[0]['route_id']} contributing "
+                    f"{contributions[0]['contribution_to_national_inflation_pts']:+.2f} percentage points."
+                ),
+            }
 
         contributions = []
         total_inflation_points = 0.0
