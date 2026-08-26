@@ -408,7 +408,7 @@ class AirfareIndexEngine:
     ) -> list[dict[str, Any]]:
         """Compute calendar month and 30-day chained CPI publication series."""
         async with async_session_maker() as session:
-            stmt = select(DailyIndex).order_by(DailyIndex.index_date.asc())
+            stmt = select(DailyIndex).order_by(DailyIndex.index_date)
             all_daily = (await session.execute(stmt)).scalars().all()
 
         if not all_daily:

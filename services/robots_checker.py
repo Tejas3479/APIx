@@ -58,13 +58,13 @@ class RobotsTxtChecker:
                         logger.debug("Successfully loaded robots.txt for origin: %s", origin)
                     elif resp.status_code in (401, 403):
                         # Site disallows all
-                        parser.disallow_all = True
+                        parser.parse(["User-agent: *", "Disallow: /"])
                     else:
                         # 404 or other status means no restrictions
-                        parser.allow_all = True
+                        parser.parse(["User-agent: *", "Allow: /"])
             except Exception as e:
                 logger.debug("Could not fetch robots.txt for %s (%s); defaulting to allow", origin, e)
-                parser.allow_all = True
+                parser.parse(["User-agent: *", "Allow: /"])
 
             async with _CACHE_LOCK:
                 # Keep cache bounded to 100 domains

@@ -5,10 +5,10 @@ logging progress, quote counts, and telemetry events into ScrapeJob and live rin
 """
 
 import asyncio
-from collections import deque
 import logging
 import os
 import uuid
+from collections import deque
 from datetime import date, datetime, timedelta, timezone
 from typing import Any
 

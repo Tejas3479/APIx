@@ -1,6 +1,7 @@
 """Integration tests for dynamic dashboard, multi-frequency indices, and CSV microdata exports."""
 
 import os
+
 os.environ["AUTH_DISABLED"] = "true"
 
 import pytest

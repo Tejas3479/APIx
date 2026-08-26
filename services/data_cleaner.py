@@ -11,9 +11,7 @@ and ILO CPI Manual guidelines for high-frequency scanner/web-scraped data:
 """
 
 import hashlib
-import json
 import logging
-from datetime import date, datetime
 from typing import Any
 
 import numpy as np

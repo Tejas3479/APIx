@@ -3,7 +3,7 @@
 import csv
 import io
 import logging
-from datetime import date
+from datetime import datetime, timezone
 
 from fastapi import APIRouter
 from fastapi.responses import Response
@@ -81,8 +81,9 @@ async def export_microdata_csv(limit: int = 5000):
             ]
         )
 
+    today_str = datetime.now(timezone.utc).date().isoformat()
     csv_content = output.getvalue()
-    filename = f"APIx_NSO_Airfare_Microdata_{date.today().isoformat()}.csv"
+    filename = f"APIx_NSO_Airfare_Microdata_{today_str}.csv"
 
     return Response(
         content=csv_content,
@@ -97,7 +98,7 @@ async def export_index_series_csv(limit: int = 365):
     async with async_session_maker() as session:
         stmt = (
             select(DailyIndex)
-            .order_by(DailyIndex.index_date.asc())
+            .order_by(DailyIndex.index_date)
             .limit(limit)
         )
         indices = (await session.execute(stmt)).scalars().all()
@@ -132,8 +133,9 @@ async def export_index_series_csv(limit: int = 365):
             ]
         )
 
+    today_str = datetime.now(timezone.utc).date().isoformat()
     csv_content = output.getvalue()
-    filename = f"APIx_National_Index_Series_{date.today().isoformat()}.csv"
+    filename = f"APIx_National_Index_Series_{today_str}.csv"
 
     return Response(
         content=csv_content,
