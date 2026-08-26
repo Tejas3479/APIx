@@ -7,7 +7,7 @@ from fastapi import APIRouter
 from sqlalchemy import desc, select
 
 from database import DailyIndex, FareQuote, RouteIndex, async_session_maker
-from models import DailyIndexResponse, MaterialityGapResponse, AiDiagnoseRequest
+from models import AiDiagnoseRequest, DailyIndexResponse, MaterialityGapResponse
 from services.index_engine import AirfareIndexEngine
 
 logger = logging.getLogger("apix.routers.index")

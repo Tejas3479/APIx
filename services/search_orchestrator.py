@@ -12,8 +12,8 @@ from pathlib import Path
 from typing import Any
 
 from database import FareQuote, async_session_maker
-from services.price_extractor import decompose_fare, extract_fares_from_content
 from services.fetch_engine import run_fetch
+from services.price_extractor import decompose_fare, extract_fares_from_content
 from services.serpapi_service import search_google_flights
 
 logger = logging.getLogger("apix.search_orchestrator")
@@ -68,16 +68,32 @@ async def _scrape_ota_fares(origin: str, dest: str, dep_date: str, advance_days:
     """Scrape fares from Ixigo OTA portal via Playwright headless browser."""
     try:
         import datetime
-        date_obj = datetime.datetime.strptime(dep_date, "%Y-%m-%d")
+        date_obj = datetime.datetime.strptime(dep_date, "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
         ixigo_date = date_obj.strftime("%d%m%Y")
         url = f"https://www.ixigo.com/search/result/flight/{origin}-{dest}-{ixigo_date}//1/0/0/e?source=Search%20Form"
         
+        from services.browser_manager import playwright_mgr
         res = await run_fetch(
-            url=url,
-            render_js=True,
-            output_format="markdown",
+            url,
+            "GET",
+            {},
+            {},
+            None,
+            None,
+            None,
+            True,
+            False,
+            None,
+            1,
+            15,
+            "chrome120",
+            playwright_mgr,
+            "markdown",
+            True,
+            None,
+            "gemini",
+            None,
             stealth=True,
-            timeout=15,
             wait_until="networkidle"
         )
         if res.get("content"):
@@ -95,15 +111,31 @@ async def _scrape_airline_fares(origin: str, dest: str, dep_date: str, advance_d
     """Attempt direct airline portal scrape (SpiceJet) via Playwright (best-effort)."""
     try:
         import datetime
-        date_obj = datetime.datetime.strptime(dep_date, "%Y-%m-%d")
+        date_obj = datetime.datetime.strptime(dep_date, "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
         url = f"https://www.spicejet.com/search?from={origin}&to={dest}&date={dep_date}&adult=1"
         
+        from services.browser_manager import playwright_mgr
         res = await run_fetch(
-            url=url,
-            render_js=True,
-            output_format="markdown",
+            url,
+            "GET",
+            {},
+            {},
+            None,
+            None,
+            None,
+            True,
+            False,
+            None,
+            1,
+            15,
+            "chrome120",
+            playwright_mgr,
+            "markdown",
+            True,
+            None,
+            "gemini",
+            None,
             stealth=True,
-            timeout=15,
             wait_until="domcontentloaded"
         )
         if res.get("content"):
