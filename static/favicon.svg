@@ -1,15 +1,52 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect x="2" y="2" width="60" height="60" rx="14" fill="#0a0a0a"/>
-  <!-- Plane Delta Silhouette with Aviation Ascending Vectors -->
-  <path d="M32 10 L52 48 L32 40 L12 48 Z" fill="url(#apixG)" stroke="#fa5d19" stroke-width="2" stroke-linejoin="round"/>
-  <path d="M32 10 L32 40" stroke="#fff" stroke-width="1.5" opacity="0.75"/>
-  <!-- Index Trajectory Vector Dot -->
-  <circle cx="32" cy="10" r="3" fill="#ff914d"/>
   <defs>
-    <linearGradient id="apixG" x1="12" y1="10" x2="52" y2="48" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#ff914d"/>
-      <stop offset="60%" stop-color="#fa5d19"/>
+    <linearGradient id="apix-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fa5d19"/>
+      <stop offset="60%" stop-color="#ea580c"/>
       <stop offset="100%" stop-color="#c2410c"/>
     </linearGradient>
+    <linearGradient id="apix-plat" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+    <linearGradient id="apix-amber" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="50%" stop-color="#fa5d19"/>
+      <stop offset="100%" stop-color="#fed7aa"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#fa5d19" flood-opacity="0.45"/>
+    </filter>
   </defs>
+
+  <!-- Background rounded pill/tile -->
+  <rect width="64" height="64" rx="14" fill="#0d1117" stroke="rgba(250,93,25,0.25)" stroke-width="1.5"/>
+
+  <!-- Glowing background ambient ring -->
+  <circle cx="32" cy="32" r="22" fill="url(#apix-glow)" opacity="0.12" filter="url(#shadow)"/>
+
+  <!-- Jet Delta Wing Structure (Concept A) -->
+  <!-- Platinum Left Wing Flare -->
+  <path d="M 44 14 L 17 38 Q 23 37 27 45 L 36 34 L 44 14 Z" 
+        fill="url(#apix-plat)" opacity="0.9"/>
+
+  <!-- Flame Orange Supersonic Forebody -->
+  <path d="M 44 14 L 23 48 L 29 41 L 39 31 Z" 
+        fill="url(#apix-glow)"/>
+
+  <!-- Center Wing Core -->
+  <path d="M 44 14 L 33 44 L 37 32 Z" 
+        fill="#ffffff" opacity="0.8"/>
+
+  <!-- Ascending Economic Trendline & Arrow (Concept A Growth Spike) -->
+  <path d="M 23 45 L 31 36 L 37 42 L 48 20" 
+        fill="none" stroke="url(#apix-amber)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow)"/>
+  
+  <!-- Arrowhead Pointer -->
+  <path d="M 40 20 L 48 20 L 48 28" 
+        fill="none" stroke="url(#apix-amber)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Micro Radar Pulse Dot -->
+  <circle cx="48" cy="20" r="2" fill="#ffffff"/>
 </svg>
