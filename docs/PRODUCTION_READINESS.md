@@ -13,30 +13,30 @@ APIx proposes a **Dual-Layer Institutional Architecture** for national CPI compi
 
 ```mermaid
 flowchart TD
-    subgraph Layer1 [Layer 1: Statutory Mandated Direct Data Feed · Primary Source]
-        AIRLINES[Scheduled Commercial Airlines<br/>IndiGo · Air India · AIX · Akasa · SpiceJet]
-        OTAS[Online Travel Aggregators<br/>MakeMyTrip · EaseMyTrip · Cleartrip]
-        DGCA_PORTAL[DGCA / MoSPI Central Data Gateway<br/>Automated SFTP / HTTPS API Upload]
+    subgraph Layer1["Layer 1: Statutory Mandated Direct Data Feed · Primary Source"]
+        AIRLINES["Scheduled Commercial Airlines<br/>IndiGo · Air India · AIX · Akasa · SpiceJet"]
+        OTAS["Online Travel Aggregators<br/>MakeMyTrip · EaseMyTrip · Cleartrip"]
+        DGCA_PORTAL["DGCA / MoSPI Central Data Gateway<br/>Automated SFTP / HTTPS API Upload"]
         AIRLINES -->|Daily Structured XML/JSON Feeds| DGCA_PORTAL
         OTAS -->|Transactional Price Feeds| DGCA_PORTAL
     end
 
-    subgraph Layer2 [Layer 2: Passive Automated Web Scraping · Regulatory Audit Layer]
-        SCRAPER[APIx High-Frequency Scraping Engine<br/>Playwright Stealth · SerpAPI Aggregator]
-        PUBLIC_WEB[Public Airline & OTA Booking Portals]
+    subgraph Layer2["Layer 2: Passive Automated Web Scraping · Regulatory Audit Layer"]
+        SCRAPER["APIx High-Frequency Scraping Engine<br/>Playwright Stealth · SerpAPI Aggregator"]
+        PUBLIC_WEB["Public Airline & OTA Booking Portals"]
         PUBLIC_WEB -->|Daily Multi-Window Sampling| SCRAPER
     end
 
-    subgraph Core [APIx National Econometric Engine]
-        CLEAN[Data Cleaning & Normalization Pipeline<br/>Tukey IQR · SHA-256 Deduplication]
-        AUDIT[Discrepancy & Anomaly Cross-Validator<br/>Mandate Feed vs. Public Scrape Check]
-        INDEX[Multilateral GEKS-Törnqvist Engine<br/>Daily · Weekly · Monthly CPI Series]
+    subgraph Core["APIx National Econometric Engine"]
+        CLEAN["Data Cleaning & Normalization Pipeline<br/>Tukey IQR · SHA-256 Deduplication"]
+        AUDIT["Discrepancy & Anomaly Cross-Validator<br/>Mandate Feed vs. Public Scrape Check"]
+        INDEX["Multilateral GEKS-Törnqvist Engine<br/>Daily · Weekly · Monthly CPI Series"]
     end
 
-    subgraph Output [National Policy Consumers]
-        MOSPI[MoSPI / NSO CPI Compilation Division]
-        RBI[Reserve Bank of India Monetary Policy Committee]
-        CCI[Competition Commission of India Price Monitoring]
+    subgraph Output["National Policy Consumers"]
+        MOSPI["MoSPI / NSO CPI Compilation Division"]
+        RBI["Reserve Bank of India Monetary Policy Committee"]
+        CCI["Competition Commission of India Price Monitoring"]
     end
 
     DGCA_PORTAL --> CLEAN

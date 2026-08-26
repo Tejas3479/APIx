@@ -55,30 +55,30 @@ APIx solves this by implementing **continuous, multi-carrier digital scraping** 
 
 ```mermaid
 flowchart TD
-    subgraph DataCollection [1. High-Frequency Scraping Layer]
-        GF[Google Flights via SerpAPI<br/>100% Domestic Coverage]
-        AK[Akasa Air Direct<br/>Playwright Stealth JS]
-        SG[SpiceJet Direct<br/>Headless Chromium]
-        DGCA[DGCA Traffic Benchmarks<br/>Official Sector Volumes]
+    subgraph DataCollection["1. High-Frequency Scraping Layer"]
+        GF["Google Flights via SerpAPI<br/>100% Domestic Coverage"]
+        AK["Akasa Air Direct<br/>Playwright Stealth JS"]
+        SG["SpiceJet Direct<br/>Headless Chromium"]
+        DGCA["DGCA Traffic Benchmarks<br/>Official Sector Volumes"]
     end
 
-    subgraph Normalization [2. Normalization & Decomposition Engine]
-        DEC[Statutory Fare Decomposer<br/>Base Tariff vs Fuel, UDF, ASF, 5% GST]
-        WIN[Advance Window Tagging<br/>T+1 Emergency | T+7 Business | T+30 Planned]
-        DB[(SQLite / PostgreSQL<br/>FareQuote Table)]
+    subgraph Normalization["2. Normalization & Decomposition Engine"]
+        DEC["Statutory Fare Decomposer<br/>Base Tariff vs Fuel, UDF, ASF, 5% GST"]
+        WIN["Advance Window Tagging<br/>T+1 Emergency · T+7 Business · T+30 Planned"]
+        DB[("SQLite / PostgreSQL<br/>FareQuote Table")]
     end
 
-    subgraph MathematicalEngine [3. Econometric Index Construction]
-        JEV[Jevons Elementary Aggregates<br/>Geometric Mean of Relatives]
-        GEKS[Multilateral GEKS-Törnqvist<br/>Rolling Window Chaining]
-        DGCA_W[DGCA Traffic Weighting<br/>Sector Passenger Weights]
+    subgraph MathematicalEngine["3. Econometric Index Construction"]
+        JEV["Jevons Elementary Aggregates<br/>Geometric Mean of Relatives"]
+        GEKS["Multilateral GEKS-Törnqvist<br/>Rolling Window Chaining"]
+        DGCA_W["DGCA Traffic Weighting<br/>Sector Passenger Weights"]
     end
 
-    subgraph Dashboards [4. Institutional Intelligence Outputs]
-        DASH[MoSPI / RBI National CPI Dashboard]
-        HEAT[Route x Date Price Surge Heatmaps]
-        ELAS[Lead-Time Elasticity Yield Curves]
-        GAP[Statistical Materiality Gap Diagnostic]
+    subgraph Dashboards["4. Institutional Intelligence Outputs"]
+        DASH["MoSPI / RBI National CPI Dashboard"]
+        HEAT["Route x Date Price Surge Heatmaps"]
+        ELAS["Lead-Time Elasticity Yield Curves"]
+        GAP["Statistical Materiality Gap Diagnostic"]
     end
 
     DataCollection --> Normalization

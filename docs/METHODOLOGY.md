@@ -113,15 +113,15 @@ $$\text{Total Ticket Fare} = P_{\text{Base}} + P_{\text{Fuel (YQ)}} + \text{UDF}
 
 ```mermaid
 graph LR
-    TF[Total Ticket Price Paid by Passenger] --> AIRLINE[Airline Commercial Revenue]
-    TF --> STATUTORY[Statutory Non-Airline Fees]
+    TF["Total Ticket Price Paid by Passenger"] --> AIRLINE["Airline Commercial Revenue"]
+    TF --> STATUTORY["Statutory Non-Airline Fees"]
     
-    AIRLINE --> BF[Dynamic Base Tariff<br/>Carrier RBD Bucket]
-    AIRLINE --> YQ[Fuel Surcharge YQ/YR<br/>ATF Price Linked]
+    AIRLINE --> BF["Dynamic Base Tariff<br/>Carrier RBD Bucket"]
+    AIRLINE --> YQ["Fuel Surcharge YQ/YR<br/>ATF Price Linked"]
     
-    STATUTORY --> UDF[User Development Fee<br/>Airport Specific: ₹380-₹1200]
-    STATUTORY --> ASF[Aviation Security Fee<br/>Statutory Flat: ₹200]
-    STATUTORY --> GST[GST<br/>5% Economy / 12% Business]
+    STATUTORY --> UDF["User Development Fee<br/>Airport Specific: ₹380-₹1200"]
+    STATUTORY --> ASF["Aviation Security Fee<br/>Statutory Flat: ₹200"]
+    STATUTORY --> GST["GST<br/>5% Economy / 12% Business"]
 ```
 
 APIx isolates dynamic commercial tariff movements from statutory tax adjustments, preventing airport fee revisions from being misattributed to airline price gouging.
