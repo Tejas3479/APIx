@@ -80,7 +80,7 @@ Trigger on-demand index calculation for a given date applying Tukey IQR outlier 
 Generate the official MoSPI/NSO Airfare Price Index Monthly Statistical Bulletin.
 
 ### POST /api/v1/index/ai-diagnose
-Diagnose price surge or capacity shocks using Gemini AI or econometric heuristics.
+Diagnose price surge or capacity shocks using Gemini AI or econometric heuristics. Accepts JSON body `{ "route_id", "days" }` and returns `{ "diagnosis": { ... } }`.
 
 ---
 

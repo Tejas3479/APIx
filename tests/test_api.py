@@ -135,6 +135,8 @@ async def test_statistical_bulletin_and_ai_diagnose(async_client):
     )
     assert d_res.status_code == 200
     d_data = d_res.json()
-    assert "root_cause_explanation" in d_data
-    assert "surge_category" in d_data
+    assert "diagnosis" in d_data
+    diag = d_data["diagnosis"]
+    assert "anomaly_detected" in diag
+    assert "economic_explanation" in diag
 

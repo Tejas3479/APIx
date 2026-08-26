@@ -345,13 +345,20 @@ class DgcaBenchmarkResponse(BaseModel):
     created_at: datetime
 
 
+class AiDiagnoseRequest(BaseModel):
+    route_id: str | None = None
+    days: int | None = None
+    current_avg_fare: float | None = None
+    benchmark_fare: float | None = None
+
+
 class FareAnomalyReportCreate(BaseModel):
     route_id: str
     survey_date: date
     advance_days: int
     surge_multiplier: float
     diagnosis_text: str
-    ai_model: str = "gemini-3.5-flash"
+    ai_model: str = "gemini-2.0-flash"
 
 
 class FareAnomalyReportResponse(BaseModel):

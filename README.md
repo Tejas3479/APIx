@@ -36,6 +36,14 @@ APIx solves this by implementing **continuous, multi-carrier digital scraping** 
 
 ---
 
+### International Precedents for Automated Web Scraping in CPI
+Global statistical agencies have already transitioned to automated web scraping and scanner data for volatile components like airfare:
+- **Istat (Italy):** Automated scraping for transport and accommodation.
+- **INE (Portugal) & IBGE (Brazil):** Web scraping pipelines for airfare indices.
+- **Eurostat:** Scanner data and web scraping integration guidelines.
+- **MIT Billion Prices Project:** Demonstrated the validity of high-frequency digital price collection over traditional manual sampling.
+- **US BLS (Bureau of Labor Statistics):** Established statutory data feeds for passenger revenue. See our [Production Readiness Note](docs/PRODUCTION_READINESS.md) for India's path to Phase 2.
+
 ## ✨ Key Capabilities
 
 | Module | Purpose | Method / Standard |
@@ -57,8 +65,8 @@ APIx solves this by implementing **continuous, multi-carrier digital scraping** 
 flowchart TD
     subgraph DataCollection["1. High-Frequency Scraping Layer"]
         GF["Google Flights via SerpAPI<br/>100% Domestic Coverage"]
-        AK["Akasa Air Direct<br/>Playwright Stealth JS"]
-        SG["SpiceJet Direct<br/>Headless Chromium"]
+        IX["Ixigo OTA<br/>Playwright Chromium"]
+        SG["SpiceJet Direct<br/>Playwright Chromium (Probe)"]
         DGCA["DGCA Traffic Benchmarks<br/>Official Sector Volumes"]
     end
 

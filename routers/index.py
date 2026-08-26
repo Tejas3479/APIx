@@ -7,7 +7,7 @@ from fastapi import APIRouter
 from sqlalchemy import desc, select
 
 from database import DailyIndex, FareQuote, RouteIndex, async_session_maker
-from models import DailyIndexResponse, MaterialityGapResponse
+from models import DailyIndexResponse, MaterialityGapResponse, AiDiagnoseRequest
 from services.index_engine import AirfareIndexEngine
 
 logger = logging.getLogger("apix.routers.index")
@@ -173,7 +173,16 @@ async def get_statistical_bulletin(year_month: str = "2026-08"):
     from services.bulletin_generator import generate_statistical_bulletin
 
     bulletin = await generate_statistical_bulletin(year_month=year_month)
-    return bulletin
+    return {
+        **bulletin,
+        "bulletin": {
+            "title": bulletin.get("publication_title", ""),
+            "headline_index": bulletin.get("headline_metrics", {}).get("national_index_value", 100.0),
+            "base_period": bulletin.get("base_period", ""),
+            "executive_summary": ". ".join(bulletin.get("methodology_notes", [])),
+            **bulletin
+        }
+    }
 
 
 @router.post("/ai-diagnose")
@@ -182,7 +191,13 @@ async def diagnose_fare_anomaly(
     advance_days: int = 7,
     current_avg_fare: float = 6500.0,
     benchmark_fare: float = 5800.0,
+    req_body: AiDiagnoseRequest | None = None,
 ):
+    if req_body:
+        route = req_body.route_id or route
+        advance_days = req_body.days or advance_days
+        current_avg_fare = req_body.current_avg_fare or current_avg_fare
+        benchmark_fare = req_body.benchmark_fare or benchmark_fare
     """Diagnose price surge or capacity shocks using Gemini AI or econometric heuristics."""
     from database import FareAnomalyReport, async_session_maker
     from services.gemini_grounding import analyze_fare_anomaly
@@ -218,7 +233,7 @@ async def diagnose_fare_anomaly(
                 advance_days=advance_days,
                 surge_multiplier=round(current_avg_fare / benchmark_fare if benchmark_fare > 0 else 1.0, 2),
                 diagnosis_text=ai_result.get("root_cause_explanation", ""),
-                ai_model="gemini-3.5-flash",
+                ai_model="gemini-2.0-flash",
                 flagged_by="econometric_survey",
                 is_verified=True,
             )
@@ -227,4 +242,11 @@ async def diagnose_fare_anomaly(
     except Exception as e:
         logger.warning("Could not persist anomaly report: %s", e)
 
-    return ai_result
+    return {
+        "diagnosis": {
+            "anomaly_detected": ai_result.get("is_anomaly", False),
+            "economic_explanation": ai_result.get("root_cause_explanation", ""),
+            "policy_recommendation": ai_result.get("statistical_recommendation", ""),
+            **ai_result
+        }
+    }

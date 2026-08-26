@@ -3,6 +3,11 @@
 **Proposal Target:** Ministry of Statistics & Programme Implementation (MoSPI) / Directorate General of Civil Aviation (DGCA) / Reserve Bank of India (RBI)  
 **Classification:** Policy Brief & Technical Architecture Roadmap  
 
+### 2.4 Current Limitations & Risks (Hackathon Phase 1)
+- **Anti-Bot Fragility:** Web scrapers (even Playwright with stealth) are in an arms race with WAFs (Akamai, DataDome). The current Phase 1 relies on graceful degradation to SerpAPI when direct probes fail.
+- **ToS Friction:** While legal under public data indexing precedents, commercial carriers' Terms of Service prohibit automated collection.
+- **Granularity Limitations:** Scraped public portals cannot distinguish between fare buckets (RBDs) or passenger volume per price point, requiring DGCA traffic weights as a proxy.
+
 ---
 
 ## Executive Proposal
@@ -48,6 +53,11 @@ flowchart TD
     INDEX --> CCI
 ```
 
+### 2.4 Current Limitations & Risks (Hackathon Phase 1)
+- **Anti-Bot Fragility:** Web scrapers (even Playwright with stealth) are in an arms race with WAFs (Akamai, DataDome). The current Phase 1 relies on graceful degradation to SerpAPI when direct probes fail.
+- **ToS Friction:** While legal under public data indexing precedents, commercial carriers' Terms of Service prohibit automated collection.
+- **Granularity Limitations:** Scraped public portals cannot distinguish between fare buckets (RBDs) or passenger volume per price point, requiring DGCA traffic weights as a proxy.
+
 ---
 
 ## 1. International Benchmark: The US BLS Precedent
@@ -61,6 +71,11 @@ In India, an identical statutory precedent exists:
 1. **TRAI (Telecom Regulatory Authority of India):** Mandates telecommunications operators to report all dynamic tariff plans on a common portal.
 2. **GSTN (Goods and Services Tax Network):** Mandates real-time e-invoicing for commercial sales.
 3. **DGCA Periodic Fare Monitoring:** DGCA already collects periodic fare data for 78 domestic routes to monitor festival surges.
+
+### 2.4 Current Limitations & Risks (Hackathon Phase 1)
+- **Anti-Bot Fragility:** Web scrapers (even Playwright with stealth) are in an arms race with WAFs (Akamai, DataDome). The current Phase 1 relies on graceful degradation to SerpAPI when direct probes fail.
+- **ToS Friction:** While legal under public data indexing precedents, commercial carriers' Terms of Service prohibit automated collection.
+- **Granularity Limitations:** Scraped public portals cannot distinguish between fare buckets (RBDs) or passenger volume per price point, requiring DGCA traffic weights as a proxy.
 
 ---
 
@@ -87,7 +102,7 @@ In India, an identical statutory precedent exists:
 Phase 1: Hackathon Prototype (Current)
 ├── 8 High-Density Domestic Routes (68% traffic volume)
 ├── 5 Advance Booking Windows (T+1, T+7, T+15, T+30, T+45)
-└── Multi-Carrier Scraping (Google Flights / SerpAPI + Direct Registry)
+└── Multi-Source Architecture (SerpAPI Aggregator + Ixigo OTA + SpiceJet Direct)
 
 Phase 2: MoSPI / DGCA Pilot (Months 1–3)
 ├── Expansion to 25 Major Domestic Sectors
