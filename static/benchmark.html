@@ -10,216 +10,434 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/base.css">
+  <script src="/chart.umd.min.js"></script>
   <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
   <style>
-    .search-card {
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-md);
-      padding: 28px;
-      margin-bottom: 24px;
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
-    .preset-chip {
-      background: var(--border-subtle);
-      border: 1px solid var(--border);
+    .toast {
+      background: rgba(220, 38, 38, 0.95);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      animation: toastIn 0.3s ease-out;
+      max-width: 380px;
+    }
+    .toast.toast-warn { background: rgba(245, 158, 11, 0.95); }
+    .toast.toast-success { background: rgba(16, 185, 129, 0.95); }
+    .toast.toast-info { background: rgba(79, 70, 229, 0.95); }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Top Announcement Ribbon */
+    .announcement-ribbon {
+      background: linear-gradient(90deg, #fa5d19 0%, #ea580c 100%);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 16px;
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: rgba(10, 10, 10, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* Executive Hero Header */
+    .bench-hero {
+      margin-bottom: 28px;
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-loud);
+      background: var(--card-bg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--navy-700);
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .hero-pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: apix-blink 1.6s steps(1) infinite;
+    }
+    .bench-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(26px, 3.2vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--navy-900);
+      margin: 0;
+      line-height: 1.15;
+    }
+    .bench-title span { color: var(--heat-100); }
+    .bench-desc {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      margin: 8px 0 0 0;
+      max-width: 720px;
+    }
+
+    /* Search Form Card */
+    .search-card-pro {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-loud);
+      box-shadow: var(--shadow-sm);
+      padding: 26px 28px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .search-card-pro::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--heat-100), transparent);
+    }
+
+    .form-label-pro {
+      display: block;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-bottom: 6px;
+    }
+    .select-pro {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-loud);
+      background: var(--surface-raised);
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--navy-900);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .select-pro:focus {
+      border-color: var(--heat-100);
+    }
+
+    /* Preset Chips */
+    .preset-chip-pro {
+      background: var(--alpha-4);
+      border: 1px solid var(--border-loud);
       border-radius: 20px;
       padding: 6px 14px;
+      font-family: 'Outfit', sans-serif;
       font-size: 12.5px;
-      font-weight: 600;
-      color: var(--text-main);
+      font-weight: 700;
+      color: var(--navy-800);
       cursor: pointer;
       transition: all 0.15s ease;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
-    .preset-chip:hover {
-      border-color: var(--primary);
-      color: var(--primary);
+    .preset-chip-pro:hover {
+      border-color: var(--heat-100);
+      color: var(--heat-100);
       background: var(--heat-4);
+      transform: translateY(-1px);
     }
-    .stepper {
+
+    /* Dynamic Yield Slider */
+    .yield-slider-pro {
+      margin-top: 18px;
+      padding: 16px 20px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border-loud);
+      border-radius: 12px;
+    }
+
+    /* Progress Stepper */
+    .stepper-pro {
       display: flex;
       justify-content: space-between;
-      margin: 24px 0;
+      margin: 28px 0;
       position: relative;
     }
-    .stepper::before {
+    .stepper-pro::before {
       content: '';
       position: absolute;
-      top: 14px;
-      left: 20px;
-      right: 20px;
+      top: 16px;
+      left: 30px;
+      right: 30px;
       height: 2px;
-      background: var(--border);
+      background: var(--border-loud);
       z-index: 0;
     }
-    .step-item {
+    .step-item-pro {
       position: relative;
       z-index: 1;
       text-align: center;
       flex: 1;
     }
-    .step-icon {
-      width: 30px;
-      height: 30px;
+    .step-icon-pro {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       background: var(--card-bg);
-      border: 2px solid var(--border);
+      border: 2px solid var(--border-loud);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 6px;
-      font-size: 12px;
-      font-weight: 700;
+      margin: 0 auto 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
       color: var(--text-muted);
+      transition: all 0.25s ease;
     }
-    .step-item.active .step-icon {
-      border-color: var(--primary);
-      background: var(--primary);
+    .step-item-pro.active .step-icon-pro {
+      border-color: var(--heat-100);
+      background: var(--heat-100);
       color: #fff;
-      box-shadow: 0 0 12px rgba(250, 93, 25, 0.4);
+      box-shadow: 0 0 16px rgba(250, 93, 25, 0.45);
     }
-    .step-item.done .step-icon {
+    .step-item-pro.done .step-icon-pro {
       border-color: #10b981;
       background: #10b981;
       color: #fff;
     }
-    .step-label {
-      font-size: 11px;
-      font-weight: 600;
+    .step-label-pro {
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
       color: var(--text-muted);
     }
-    .step-item.active .step-label {
+    .step-item-pro.active .step-label-pro {
       color: var(--navy-900);
     }
-    .fare-result-card {
+
+    /* Results Card */
+    .card-pro {
       background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-fc);
-      padding: 28px;
+      border-radius: 16px;
+      border: 1px solid var(--border-loud);
+      box-shadow: var(--shadow-sm);
+      padding: 26px 28px;
       margin-bottom: 24px;
       animation: apix-slide-up 0.3s ease both;
     }
-    .decomp-bar-wrap {
-      background: var(--border-subtle);
-      border-radius: 8px;
-      height: 18px;
+
+    /* Decomposition Stack Bar */
+    .decomp-bar-pro {
+      background: var(--border-faint);
+      border-radius: 10px;
+      height: 20px;
       display: flex;
       overflow: hidden;
-      margin: 16px 0 12px;
+      margin: 18px 0 14px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
     }
-    .decomp-segment {
+    .decomp-seg {
       height: 100%;
-      transition: width 0.4s ease;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .decomp-segment.base { background: var(--primary); }
-    .decomp-segment.fuel { background: #f59e0b; }
-    .decomp-segment.udf { background: #3b82f6; }
-    .decomp-segment.asf { background: #10b981; }
-    .decomp-segment.gst { background: #8b5cf6; }
-    .decomp-segment.fee { background: #64748b; }
-    
-    .decomp-legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-    .decomp-legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .decomp-legend-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-    }
-    .quote-row {
+    .decomp-seg.base { background: #fa5d19; }
+    .decomp-seg.fuel { background: #f59e0b; }
+    .decomp-seg.udf { background: #3b82f6; }
+    .decomp-seg.asf { background: #10b981; }
+    .decomp-seg.gst { background: #8b5cf6; }
+    .decomp-seg.fee { background: #64748b; }
+
+    .decomp-grid-pro {
       display: grid;
-      grid-template-columns: 100px 1.5fr 1fr 1fr 120px 100px;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .decomp-box-pro {
+      background: var(--surface-raised);
+      border: 1px solid var(--border-loud);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+
+    /* Quotes Table */
+    .quote-row-pro {
+      display: grid;
+      grid-template-columns: 110px 1.4fr 1fr 1fr 120px 90px;
       align-items: center;
       gap: 12px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border-subtle);
-      transition: background 0.15s;
-    }
-    .quote-row:hover { background: var(--surface-raised); }
-    .quote-row:last-child { border-bottom: none; }
-    
-    .yield-slider-wrap {
-      margin-top: 14px;
       padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.15s ease;
+    }
+    .quote-row-pro:hover {
       background: var(--surface-raised);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
+    }
+    .quote-row-pro:last-child {
+      border-bottom: none;
+    }
+
+    /* Button Cluster */
+    .btn-dash {
+      padding: 9px 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .btn-dash-primary {
+      background: var(--heat-100);
+      color: #fff;
+      border: 1px solid var(--heat-100);
+      box-shadow: 0 2px 8px rgba(250, 93, 25, 0.25);
+    }
+    .btn-dash-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    .btn-dash-secondary {
+      background: var(--card-bg);
+      color: var(--navy-800);
+      border: 1px solid var(--border-loud);
+    }
+    .btn-dash-secondary:hover {
+      background: var(--alpha-4);
+      transform: translateY(-1px);
+    }
+    .btn-dash-ai {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: #fff;
+      border: none;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+    }
+    .btn-dash-ai:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    /* AI Anomaly Box */
+    .ai-box-pro {
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(124, 58, 237, 0.1) 100%);
+      border: 1px solid rgba(79, 70, 229, 0.25);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      animation: apix-slide-up 0.3s ease both;
     }
   </style>
 </head>
 <body>
+<div class="toast-container" id="toast-container"></div>
 
-  <!-- Top Navbar -->
+  <!-- Announcement Ribbon -->
+  <div class="announcement-ribbon">
+    🏛️ MoSPI / DGCA Airfare Microdata Extraction · Statutory Tariff Isolation & Invariant Levy Decomposition
+  </div>
+
+  <!-- Top Navbar (Dark Glassmorphism) -->
   <header class="navbar">
-    <div style="max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; width: 100%;">
+    <div style="max-width: 1320px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; width: 100%;">
       <a href="/" class="nav-brand" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
-        <span style="font-weight: 900; font-size: 22px; color: var(--primary); letter-spacing: -0.04em;">APIx</span>
-        <span class="badge" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.16); font-size: 11px;">National Price Index</span>
+        <span style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; color: var(--heat-100); letter-spacing: -0.03em;">APIx</span>
+        <span class="badge" style="background: var(--heat-8); color: var(--heat-100); border: 1px solid var(--heat-24); font-size: 11px;">MoSPI · CPI Portal</span>
       </a>
 
       <nav class="nav-links">
-        <a href="/dashboard" class="nav-link">Index Dashboard</a>
-        <a href="/benchmark" class="nav-link active" style="color: var(--primary); font-weight:700;">Route Discovery</a>
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/benchmark" class="nav-link active" style="font-weight: 700; color: #fff;">Route Discovery</a>
         <a href="/routes" class="nav-link">Route Basket</a>
-        <a href="/scraper" class="nav-link">Scraper Telemetry</a>
+        <a href="/scraper" class="nav-link">Scraper Health</a>
       </nav>
 
       <div class="nav-right" style="display: flex; align-items: center; gap: 10px;">
-        <div id="officerBadge" style="font-size: 12px; font-weight: 600; color: #fff; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); display:flex; align-items:center; gap:6px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="21" x2="21" y2="21"/><line x1="6" y1="21" x2="6" y2="10"/><line x1="10" y1="21" x2="10" y2="10"/><line x1="14" y1="21" x2="14" y2="10"/><line x1="18" y1="21" x2="18" y2="10"/><polygon points="12 2 2 7 22 7 12 2"/></svg> MoSPI Analyst
-        </div>
         <button class="btn-theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
-          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
+        <div id="officerBadge" class="badge" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 6px; padding: 6px 12px;">
+          <span class="pulse-live" style="width: 7px; height: 7px; border-radius: 50%; background: #10b981;"></span>
+          <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">Dr. S. K. Mukherjee (NSO)</span>
+        </div>
       </div>
     </div>
   </header>
 
-  <main class="page-container" style="max-width: 1180px; margin: 30px auto; padding: 0 20px;">
+  <main class="page-container" style="max-width: 1320px; margin: 0 auto; padding: 28px 24px;">
     
     <!-- Page Header -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+    <div class="bench-hero">
       <div>
-        <div style="font-family:'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">
-          NSO Statistical Price Discovery
+        <div class="hero-pill">
+          <span class="dot"></span>
+          <span>Live Microdata Survey & Statutory Tariff Extraction</span>
         </div>
-        <h1 style="font-size: 28px; font-weight: 800; color: var(--navy-900); margin: 0;">
-          Route Airfare Search &amp; Statutory Decomposition
+        <h1 class="bench-title">
+          Route Airfare Search & <span>Statutory Decomposition</span>
         </h1>
-        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">
-          Execute real-time multi-carrier surveys, inspect advance lead-time elasticity curves, and decompose tariffs from airport taxes.
+        <p class="bench-desc">
+          Execute on-demand multi-carrier surveys, inspect advance lead-time elasticity curves ($T+1 \dots T+45$), and decompose pure air travel tariffs from airport levies (UDF, ASF, GST).
         </p>
       </div>
-      <div style="display:flex; gap: 8px;">
-        <button class="btn-secondary" onclick="window.print()" style="font-size: 13px; display:inline-flex; align-items:center; gap:6px;">
+
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn-dash btn-dash-secondary" onclick="window.print()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print Report
         </button>
-        <button class="btn-secondary" onclick="triggerAiDiagnosis()" id="btnAiDiag" style="font-size: 13px; display:inline-flex; align-items:center; gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/></svg> AI Anomaly Diagnostic
+        <button class="btn-dash btn-dash-ai" onclick="triggerAiDiagnosis()" id="btnAiDiag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> AI Anomaly Diagnostic
         </button>
       </div>
     </div>
 
     <!-- Search Form Card -->
-    <div class="search-card">
-      <div style="display: grid; grid-template-columns: 1.5fr 1.5fr 1fr 1fr auto; gap: 14px; align-items: flex-end;">
+    <div class="search-card-pro">
+      <div style="display: grid; grid-template-columns: 1.5fr 1.5fr 1.2fr 1fr auto; gap: 16px; align-items: flex-end;">
         <div>
-          <label style="display:block; font-size: 12px; font-weight: 700; color: var(--navy-800); margin-bottom: 6px;">Origin City / IATA</label>
-          <select id="originSelect" class="form-input" style="width: 100%; padding: 11px 14px; font-weight: 600;">
+          <label class="form-label-pro">Origin City / IATA</label>
+          <select id="originSelect" class="select-pro">
             <option value="DEL" selected>New Delhi (DEL)</option>
             <option value="BOM">Mumbai (BOM)</option>
             <option value="BLR">Bengaluru (BLR)</option>
@@ -230,8 +448,8 @@
           </select>
         </div>
         <div>
-          <label style="display:block; font-size: 12px; font-weight: 700; color: var(--navy-800); margin-bottom: 6px;">Destination City / IATA</label>
-          <select id="destSelect" class="form-input" style="width: 100%; padding: 11px 14px; font-weight: 600;">
+          <label class="form-label-pro">Destination City / IATA</label>
+          <select id="destSelect" class="select-pro">
             <option value="BOM" selected>Mumbai (BOM)</option>
             <option value="DEL">New Delhi (DEL)</option>
             <option value="BLR">Bengaluru (BLR)</option>
@@ -242,51 +460,51 @@
           </select>
         </div>
         <div>
-          <label style="display:block; font-size: 12px; font-weight: 700; color: var(--navy-800); margin-bottom: 6px;">Advance Window</label>
-          <select id="windowSelect" class="form-input" style="width: 100%; padding: 11px 14px; font-weight: 600;">
-            <option value="1">T+1 (Emergency)</option>
-            <option value="7" selected>T+7 (Business)</option>
-            <option value="15">T+15 (Regular)</option>
-            <option value="30">T+30 (Planned)</option>
-            <option value="45">T+45 (Early Bird)</option>
+          <label class="form-label-pro">Advance Window</label>
+          <select id="windowSelect" class="select-pro">
+            <option value="1">T+1 (Emergency Surge)</option>
+            <option value="7" selected>T+7 (Business Window)</option>
+            <option value="15">T+15 (Regular Window)</option>
+            <option value="30">T+30 (Planned Holiday)</option>
+            <option value="45">T+45 (Long Lead Bird)</option>
           </select>
         </div>
         <div>
-          <label style="display:block; font-size: 12px; font-weight: 700; color: var(--navy-800); margin-bottom: 6px;">Cabin Class</label>
-          <select id="cabinSelect" class="form-input" style="width: 100%; padding: 11px 14px;">
-            <option value="economy" selected>Economy</option>
+          <label class="form-label-pro">Cabin Class</label>
+          <select id="cabinSelect" class="select-pro">
+            <option value="economy" selected>Economy (CPI Target)</option>
             <option value="premium_economy">Premium Economy</option>
             <option value="business">Business</option>
           </select>
         </div>
         <div>
-          <button class="btn-primary" id="btnRunSurvey" onclick="runSurvey()" style="padding: 12px 24px; font-size: 14px; font-weight: 700;">
-            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <button class="btn-dash btn-dash-primary" id="btnRunSurvey" onclick="runSurvey()" style="padding: 11px 24px; font-size: 14px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Survey Route
           </button>
         </div>
       </div>
 
       <!-- Quick Preset City Pairs -->
-      <div style="margin-top: 18px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-        <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Top High-Density Presets:</span>
-        <button type="button" class="preset-chip" onclick="setPreset('DEL', 'BOM', 7)">DEL ⇄ BOM (T+7)</button>
-        <button type="button" class="preset-chip" onclick="setPreset('DEL', 'BLR', 15)">DEL ⇄ BLR (T+15)</button>
-        <button type="button" class="preset-chip" onclick="setPreset('BOM', 'BLR', 7)">BOM ⇄ BLR (T+7)</button>
-        <button type="button" class="preset-chip" onclick="setPreset('DEL', 'CCU', 30)">DEL ⇄ CCU (T+30)</button>
-        <button type="button" class="preset-chip" onclick="setPreset('BLR', 'HYD', 1)">BLR ⇄ HYD (T+1 Surge)</button>
+      <div style="margin-top: 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">High-Density Corridors:</span>
+        <button type="button" class="preset-chip-pro" onclick="setPreset('DEL', 'BOM', 7)">DEL ⇄ BOM (T+7)</button>
+        <button type="button" class="preset-chip-pro" onclick="setPreset('DEL', 'BLR', 15)">DEL ⇄ BLR (T+15)</button>
+        <button type="button" class="preset-chip-pro" onclick="setPreset('BOM', 'BLR', 7)">BOM ⇄ BLR (T+7)</button>
+        <button type="button" class="preset-chip-pro" onclick="setPreset('DEL', 'CCU', 30)">DEL ⇄ CCU (T+30)</button>
+        <button type="button" class="preset-chip-pro" onclick="setPreset('BLR', 'HYD', 1)">BLR ⇄ HYD (T+1 Surge)</button>
       </div>
 
       <!-- Dynamic Lead-Time Slider -->
-      <div class="yield-slider-wrap">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
-          <span style="font-size: 12px; font-weight: 700; color: var(--navy-900); display:inline-flex; align-items:center; gap:6px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Dynamic Advance Lead-Time Explorer
+      <div class="yield-slider-pro">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy-900); display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--heat-100)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Dynamic Advance Lead-Time Explorer
           </span>
-          <span id="sliderLabel" style="font-family:'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--primary);">T+7 Days Horizon</span>
+          <span id="sliderLabel" style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; color: var(--heat-100);">T+7 Days Horizon</span>
         </div>
-        <input type="range" id="yieldSlider" min="1" max="45" value="7" style="width: 100%; accent-color: var(--primary); cursor: pointer;" oninput="onSliderChange(this.value)">
-        <div style="display:flex; justify-content:space-between; font-size: 10.5px; color: var(--text-muted); font-family:'JetBrains Mono', monospace; margin-top: 4px;">
+        <input type="range" id="yieldSlider" min="1" max="45" value="7" style="width: 100%; accent-color: var(--heat-100); cursor: pointer;" oninput="onSliderChange(this.value)">
+        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 6px;">
           <span>T+1 (Emergency)</span>
           <span>T+7 (Business)</span>
           <span>T+15 (Regular)</span>
@@ -297,52 +515,52 @@
     </div>
 
     <!-- Progress Stepper -->
-    <div class="stepper" id="surveyStepper" style="display: none;">
-      <div class="step-item active" id="step1">
-        <div class="step-icon">1</div>
-        <div class="step-label">Carrier Ingestion</div>
+    <div class="stepper-pro" id="surveyStepper" style="display: none;">
+      <div class="step-item-pro active" id="step1">
+        <div class="step-icon-pro">1</div>
+        <div class="step-label-pro">OTA Ingestion</div>
       </div>
-      <div class="step-item" id="step2">
-        <div class="step-icon">2</div>
-        <div class="step-label">Fare Decomposition</div>
+      <div class="step-item-pro" id="step2">
+        <div class="step-icon-pro">2</div>
+        <div class="step-label-pro">Data Cleaning</div>
       </div>
-      <div class="step-item" id="step3">
-        <div class="step-icon">3</div>
-        <div class="step-label">Jevons Elementary Aggregation</div>
+      <div class="step-item-pro" id="step3">
+        <div class="step-icon-pro">3</div>
+        <div class="step-label-pro">Fee Decomposition</div>
       </div>
-      <div class="step-item" id="step4">
-        <div class="step-icon">4</div>
-        <div class="step-label">CPI Verification</div>
+      <div class="step-item-pro" id="step4">
+        <div class="step-icon-pro">4</div>
+        <div class="step-label-pro">Jevons CPI Index</div>
       </div>
     </div>
 
     <!-- AI Anomaly Diagnosis Box -->
-    <div id="aiDiagBox" style="display: none; background: rgba(79, 70, 229, 0.06); border: 1px solid rgba(79, 70, 229, 0.25); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px;">
-      <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #4f46e5; margin-bottom: 6px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/></svg> Gemini AI Statistical Anomaly Diagnostic
+    <div id="aiDiagBox" class="ai-box-pro" style="display: none;">
+      <div style="display: flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; color: #4f46e5; margin-bottom: 8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Gemini AI Statistical Anomaly Diagnostic
       </div>
-      <div id="aiDiagContent" style="font-size: 13.5px; color: var(--navy-800); line-height: 1.6;"></div>
+      <div id="aiDiagContent" style="font-size: 13.5px; color: var(--navy-900); line-height: 1.65;"></div>
     </div>
 
     <!-- Results Section -->
     <div id="surveyResults" style="display: none;">
       
       <!-- Headline Metric Verdict -->
-      <div class="fare-result-card">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border-subtle); padding-bottom: 18px; margin-bottom: 20px;">
+      <div class="card-pro">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border-loud); padding-bottom: 20px; margin-bottom: 22px; flex-wrap: wrap; gap: 16px;">
           <div>
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-              <span id="resRouteTitle" style="font-size: 24px; font-weight: 800; color: var(--navy-900);">DEL ⇄ BOM</span>
-              <span id="resHorizonBadge" class="badge" style="background: var(--heat-8); color: var(--primary); border: 1px solid var(--heat-20); font-size: 12px;">T+7 Business Horizon</span>
+              <span id="resRouteTitle" style="font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; color: var(--navy-900);">DEL ⇄ BOM</span>
+              <span id="resHorizonBadge" class="badge" style="background: var(--heat-8); color: var(--heat-100); border: 1px solid var(--heat-24); font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 700;">T+7 Business Horizon</span>
             </div>
-            <div id="resSurveyMeta" style="font-size: 13px; color: var(--text-muted);">
-              4 Carriers Surveyed · Google Flights Engine · 5% Economy GST Applied
+            <div id="resSurveyMeta" style="font-size: 13.5px; color: var(--text-muted);">
+              4 Domestic Carriers Surveyed · Continuous Scraper Engine · 5% Economy GST Applied
             </div>
           </div>
           <div style="text-align: right;">
-            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Elementary Jevons Geometric Mean</div>
-            <div id="resJevonsPrice" style="font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); line-height: 1.1;">₹6,840</div>
-            <div style="font-size: 11px; color: #10b981; font-weight: 600; display:inline-flex; align-items:center; gap:4px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Elementary Jevons Geometric Mean</div>
+            <div id="resJevonsPrice" style="font-family: 'Outfit', sans-serif; font-size: 36px; font-weight: 900; color: var(--heat-100); line-height: 1.1;">₹6,840</div>
+            <div style="font-size: 11.5px; color: #10b981; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 2px;">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Within Normal DGCA Tariff Band
             </div>
           </div>
@@ -350,35 +568,59 @@
 
         <!-- Statutory Fare Decomposition Stack -->
         <div>
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size: 13px; font-weight: 700; color: var(--navy-900);">Statutory Fare Decomposition (Representative Quote)</span>
-            <span id="resBaseTariffPct" style="font-family:'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--primary);">Base Tariff: 71.2%</span>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; color: var(--navy-900);">Statutory Fare Decomposition (Representative Quote)</span>
+            <span id="resBaseTariffPct" style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; color: var(--heat-100);">Base Tariff: 71.2%</span>
           </div>
 
-          <div class="decomp-bar-wrap">
-            <div class="decomp-segment base" id="segBase" style="width: 71%;" title="Base Fare"></div>
-            <div class="decomp-segment fuel" id="segFuel" style="width: 10%;" title="Fuel Surcharge (YQ)"></div>
-            <div class="decomp-segment udf" id="segUdf" style="width: 5%;" title="User Development Fee (UDF)"></div>
-            <div class="decomp-segment asf" id="segAsf" style="width: 3%;" title="Aviation Security Fee (ASF)"></div>
-            <div class="decomp-segment gst" id="segGst" style="width: 4%;" title="GST 5%"></div>
-            <div class="decomp-segment fee" id="segFee" style="width: 7%;" title="Convenience Fee"></div>
+          <div class="decomp-bar-pro">
+            <div class="decomp-seg base" id="segBase" style="width: 71%;" title="Base Fare"></div>
+            <div class="decomp-seg fuel" id="segFuel" style="width: 10%;" title="Fuel Surcharge (YQ)"></div>
+            <div class="decomp-seg udf" id="segUdf" style="width: 5%;" title="User Development Fee (UDF)"></div>
+            <div class="decomp-seg asf" id="segAsf" style="width: 3%;" title="Aviation Security Fee (ASF)"></div>
+            <div class="decomp-seg gst" id="segGst" style="width: 4%;" title="GST 5%"></div>
+            <div class="decomp-seg fee" id="segFee" style="width: 7%;" title="Convenience Fee"></div>
           </div>
 
-          <div class="decomp-legend">
-            <div class="decomp-legend-item"><span class="decomp-legend-dot" style="background:var(--primary);"></span> Base Tariff: <strong id="lblBaseVal">₹4,850</strong></div>
-            <div class="decomp-legend-item"><span class="decomp-legend-dot" style="background:#f59e0b;"></span> Fuel Surcharge (YQ): <strong id="lblFuelVal">₹700</strong></div>
-            <div class="decomp-legend-item"><span class="decomp-legend-dot" style="background:#3b82f6;"></span> UDF Airport Levy: <strong id="lblUdfVal">₹300</strong></div>
-            <div class="decomp-legend-item"><span class="decomp-legend-dot" style="background:#10b981;"></span> ASF Statutory Fee: <strong>₹200</strong></div>
-            <div class="decomp-legend-item"><span class="decomp-legend-dot" style="background:#8b5cf6;"></span> GST (5%): <strong id="lblGstVal">₹278</strong></div>
-            <div class="decomp-legend-item"><span class="decomp-legend-dot" style="background:#64748b;"></span> Convenience Charge: <strong id="lblFeeVal">₹350</strong></div>
+          <div class="decomp-grid-pro">
+            <div class="decomp-box-pro">
+              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Base Airline Tariff</div>
+              <div id="lblBaseVal" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: var(--heat-100); margin-top: 2px;">₹4,850</div>
+              <div style="font-size: 10.5px; color: var(--text-muted);">Pure Transport Cost</div>
+            </div>
+            <div class="decomp-box-pro">
+              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Fuel Surcharge (YQ)</div>
+              <div id="lblFuelVal" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #f59e0b; margin-top: 2px;">₹700</div>
+              <div style="font-size: 10.5px; color: var(--text-muted);">ATF Pass-Through</div>
+            </div>
+            <div class="decomp-box-pro">
+              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Airport UDF Levy</div>
+              <div id="lblUdfVal" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #3b82f6; margin-top: 2px;">₹300</div>
+              <div style="font-size: 10.5px; color: var(--text-muted);">Airport Infra Fee</div>
+            </div>
+            <div class="decomp-box-pro">
+              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">ASF Security Fee</div>
+              <div style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #10b981; margin-top: 2px;">₹200</div>
+              <div style="font-size: 10.5px; color: var(--text-muted);">MoCA Fixed Charge</div>
+            </div>
+            <div class="decomp-box-pro">
+              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">GST (5% Economy)</div>
+              <div id="lblGstVal" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #8b5cf6; margin-top: 2px;">₹278</div>
+              <div style="font-size: 10.5px; color: var(--text-muted);">Statutory Tax</div>
+            </div>
+            <div class="decomp-box-pro">
+              <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">OTA Convenience Fee</div>
+              <div id="lblFeeVal" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #64748b; margin-top: 2px;">₹350</div>
+              <div style="font-size: 10.5px; color: var(--text-muted);">Platform Booking Fee</div>
+            </div>
           </div>
         </div>
 
         <!-- Comparative Multi-Carrier Quotes Table -->
-        <div style="margin-top: 24px;">
-          <h3 style="font-size: 15px; font-weight: 700; color: var(--navy-900); margin-bottom: 12px;">Live Multi-Carrier Airfare Quotes Collected</h3>
-          <div style="border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--card-bg);">
-            <div class="quote-row" style="background: var(--surface-raised); font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+        <div style="margin-top: 28px;">
+          <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; color: var(--navy-900); margin-bottom: 12px;">Live Multi-Carrier Airfare Quotes Collected</h3>
+          <div style="border: 1px solid var(--border-loud); border-radius: 12px; overflow: hidden; background: var(--card-bg);">
+            <div class="quote-row-pro" style="background: var(--surface-raised); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
               <span>Carrier</span>
               <span>Flight / Schedule</span>
               <span>Duration</span>
@@ -396,6 +638,15 @@
   <script src="/app.js"></script>
   <script>
     window.currentQuotes = [];
+
+    function showToast(msg, type = 'error') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast' + (type === 'warn' ? ' toast-warn' : (type === 'success' ? ' toast-success' : (type === 'info' ? ' toast-info' : '')));
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
+    }
 
     function setPreset(orig, dest, win) {
       document.getElementById('originSelect').value = orig;
@@ -418,7 +669,7 @@
       const routeId = orig + '-' + dest;
 
       if (orig === dest) {
-        showToast('Origin and Destination cannot be the same airport.', 'warning');
+        showToast('Origin and Destination cannot be the same airport.', 'warn');
         return;
       }
 
@@ -432,14 +683,14 @@
       btn.textContent = 'Surveying…';
 
       // Step animations
-      document.getElementById('step1').className = 'step-item active';
-      document.getElementById('step2').className = 'step-item';
-      document.getElementById('step3').className = 'step-item';
-      document.getElementById('step4').className = 'step-item';
+      document.getElementById('step1').className = 'step-item-pro active';
+      document.getElementById('step2').className = 'step-item-pro';
+      document.getElementById('step3').className = 'step-item-pro';
+      document.getElementById('step4').className = 'step-item-pro';
 
-      setTimeout(() => { document.getElementById('step1').className = 'step-item done'; document.getElementById('step2').className = 'step-item active'; }, 300);
-      setTimeout(() => { document.getElementById('step2').className = 'step-item done'; document.getElementById('step3').className = 'step-item active'; }, 600);
-      setTimeout(() => { document.getElementById('step3').className = 'step-item done'; document.getElementById('step4').className = 'step-item active'; }, 900);
+      setTimeout(() => { document.getElementById('step1').className = 'step-item-pro done'; document.getElementById('step2').className = 'step-item-pro active'; }, 300);
+      setTimeout(() => { document.getElementById('step2').className = 'step-item-pro done'; document.getElementById('step3').className = 'step-item-pro active'; }, 600);
+      setTimeout(() => { document.getElementById('step3').className = 'step-item-pro done'; document.getElementById('step4').className = 'step-item-pro active'; }, 900);
 
       try {
         const res = await fetch('/api/v1/scraper/survey-instant?route=' + encodeURIComponent(routeId) + '&advance_days=' + win, {
@@ -449,7 +700,7 @@
         window.currentQuotes = quotes || [];
         
         setTimeout(() => {
-          document.getElementById('step4').className = 'step-item done';
+          document.getElementById('step4').className = 'step-item-pro done';
           renderSurveyResults(routeId, win, window.currentQuotes);
           btn.disabled = false;
           btn.textContent = 'Survey Route';
@@ -467,7 +718,7 @@
       document.getElementById('resHorizonBadge').textContent = 'T+' + win + ' Days Horizon';
 
       if (!quotes || quotes.length === 0) {
-        document.getElementById('quotesTableBody').innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);">No live flights found for this route and horizon.</div>';
+        document.getElementById('quotesTableBody').innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted);font-family:\'Inter\',sans-serif;">No live flights found for this route and horizon.</div>';
         return;
       }
 
@@ -507,17 +758,17 @@
                             '<span class="carrier-pill carrier-spicejet">SpiceJet</span>'));
 
         return `
-          <div class="quote-row">
+          <div class="quote-row-pro">
             <div>${carrierBadge}</div>
             <div>
-              <strong style="color:var(--navy-900); font-size:13.5px;">${q.flight_number}</strong>
+              <strong style="font-family:'JetBrains Mono',monospace; color:var(--navy-900); font-size:13.5px;">${q.flight_number}</strong>
               <div style="font-size:11.5px; color:var(--text-muted);">${q.departure_time} → ${q.arrival_time}</div>
             </div>
             <div style="font-size:12.5px; color:var(--navy-700);">${q.duration_minutes} mins (Non-stop)</div>
             <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹${q.base_fare.toLocaleString('en-IN')}</div>
-            <div style="font-family:'Outfit', sans-serif; font-size:16px; font-weight:800; color:var(--primary);">₹${q.total_fare.toLocaleString('en-IN')}</div>
+            <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹${q.total_fare.toLocaleString('en-IN')}</div>
             <div>
-              <a href="${q.source_url}" target="_blank" class="btn-secondary" style="font-size:11px; padding:4px 8px; text-decoration:none;">Verify ↗</a>
+              <a href="${q.source_url}" target="_blank" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 10px; text-decoration:none;">Verify ↗</a>
             </div>
           </div>
         `;
@@ -540,19 +791,20 @@
         const routeId = `${orig}-${dest}`;
         const quotes = window.currentQuotes || [];
         const currentFare = quotes.length ? (quotes.reduce((acc, q) => acc + q.total_fare, 0) / quotes.length) : 6500.0;
-        const res = await fetch(`/api/v1/index/ai-diagnose?route=${routeId}&advance_days=${win}&current_avg_fare=${currentFare}&benchmark_fare=5850.0`, {
+        const res = await fetch(`/api/v1/index/ai-diagnose`, {
           method: 'POST',
-          headers: authHeaders()
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ route_id: routeId, days: 14 })
         });
         if (!res.ok) throw new Error('API request failed');
         const data = await res.json();
+        const diag = data.diagnosis || {};
 
         content.innerHTML = `
-          <strong>Econometric Diagnosis for ${routeId} (T+${win}) · ${data.surge_category}:</strong><br/>
-          ${data.root_cause_explanation}<br/>
-          <div style="margin-top:6px; font-size:12px; color:var(--navy-800);">
-            <strong>CPI Materiality Impact:</strong> <span style="color:var(--primary); font-weight:700;">${data.cpi_materiality_verdict}</span> | 
-            <strong>Recommendation:</strong> ${data.statistical_recommendation}
+          <strong>Econometric Diagnosis for ${routeId} (T+${win}) · ${diag.anomaly_detected ? 'Surge Anomaly' : 'Normal Equilibrium'}:</strong><br/>
+          ${diag.economic_explanation || 'Fares reflect standard lead-time price discrimination across booking horizons.'}<br/>
+          <div style="margin-top:8px; font-size:12px; color:var(--navy-800);">
+            <strong>Policy Recommendation:</strong> <span style="color:var(--heat-100); font-weight:700;">${diag.policy_recommendation || 'Include in current Jevons elementary aggregate without outlier trimming.'}</span>
           </div>
         `;
       } catch (e) {
@@ -565,7 +817,6 @@
       }
     }
 
-    // Parse URL query params and auto-run survey on initial page load
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const routeParam = urlParams.get('route');
