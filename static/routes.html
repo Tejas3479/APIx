@@ -163,12 +163,14 @@
       padding: 20px 22px;
       box-shadow: var(--shadow-sm);
       position: relative;
-      overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      overflow: visible;
+      z-index: 1;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, z-index 0s;
     }
     .stat-card-pro:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
+      z-index: 50;
     }
     .stat-card-pro::before {
       content: '';
@@ -178,6 +180,8 @@
       right: 0;
       height: 3px;
       background: linear-gradient(90deg, var(--heat-100), transparent);
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
     }
 
     /* Weight Share Stack Bar */
