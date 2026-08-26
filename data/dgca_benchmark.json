@@ -1,0 +1,66 @@
+[
+  {
+    "route_id": "DEL-BOM",
+    "year_month": "2026-06",
+    "dgca_avg_fare": 5850.0,
+    "passenger_load_factor_pct": 88.4,
+    "total_passengers_monthly": 412000,
+    "source_bulletin": "DGCA Domestic Air Transport Monthly Report - June 2026"
+  },
+  {
+    "route_id": "DEL-BOM",
+    "year_month": "2026-07",
+    "dgca_avg_fare": 5620.0,
+    "passenger_load_factor_pct": 84.1,
+    "total_passengers_monthly": 395000,
+    "source_bulletin": "DGCA Domestic Air Transport Monthly Report - July 2026"
+  },
+  {
+    "route_id": "DEL-BOM",
+    "year_month": "2026-08",
+    "dgca_avg_fare": 6140.0,
+    "passenger_load_factor_pct": 89.2,
+    "total_passengers_monthly": 425000,
+    "source_bulletin": "DGCA Domestic Air Transport Monthly Report - August 2026"
+  },
+  {
+    "route_id": "DEL-BLR",
+    "year_month": "2026-06",
+    "dgca_avg_fare": 6480.0,
+    "passenger_load_factor_pct": 86.8,
+    "total_passengers_monthly": 340000,
+    "source_bulletin": "DGCA Domestic Air Transport Monthly Report - June 2026"
+  },
+  {
+    "route_id": "DEL-BLR",
+    "year_month": "2026-07",
+    "dgca_avg_fare": 6210.0,
+    "passenger_load_factor_pct": 83.5,
+    "total_passengers_monthly": 328000,
+    "source_bulletin": "DGCA Domestic Air Transport Monthly Report - July 2026"
+  },
+  {
+    "route_id": "DEL-BLR",
+    "year_month": "2026-08",
+    "dgca_avg_fare": 6790.0,
+    "passenger_load_factor_pct": 88.9,
+    "total_passengers_monthly": 355000,
+    "source_bulletin": "DGCA Domestic Air Transport Monthly Report - August 2026"
+  },
+  {
+    "route_id": "BOM-BLR",
+    "year_month": "2026-08",
+    "dgca_avg_fare": 4350.0,
+    "passenger_load_factor_pct": 85.2,
+    "total_passengers_monthly": 280000,
+    "source_bulletin": "DGCA Domestic Air Transport Monthly Report - August 2026"
+  },
+  {
+    "route_id": "DEL-CCU",
+    "year_month": "2026-08",
+    "dgca_avg_fare": 5320.0,
+    "passenger_load_factor_pct": 87.1,
+    "total_passengers_monthly": 240000,
+    "source_bulletin": "DGCA Domestic Air Transport Monthly Report - August 2026"
+  }
+]

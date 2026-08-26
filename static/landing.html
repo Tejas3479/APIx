@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APIx — National Real-Time Airfare Price Index & Intelligence Portal</title>
+  <meta name="description" content="Automated high-frequency airfare intelligence and multilateral price index engine designed for MoSPI, NSO, and RBI monetary policy nowcasting.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/base.css">
+  <style>
+    html { scroll-behavior: smooth; }
+    body { line-height: 1.6; overflow-x: hidden; }
+
+    /* ── Announcement banner (Firecrawl: solid heat strip) ── */
+    .announce-bar {
+      background: var(--heat-100);
+      color: #fff;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      letter-spacing: 0.01em;
+      position: relative;
+      z-index: 101;
+    }
+    .announce-bar a {
+      color: #fff;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      margin-left: 4px;
+    }
+    .announce-bar a:hover { color: #fff; text-decoration-thickness: 2px; }
+
+    /* ── Navbar (dark glass) ── */
+    .navbar {
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .navbar.scrolled { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); }
+
+    .btn-nav-launch {
+      color: #fff !important;
+      background: var(--heat-100);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .btn-nav-launch:hover {
+      background: var(--primary-hover);
+      color: #fff !important;
+      transform: translateY(-1px);
+    }
+
+    .btn-theme-toggle {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s ease, transform 0.3s ease;
+    }
+    .btn-theme-toggle:hover { background: rgba(255, 255, 255, 0.14); }
+    .btn-theme-toggle svg { width: 19px; height: 19px; }
+
+    /* ── Hero ── */
+    main { padding: 0; }
+
+    .hero-section {
+      position: relative;
+      padding: 84px 24px 40px;
+      text-align: center;
+      max-width: 100%;
+      margin: 0 auto;
+      overflow: clip;
+    }
+    .hero-inner { position: relative; max-width: 1080px; margin: 0 auto; }
+
+    /* Firecrawl-style background decorations: hairline column guides */
+    .hero-guides {
+      position: absolute;
+      inset: 0;
+      margin: 0 auto;
+      width: min(1080px, 100%);
+      pointer-events: none;
+      border-left: 1px solid var(--border-faint);
+      border-right: 1px solid var(--border-faint);
+    }
+    @media (max-width: 700px) { .hero-guides { border: none; } }
+
+    /* Floating mono annotations */
+    .hero-anno {
+      position: absolute;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--alpha-12);
+      text-transform: uppercase;
+      pointer-events: none;
+      white-space: nowrap;
+      animation: anno-float 7s ease-in-out infinite;
+    }
+    @keyframes anno-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @media (max-width: 1100px) { .hero-anno { display: none; } }
+
+    /* Firecrawl hero pill */
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border-loud);
+      background: var(--card-bg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--navy-700);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .hero-pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--heat-100);
+      box-shadow: 0 0 10px var(--heat-100);
+      animation: apix-blink 1.6s steps(1) infinite;
+    }
+
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(38px, 5.6vw, 60px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      color: var(--navy-900);
+      margin-bottom: 20px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-title span { color: var(--heat-100); }
+
+    .hero-desc {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 20px;
+      line-height: 1.65;
+    }
+    .hero-desc strong { color: var(--navy-800); font-weight: 600; }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 44px;
+      flex-wrap: wrap;
+    }
+    .btn-hero-primary {
+      padding: 13px 26px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--heat-100);
+      border-radius: 10px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .btn-hero-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-hero-primary:active { transform: scale(0.99); }
+    .btn-hero-secondary {
+      padding: 13px 24px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--navy-800);
+      background: var(--alpha-4);
+      border: none;
+      border-radius: 10px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .btn-hero-secondary:hover { background: var(--alpha-6); }
+    .btn-hero-secondary:active { transform: scale(0.99); }
+    .hero-ghost-link {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s ease;
+    }
+    .hero-ghost-link:hover { color: var(--heat-100); }
+    .hero-ghost-link svg { transition: transform 0.15s ease; }
+    .hero-ghost-link:hover svg { transform: translateX(3px); }
+
+    /* ── Live Terminal Playground (Firecrawl window) ── */
+    .playground {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: left;
+      position: relative;
+    }
+    .playground .corner {
+      position: absolute;
+      width: 11px;
+      height: 11px;
+      z-index: 2;
+      opacity: 0.9;
+    }
+    .playground .corner-tl { top: -1px; left: -1px; }
+    .playground .corner-tr { top: -1px; right: -1px; transform: scaleX(-1); }
+    .playground .corner-bl { bottom: -1px; left: -1px; transform: scaleY(-1); }
+    .playground .corner-br { bottom: -1px; right: -1px; transform: scale(-1); }
+
+    .pg-window {
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 14px;
+      box-shadow: var(--shadow-fc);
+      overflow: hidden;
+    }
+    .pg-chrome {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-faint);
+      background: var(--surface-raised);
+    }
+    .pg-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .pg-dot.r { background: #f87171; }
+    .pg-dot.y { background: #fbbf24; }
+    .pg-dot.g { background: #34d399; }
+    .pg-url {
+      margin-left: 8px;
+      flex: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid var(--border-faint);
+      border-radius: 6px;
+      padding: 4px 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Pipeline tier tabs */
+    .pg-tabs {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 10px 16px 0;
+      border-bottom: 1px solid var(--border-faint);
+      overflow-x: auto;
+    }
+    .pg-tab {
+      flex-shrink: 0;
+      padding: 8px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      color: var(--alpha-56);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .pg-tab:hover { color: var(--navy-900); }
+    .pg-tab.active { color: var(--navy-900); border-bottom-color: var(--heat-100); }
+    .pg-tab .tier-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    .pg-body {
+      padding: 22px 22px 18px;
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pg-line {
+      font-size: 12.5px;
+      color: var(--navy-700);
+      line-height: 1.6;
+    }
+    .pg-line .prompt { color: var(--alpha-48); }
+    .pg-line .query { color: var(--navy-900); font-weight: 600; }
+    .pg-line .ok { color: #16a34a; font-weight: 600; }
+    .pg-line .chip {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--heat-100);
+      background: var(--heat-8);
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-right: 6px;
+    }
+    .pg-result {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border-faint);
+      border-radius: 10px;
+      background: var(--surface-raised);
+      margin-top: 4px;
+      animation: apix-slide-up 0.4s var(--transition-spring) both;
+    }
+    .pg-result .pg-result-tier {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--heat-100);
+    }
+    .pg-result .pg-result-meta { line-height: 1.5; }
+    .pg-result .pg-result-name { font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--navy-900); }
+    .pg-result .pg-result-src { font-size: 11px; color: var(--text-muted); }
+    .pg-result .pg-result-price {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--navy-900);
+      white-space: nowrap;
+    }
+    .pg-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-faint);
+      padding-top: 12px;
+      font-family: 'Inter', sans-serif;
+    }
+    .pg-foot .demo-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #b45309;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .pg-foot a {
+      color: var(--heat-100);
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .pg-foot a:hover { text-decoration: underline; }
+
+    /* ── Trusted by marquee ── */
+    .trusted-section { padding: 64px 24px 70px; border-top: 1px solid var(--border-faint); }
+    .trusted-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .trusted-label strong { color: var(--heat-100); }
+    .fc-marquee {
+      max-width: 1080px;
+      margin: 0 auto;
+      mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+      padding: 6px 0;
+    }
+    .fc-marquee-track { gap: 14px; }
+    .trusted-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy-700);
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 10px;
+      padding: 12px 22px;
+      white-space: nowrap;
+      box-shadow: var(--shadow-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .trusted-logo .emblem { color: var(--heat-100); }
+
+    /* ── Hero proof-strip ── */
+    .hero-proof {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 auto 32px;
+      justify-content: center;
+      max-width: 760px;
+    }
+    .proof-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border-loud);
+      background: var(--card-bg);
+      color: var(--navy-700);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .proof-chip:hover { transform: translateY(-2px); box-shadow: var(--shadow-fc); border-color: var(--heat-100); }
+    .proof-chip .p-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--heat-100); flex: none; }
+    .proof-chip.green .p-dot { background: #16a34a; }
+    .proof-chip.violet .p-dot { background: #4338ca; }
+
+    /* ── Metrics stats ── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .metric-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .metric-box:hover { transform: translateY(-3px); box-shadow: var(--shadow-fc); }
+    .metric-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--heat-100);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .metric-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Sections ── */
+    .section-container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .section-header { text-align: center; margin-bottom: 40px; }
+    .section-pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--heat-100);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(28px, 3.6vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.12;
+      color: var(--navy-900);
+    }
+    .section-title span { color: var(--heat-100); }
+    .section-sub { margin: 12px auto 0; max-width: 600px; font-size: 15px; color: var(--text-muted); line-height: 1.6; }
+
+    .capabilities-section { padding: 80px 0 64px; }
+
+    /* Three pillars */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-bottom: 44px;
+    }
+    .pillar-card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 14px;
+      padding: 26px 24px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .pillar-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-fc); border-color: var(--border-muted); }
+    .pillar-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 24px;
+      bottom: 24px;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--heat-100);
+      opacity: 0;
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .pillar-card:hover::before { opacity: 1; transform: scaleY(1); }
+    .pillar-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--heat-8);
+      color: var(--heat-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .pillar-name { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; color: var(--navy-900); margin-bottom: 8px; }
+    .pillar-desc { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+    .pillar-link {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--heat-100);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pillar-link:hover { color: var(--primary-hover); }
+    .pillar-link svg { transition: transform 0.15s ease; }
+    .pillar-link:hover svg { transform: translateX(3px); }
+
+    /* Feature bento grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      border: 1px solid var(--border-faint);
+      border-radius: 14px;
+      padding: 6px;
+      background: var(--background-lighter);
+    }
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-faint);
+      border-radius: 12px;
+      padding: 20px 20px 18px;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+    }
+    .feature-card:hover { border-color: var(--border-muted); box-shadow: var(--shadow-fc); transform: translateY(-2px); }
+    .feature-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      background: var(--heat-8);
+      color: var(--heat-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 13px;
+    }
+    .feature-name { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; color: var(--navy-900); margin-bottom: 6px; }
+    .feature-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+
+    /* ── 5-Stage cascade ── */
+    .tiers-section { padding: 80px 0; border-top: 1px solid var(--border-faint); }
+    .tiers-cascade-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+    }
+    .tier-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.3s var(--transition-spring), box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .tier-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-fc);
+      border-color: var(--border-muted);
+    }
+    .tier-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 14px;
+      bottom: 14px;
+      width: 3px;
+      border-radius: 0 3px 3px 0;
+      background: var(--tier-accent, var(--border));
+      opacity: 0.7;
+    }
+    .tier-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .tier-pill-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      width: fit-content;
+      margin-bottom: 12px;
+    }
+    .t0-badge { background: rgba(79, 70, 229, 0.1); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25); }
+    .t1-badge { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .t2-badge { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.25); }
+    .t3-badge { background: rgba(249, 115, 22, 0.1); color: #fa5d19; border: 1px solid rgba(249, 115, 22, 0.25); }
+    .t4-badge { background: rgba(220, 38, 38, 0.1); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.25); }
+    .tier-accent-0 { --tier-accent: #4f46e5; }
+    .tier-accent-1 { --tier-accent: #10b981; }
+    .tier-accent-2 { --tier-accent: #f59e0b; }
+    .tier-accent-3 { --tier-accent: #fa5d19; }
+    .tier-accent-4 { --tier-accent: #dc2626; }
+    .tier-toggle {
+      background: var(--alpha-4);
+      border: 1px solid var(--border-faint);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--navy-700);
+      flex-shrink: 0;
+      transition: transform 0.2s ease, background 0.15s;
+    }
+    .tier-toggle:hover { background: var(--alpha-6); }
+    .tier-card.is-open .tier-toggle { transform: rotate(180deg); }
+    .tier-name { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy-900); margin-bottom: 6px; }
+    .tier-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+    .tier-detail { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-faint); font-size: 12.5px; color: var(--navy-700); line-height: 1.55; }
+    .tier-card.is-open .tier-detail { display: block; animation: apix-fade-up 0.3s ease both; }
+    .tier-detail-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 4px; }
+    .tier-example { margin-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--surface-raised); border: 1px solid var(--border-faint); border-radius: 8px; padding: 7px 10px; }
+    .tier-example-item { font-weight: 600; color: var(--navy-800); font-size: 11.5px; }
+    .tier-example-price { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--heat-100); white-space: nowrap; }
+
+    /* ── Technical benchmarks ── */
+    .bench-section { padding: 80px 0; border-top: 1px solid var(--border-faint); }
+    .bench-table {
+      max-width: 880px;
+      margin: 0 auto;
+      border: 1px solid var(--border-loud);
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--card-bg);
+      box-shadow: var(--shadow-sm);
+    }
+    .bench-table .bench-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border-faint);
+    }
+    .bench-table .bench-row:last-child { border-bottom: none; }
+    .bench-table .bench-row.bench-head {
+      background: var(--surface-raised);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      padding: 11px 22px;
+    }
+    .bench-metric { font-size: 13.5px; font-weight: 600; color: var(--navy-900); }
+    .bench-value { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: var(--heat-100); }
+    .bench-method { font-size: 12px; color: var(--text-muted); }
+
+    /* ── Testimonials marquee ── */
+    .testimonial-section { padding: 80px 0; border-top: 1px solid var(--border-faint); }
+    .testimonial-marquee { max-width: 1100px; margin: 0 auto; }
+    .testimonial-marquee .fc-marquee-track { gap: 16px; }
+    .t-card {
+      width: 340px;
+      flex-shrink: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      position: relative;
+      transition: box-shadow 0.2s ease;
+    }
+    .t-card:hover { box-shadow: var(--shadow-fc); }
+    .t-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 28px;
+      bottom: 28px;
+      width: 3px;
+      background: var(--heat-100);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.2s ease;
+    }
+    .t-card:hover::before { transform: scaleY(1); }
+    .t-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border-faint);
+    }
+    .t-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--alpha-4);
+      color: var(--navy-700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .t-name { font-size: 13px; font-weight: 700; color: var(--navy-900); }
+    .t-role { font-size: 11.5px; color: var(--text-muted); }
+    .t-quote { padding: 18px; font-size: 13.5px; color: var(--navy-700); line-height: 1.6; }
+    .t-quote strong { color: var(--navy-900); }
+
+    /* ── FAQ ── */
+    .faq-section { padding: 80px 0; border-top: 1px solid var(--border-faint); }
+    .faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .faq-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .faq-item:hover { border-color: var(--border-muted); box-shadow: var(--shadow-fc); }
+    .faq-q {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 17px 20px;
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--navy-900);
+      text-align: left;
+      cursor: pointer;
+    }
+    .faq-q .faq-chev { color: var(--text-muted); transition: transform 0.25s ease; flex-shrink: 0; }
+    .faq-item.is-open .faq-chev { transform: rotate(180deg); color: var(--heat-100); }
+    .faq-a {
+      display: none;
+      padding: 0 20px 18px;
+      font-size: 13.5px;
+      color: var(--navy-700);
+      line-height: 1.65;
+    }
+    .faq-item.is-open .faq-a { display: block; animation: apix-fade-up 0.3s ease both; }
+    .faq-a strong { color: var(--navy-900); }
+
+    /* ── Auth section ── */
+    .auth-section {
+      background: var(--background-base);
+      border-top: 1px solid var(--border-faint);
+      padding: 80px 24px;
+    }
+    .auth-wrapper { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 36px; align-items: center; }
+    @media (max-width: 860px) { .auth-wrapper { grid-template-columns: 1fr; } }
+    .auth-left h2 { font-family: 'Outfit', sans-serif; font-size: 30px; font-weight: 800; color: var(--navy-900); margin-bottom: 10px; letter-spacing: -0.02em; }
+    .auth-left p { font-size: 14.5px; color: var(--text-muted); margin-bottom: 20px; }
+    .quick-officer-grid { display: flex; flex-direction: column; gap: 10px; }
+    .officer-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 10px;
+      padding: 13px 16px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-sm);
+      width: 100%;
+      font: inherit;
+      color: inherit;
+    }
+    .officer-btn:hover { border-color: var(--heat-100); background: var(--heat-8); transform: translateX(4px); }
+    .officer-name { font-weight: 700; font-size: 13.5px; color: var(--navy-900); display: flex; align-items: center; gap: 7px; }
+    .officer-dept { font-size: 12px; color: var(--text-muted); display: block; }
+    .officer-badge-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--alpha-4);
+      color: var(--heat-100);
+      padding: 3px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .auth-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: var(--shadow-fc);
+    }
+    .form-tabs { display: flex; border-bottom: 1px solid var(--border-faint); margin-bottom: 20px; }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .tab-btn.active { color: var(--heat-100); border-bottom-color: var(--heat-100); }
+    .auth-form-group { margin-bottom: 14px; }
+    .auth-form-group label { display: block; font-size: 12.5px; font-weight: 600; color: var(--navy-700); margin-bottom: 5px; }
+    .auth-form-group input, .auth-form-group select {
+      width: 100%;
+      padding: 10px 13px;
+      background: var(--surface);
+      border: 1px solid var(--border-loud);
+      border-radius: 8px;
+      color: var(--navy-900);
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+    .auth-form-group input:focus, .auth-form-group select:focus { border-color: var(--heat-100); box-shadow: 0 0 0 3px var(--heat-12); }
+    .btn-auth-submit {
+      width: 100%;
+      padding: 13px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--heat-100);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .btn-auth-submit:hover { background: var(--primary-hover); }
+
+    /* ── Footer ── */
+    .site-footer { border-top: 1px solid var(--border-faint); background: var(--card-bg); text-align: left; }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 30px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 28px;
+    }
+    @media (max-width: 760px) {
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+    .footer-brand p { margin-top: 10px; max-width: 340px; font-size: 12.5px; line-height: 1.6; color: var(--text-muted); }
+    .footer-col { display: flex; flex-direction: column; gap: 8px; }
+    .footer-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--navy-900); margin-bottom: 4px; }
+    .footer-col a { font-size: 13px; color: var(--navy-700); text-decoration: none; transition: color 0.15s; }
+    .footer-col a:hover { color: var(--heat-100); }
+    .footer-note { font-size: 11.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .footer-bottom { border-top: 1px solid var(--border-faint); padding: 16px 24px; text-align: center; font-size: 12px; color: var(--text-muted); }
+    .footer-bottom p { margin: 2px 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Banner -->
+  <div class="announce-bar">
+    <span style="display:inline-flex; align-items:center; gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="21" x2="21" y2="21"/><line x1="6" y1="21" x2="6" y2="10"/><line x1="10" y1="21" x2="10" y2="10"/><line x1="14" y1="21" x2="14" y2="10"/><line x1="18" y1="21" x2="18" y2="10"/><polygon points="12 2 2 7 22 7 12 2"/></svg> Ministry of Statistics (MoSPI) — CPI Base 2024=100 High-Frequency Airfare Intelligence Infrastructure</span>
+    <a href="/dashboard">Explore Live Dashboard →</a>
+  </div>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div style="max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; width: 100%;">
+      <a href="/" class="nav-brand" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+        <span style="font-weight: 900; font-size: 22px; color: var(--primary); letter-spacing: -0.04em;">APIx</span>
+        <span class="badge" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.16); font-size: 11px;">National Price Index</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#pipeline" class="nav-link">Index Pipeline</a>
+        <a href="#capabilities" class="nav-link">Methodology</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="#auth" class="nav-link">Officer Gateway</a>
+      </nav>
+
+      <div class="nav-right" style="display: flex; align-items: center; gap: 10px;">
+        <a href="/dashboard" class="btn-nav-launch">
+          <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Launch Index Dashboard
+        </a>
+        <button class="btn-theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <!-- Hero -->
+    <section class="hero-section" id="home-hero">
+      <div class="hero-guides" aria-hidden="true"></div>
+      <span class="hero-anno" style="left:-30px;top:120px;" aria-hidden="true">[ GEKS_TÖRNQVIST ]</span>
+      <span class="hero-anno" style="right:-40px;top:210px;" aria-hidden="true">[ T+1_TO_T+45 ]</span>
+      <span class="hero-anno" style="left:-10px;bottom:120px;" aria-hidden="true">[ JEVONS_GEOMETRIC ]</span>
+      <span class="hero-anno" style="right:-20px;bottom:210px;" aria-hidden="true">[ DGCA_WEIGHTED ]</span>
+
+      <div class="hero-inner">
+        <div class="hero-pill fade-up">
+          <span class="dot"></span>
+          MoSPI · CPI Base 2024=100 · Automated Airfare Intelligence Engine
+        </div>
+
+        <h1 class="hero-title fade-up fade-up-delay-1">
+          Continuous airfare price intelligence with <span>multi-carrier high-frequency index aggregation</span>
+        </h1>
+
+        <p class="hero-desc fade-up fade-up-delay-2">
+          The econometric intelligence engine for <strong>MoSPI</strong>, <strong>NSO</strong>, <strong>RBI</strong>, and <strong>DGCA</strong>. Replaces static once-a-month ticket snapshots with automated scraping across <strong>5 advance booking horizons (T+1 to T+45)</strong> and computes a chained <strong>GEKS-Törnqvist multilateral index</strong>.
+        </p>
+
+        <div class="hero-proof fade-up fade-up-delay-2">
+          <span class="proof-chip"><span class="p-dot"></span>Jevons Elementary Aggregates</span>
+          <span class="proof-chip"><span class="p-dot"></span>±45-Day Yield Curves</span>
+          <span class="proof-chip"><span class="p-dot"></span>Statutory Fare Decomposition</span>
+          <span class="proof-chip green"><span class="p-dot"></span>+20.6% Materiality Gap Proof</span>
+          <span class="proof-chip violet"><span class="p-dot"></span>8 Domestic City-Pairs</span>
+          <span class="proof-chip violet"><span class="p-dot"></span>Passive Stealth Chromium</span>
+        </div>
+
+        <div class="hero-actions fade-up fade-up-delay-3">
+          <a href="/dashboard" class="btn-hero-primary">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Explore Live Dashboard
+          </a>
+          <a href="/benchmark" class="btn-hero-secondary">
+            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            On-Demand Fare Discovery
+          </a>
+          <a href="#capabilities" class="hero-ghost-link">
+            Statistical Methodology
+            <svg class="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+
+        <!-- Live Terminal Playground -->
+        <div class="playground reveal">
+          <svg class="corner corner-tl" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
+          <svg class="corner corner-tr" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
+          <svg class="corner corner-bl" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
+          <svg class="corner corner-br" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
+
+          <div class="pg-window">
+            <div class="pg-chrome">
+              <span class="pg-dot r"></span>
+              <span class="pg-dot y"></span>
+              <span class="pg-dot g"></span>
+              <span class="pg-url">apix.mospi.gov.in/pipeline-telemetry</span>
+            </div>
+
+            <div class="pg-tabs" role="tablist" aria-label="Statistical pipeline steps">
+              <button type="button" class="pg-tab active" role="tab" data-pg-tier="0" aria-selected="true">
+                <span class="tier-dot" style="background:#4f46e5;"></span>1. FLIGHT SCRAPING
+              </button>
+              <button type="button" class="pg-tab" role="tab" data-pg-tier="1" aria-selected="false">
+                <span class="tier-dot" style="background:#10b981;"></span>2. DECOMPOSITION
+              </button>
+              <button type="button" class="pg-tab" role="tab" data-pg-tier="2" aria-selected="false">
+                <span class="tier-dot" style="background:#f59e0b;"></span>3. YIELD CURVES
+              </button>
+              <button type="button" class="pg-tab" role="tab" data-pg-tier="3" aria-selected="false">
+                <span class="tier-dot" style="background:#fa5d19;"></span>4. GEKS INDEX
+              </button>
+              <button type="button" class="pg-tab" role="tab" data-pg-tier="4" aria-selected="false">
+                <span class="tier-dot" style="background:#dc2626;"></span>5. MATERIALITY GAP
+              </button>
+            </div>
+
+            <div class="pg-body" id="pg-body" aria-live="polite">
+              <div class="pg-line">
+                <span class="prompt">$ apix pipeline-runner --sector DEL-BOM --horizon T+7</span>
+              </div>
+              <div class="pg-line">
+                <span class="prompt">query &nbsp;›</span>&nbsp;<span class="query" id="pg-query">Google Flights Multi-Carrier Survey (DEL ⇄ BOM)</span><span class="fc-cursor"></span>
+              </div>
+              <div id="pg-loading"></div>
+              <div id="pg-result-box"></div>
+              <div class="pg-foot">
+                <span><span class="demo-chip">LIVE DEMO</span> ILO/IMF CPI Manual Ch. 10 · 8 Indian Domestic Sectors</span>
+                <a href="/dashboard">Launch National Dashboard <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trusted Agency Marquee -->
+    <section class="trusted-section" aria-label="Institutional stakeholders">
+      <div class="trusted-label">Designed for <strong>National Statistical Agencies &amp; Central Banks</strong></div>
+      <div class="fc-marquee" data-allow-motion="true">
+        <div class="fc-marquee-track">
+          <div class="fc-marquee-set" id="ministry-marquee-set"></div>
+          <div class="fc-marquee-set" id="ministry-marquee-set-2" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Metrics -->
+    <section class="metrics-grid" aria-label="Platform metrics">
+      <div class="metric-box fade-up fade-up-delay-1">
+        <div class="metric-num" data-count="8">0</div>
+        <div class="metric-label">High-Density Domestic Sectors</div>
+      </div>
+      <div class="metric-box fade-up fade-up-delay-2">
+        <div class="metric-num" data-count="4800">0</div>
+        <div class="metric-label">Continuous Fare Quotes</div>
+      </div>
+      <div class="metric-box fade-up fade-up-delay-3">
+        <div class="metric-num" data-count="5">0</div>
+        <div class="metric-label">Advance Booking Windows (T+1 to T+45)</div>
+      </div>
+      <div class="metric-box fade-up fade-up-delay-4">
+        <div class="metric-num">GEKS · JEVONS</div>
+        <div class="metric-label">Multilateral Index Standards</div>
+      </div>
+    </section>
+
+    <!-- Platform Capabilities -->
+    <section class="capabilities-section" id="capabilities">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-pre">Econometric Architecture</div>
+          <h2 class="section-title">Everything a modern price compiler needs in <span>one continuous workflow</span></h2>
+          <p class="section-sub">From automated carrier scraping to chained multilateral index output — built to solve the dynamic-pricing blindspot in CPI.</p>
+        </div>
+
+        <!-- Three pillars -->
+        <div class="pillars-grid">
+          <div class="pillar-card reveal">
+            <div class="pillar-icon">
+              <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <div class="pillar-name">Ingest &amp; Scrape</div>
+            <div class="pillar-desc">Multi-carrier daily scraping across Google Flights, Akasa, and SpiceJet using passive TLS stealth and a 3-slot Chromium worker pool.</div>
+            <a href="/scraper" class="pillar-link">View scraper telemetry <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+          </div>
+          <div class="pillar-card reveal">
+            <div class="pillar-icon">
+              <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </div>
+            <div class="pillar-name">Decompose</div>
+            <div class="pillar-desc">Statutory fare decomposition isolating volatile airline tariffs from airport User Development Fees (UDF), statutory flat ₹200 ASF, and 5% GST.</div>
+            <a href="/benchmark" class="pillar-link">Test fare discovery <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+          </div>
+          <div class="pillar-card reveal">
+            <div class="pillar-icon">
+              <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <div class="pillar-name">Aggregate &amp; Index</div>
+            <div class="pillar-desc">Multilateral GEKS-Törnqvist rolling-window index eliminating chain drift, weighted by official DGCA passenger volume shares ($w_r$).</div>
+            <a href="/dashboard" class="pillar-link">Explore index series <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+          </div>
+        </div>
+
+        <!-- Feature Bento Grid -->
+        <div class="features-grid">
+          <div class="feature-card reveal">
+            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></div>
+            <div class="feature-name">GEKS-Törnqvist Multilateral Index</div>
+            <div class="feature-desc">Eliminates chain drift and handles new/cancelled flight numbers across booking horizons without quality degradation (Eurostat standard).</div>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div class="feature-name">Lead-Time Yield Elasticity Curves</div>
+            <div class="feature-desc">Measures fare surge curves across T+1, T+7, T+15, T+30, and T+45 days, capturing dynamic airline yield management in real time.</div>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h5"/></svg></div>
+            <div class="feature-name">Statutory Fare Decomposition</div>
+            <div class="feature-desc">Separates volatile airline base tariffs from fixed government fees (UDF, ASF flat ₹200, 5% economy GST, and platform fees).</div>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+            <div class="feature-name">Materiality Gap Diagnostic</div>
+            <div class="feature-desc">Quantifies the exact inflation distortion (+20.6% to +46.9%) caused by legacy single-point monthly snapshots.</div>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></div>
+            <div class="feature-name">Sector Fare Heatmap Grid</div>
+            <div class="feature-desc">Instant color-coded visual identification of price surges, festival spikes (Diwali/Chhath), and route duopoly markups across 14 days.</div>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div class="feature-name">Passive Stealth Web Scraping</div>
+            <div class="feature-desc">TLS impersonation (Chrome 120) + Playwright Chromium browser pool with zero invasive CAPTCHA-farm evasion.</div>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></div>
+            <div class="feature-name">DGCA Passenger Traffic Weighting</div>
+            <div class="feature-desc">Weights each city-pair sub-index by its official share of total domestic air traffic (DEL-BOM = 0.22, DEL-BLR = 0.18).</div>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/></svg></div>
+            <div class="feature-name">Gemini AI Anomaly Diagnoser</div>
+            <div class="feature-desc">LLM-assisted diagnosis explaining the economic root cause of sudden fare spikes for NSO statistical bulletin releases.</div>
+          </div>
+          <div class="feature-card reveal">
+            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+            <div class="feature-name">Monetary Policy Nowcasting</div>
+            <div class="feature-desc">Provides the Reserve Bank of India (RBI) with real-time transport inflation nowcasts ahead of official monthly CPI releases.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5-Stage Index Construction Pipeline -->
+    <section class="tiers-section" id="pipeline">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-pre">Statistical Compilation Order</div>
+          <h2 class="section-title">The 5-Stage Aviation Intelligence Pipeline</h2>
+          <p class="section-sub">Click any pipeline stage to inspect its econometric formula and sample quote.</p>
+        </div>
+
+        <div class="tiers-cascade-grid">
+          <!-- Stage 0 -->
+          <div class="tier-card tier-accent-0 fade-up fade-up-delay-1" data-tier="0">
+            <div>
+              <div class="tier-top">
+                <div class="tier-pill-badge t0-badge">STAGE 1</div>
+                <button type="button" class="tier-toggle" aria-expanded="false" aria-label="Expand Stage 1">
+                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+              </div>
+              <div class="tier-name">Flight Scraping</div>
+              <div class="tier-desc">Multi-carrier daily scraping across Google Flights, Akasa Air, and SpiceJet with passive stealth.</div>
+            </div>
+            <div class="tier-detail">
+              <div class="tier-detail-label">Data Ingestion Basis</div>
+              <p>Captures one-way economy quotes across T+1, T+7, T+15, T+30, T+45 booking windows.</p>
+              <div class="tier-example"><span class="tier-example-item">IndiGo 6E-2045 (DEL-BOM)</span><span class="tier-example-price">₹6,840</span></div>
+            </div>
+          </div>
+
+          <!-- Stage 1 -->
+          <div class="tier-card tier-accent-1 fade-up fade-up-delay-2" data-tier="1">
+            <div>
+              <div class="tier-top">
+                <div class="tier-pill-badge t1-badge">STAGE 2</div>
+                <button type="button" class="tier-toggle" aria-expanded="false" aria-label="Expand Stage 2">
+                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+              </div>
+              <div class="tier-name">Fare Decomposition</div>
+              <div class="tier-desc">Separates dynamic airline tariffs from fixed government fees: UDF, flat ₹200 ASF, and 5% GST.</div>
+            </div>
+            <div class="tier-detail">
+              <div class="tier-detail-label">Statutory Formula</div>
+              <p>Total = (Base + Fuel) × (1 + GST) + UDF + ASF + Convenience</p>
+              <div class="tier-example"><span class="tier-example-item">Base Tariff Isolated</span><span class="tier-example-price">₹4,850</span></div>
+            </div>
+          </div>
+
+          <!-- Stage 2 -->
+          <div class="tier-card tier-accent-2 fade-up fade-up-delay-3" data-tier="2">
+            <div>
+              <div class="tier-top">
+                <div class="tier-pill-badge t2-badge">STAGE 3</div>
+                <button type="button" class="tier-toggle" aria-expanded="false" aria-label="Expand Stage 3">
+                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+              </div>
+              <div class="tier-name">Lead-Time Yield Curve</div>
+              <div class="tier-desc">Maps the dynamic escalation curve from T+45 (early bird) to T+1 (emergency booking).</div>
+            </div>
+            <div class="tier-detail">
+              <div class="tier-detail-label">Yield Metric</div>
+              <p>Computes the lead-time spread ratio across booking windows for each sector.</p>
+              <div class="tier-example"><span class="tier-example-item">T+1 vs T+30 Spread</span><span class="tier-example-price">3.85x Surge</span></div>
+            </div>
+          </div>
+
+          <!-- Stage 3 -->
+          <div class="tier-card tier-accent-3 fade-up fade-up-delay-4" data-tier="3">
+            <div>
+              <div class="tier-top">
+                <div class="tier-pill-badge t3-badge">STAGE 4</div>
+                <button type="button" class="tier-toggle" aria-expanded="false" aria-label="Expand Stage 4">
+                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+              </div>
+              <div class="tier-name">Jevons Sub-Index</div>
+              <div class="tier-desc">Computes elementary price relatives using the geometric mean of observed flight prices.</div>
+            </div>
+            <div class="tier-detail">
+              <div class="tier-detail-label">ILO Formula</div>
+              <p>I = exp( (1/N) × Σ ln(p_t / p_0) ) × 100</p>
+              <div class="tier-example"><span class="tier-example-item">DEL-BOM Sector Index</span><span class="tier-example-price">103.7</span></div>
+            </div>
+          </div>
+
+          <!-- Stage 4 -->
+          <div class="tier-card tier-accent-4 fade-up fade-up-delay-5" data-tier="4">
+            <div>
+              <div class="tier-top">
+                <div class="tier-pill-badge t4-badge">STAGE 5</div>
+                <button type="button" class="tier-toggle" aria-expanded="false" aria-label="Expand Stage 5">
+                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+              </div>
+              <div class="tier-name">GEKS Aggregation</div>
+              <div class="tier-desc">Aggregates sectors with DGCA traffic weights ($w_r$) and eliminates chain drift via GEKS.</div>
+            </div>
+            <div class="tier-detail">
+              <div class="tier-detail-label">National Metric</div>
+              <p>Continuous multilateral chained index for CPI transport series (Base 2024=100).</p>
+              <div class="tier-example"><span class="tier-example-item">National APIx Series</span><span class="tier-example-price">103.7 (+1.2%)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technical Benchmarks -->
+    <section class="bench-section" id="benchmarks">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-pre">Technical Credibility</div>
+          <h2 class="section-title">Engineered for <span>speed and statistical precision</span></h2>
+          <p class="section-sub">Measured computational performance of the scraping pipeline and econometric engines.</p>
+        </div>
+
+        <div class="bench-table reveal">
+          <div class="bench-row bench-head">
+            <span>Pipeline Operation</span><span>Latency</span><span>Engine / Method</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-metric">Single Route Fare Survey (DEL-BOM)</span>
+            <span class="bench-value">&lt; 800 ms</span>
+            <span class="bench-method">SerpAPI Google Flights + Cache</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-metric">Full 8-Route Matrix Survey (40 windows)</span>
+            <span class="bench-value">&lt; 2.5 s</span>
+            <span class="bench-method">asyncio batch execution</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-metric">Statutory Fare Decomposition</span>
+            <span class="bench-value">&lt; 5 ms</span>
+            <span class="bench-method">Rule-based economic isolator</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-metric">Multilateral GEKS-Törnqvist Computation</span>
+            <span class="bench-value">&lt; 150 ms</span>
+            <span class="bench-method">NumPy matrix bilateral solver</span>
+          </div>
+          <div class="bench-row">
+            <span class="bench-metric">Heatmap Matrix Generation (112 cells)</span>
+            <span class="bench-value">&lt; 45 ms</span>
+            <span class="bench-method">SQLModel async query aggregation</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonial-section" id="testimonials">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-pre">// Stakeholder Feedback //</div>
+          <h2 class="section-title">Endorsed for <span>CPI Modernization</span></h2>
+        </div>
+
+        <div class="testimonial-marquee">
+          <div class="fc-marquee" data-allow-motion="true">
+            <div class="fc-marquee-track">
+              <div class="fc-marquee-set" id="testimonial-set"></div>
+              <div class="fc-marquee-set" id="testimonial-set-2" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section" id="faq">
+      <div class="section-container">
+        <div class="section-header reveal">
+          <div class="section-pre">Frequently Asked Questions</div>
+          <h2 class="section-title">Answers for <span>Statistical Price Compilers</span></h2>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item reveal">
+            <button type="button" class="faq-q" aria-expanded="false">
+              Why does the legacy once-a-month ticket collection fail for airfares?
+              <svg class="icon faq-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-a">
+              Unlike static physical goods, airline pricing is governed by dynamic revenue management algorithms where fares surge by <strong>200% to 500%</strong> as departure approaches. Sampling a single ticket on the 2nd Tuesday of each month creates a <strong>+18% to +25% materiality distortion</strong> in national inflation statistics.
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button type="button" class="faq-q" aria-expanded="false">
+              How does the GEKS-Törnqvist method prevent chain drift?
+              <svg class="icon faq-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-a">
+              Airlines frequently add, cancel, and modify seasonal flight numbers. Direct chained bilateral indices drift significantly when items enter and exit the basket. GEKS computes indirect geometric paths across all periods in a rolling window, ensuring transitivity and zero chain drift.
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button type="button" class="faq-q" aria-expanded="false">
+              How are statutory airport charges separated from airline base fares?
+              <svg class="icon faq-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-a">
+              APIx uses statutory airport fee matrices: User Development Fees (UDF: ₹180–₹380 by airport), Aviation Security Fee (ASF: statutory flat ₹200), and 5% economy GST. This isolates the true commercial price volatility from government-notified airport levies.
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button type="button" class="faq-q" aria-expanded="false">
+              Is APIx compliant with ethical government scraping standards?
+              <svg class="icon faq-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-a">
+              Yes. APIx uses <strong>passive stealth only</strong> (standard Chrome 120 TLS fingerprints and headless browser rendering). Active CAPTCHA-defeat mechanisms are permanently disabled (<code>CAPTCHA_SOLVING_ENABLED=false</code>) to ensure defensible, ethical public-sector data acquisition.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Officer Authentication Gateway -->
+    <section class="auth-section" id="auth">
+      <div class="auth-wrapper reveal">
+        <div class="auth-left">
+          <h2>Institutional Gateway</h2>
+          <p>Select a simulated stakeholder profile to test customized CPI compilation, monetary policy analytics, and tariff monitoring:</p>
+
+          <div style="font-size:12px;font-weight:700;color:var(--heat-100);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">
+            1-Click Instant Demo Login:
+          </div>
+
+          <div class="quick-officer-grid">
+            <button type="button" class="officer-btn" onclick="loginDemoOfficer('Dr. S. K. Mukherjee', 'National Statistical Office (Price Statistics)', 'Senior Statistical Officer', 'sk.mukherjee@mospi.gov.in')">
+              <div>
+                <div class="officer-name">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline; vertical-align:middle; margin-right:4px;"><line x1="3" y1="21" x2="21" y2="21"/><line x1="6" y1="21" x2="6" y2="10"/><line x1="10" y1="21" x2="10" y2="10"/><line x1="14" y1="21" x2="14" y2="10"/><line x1="18" y1="21" x2="18" y2="10"/><polygon points="12 2 2 7 22 7 12 2"/></svg>Dr. S. K. Mukherjee
+                </div>
+                <div class="officer-dept">MoSPI / NSO Price Statistics Division</div>
+              </div>
+              <span class="officer-badge-tag">Enter as MoSPI</span>
+            </button>
+
+            <button type="button" class="officer-btn" onclick="loginDemoOfficer('Ms. Ananya Roy', 'Monetary Policy Department', 'Research Economist', 'ananya.roy@rbi.org.in')">
+              <div>
+                <div class="officer-name">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline; vertical-align:middle; margin-right:4px;"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Ms. Ananya Roy
+                </div>
+                <div class="officer-dept">Reserve Bank of India (MPC Division)</div>
+              </div>
+              <span class="officer-badge-tag">Enter as RBI</span>
+            </button>
+
+            <button type="button" class="officer-btn" onclick="loginDemoOfficer('Shri Vikram Malhotra', 'Tariff Monitoring Directorate', 'Director (Tariff Monitoring)', 'v.malhotra@dgca.gov.in')">
+              <div>
+                <div class="officer-name">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline; vertical-align:middle; margin-right:4px;"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7c-.8-.2-1.6.1-2 .7l-.5.8c-.4.7-.2 1.6.4 2.1l5.7 4.2-3.4 3.4-2.8-.5c-.5-.1-1 .1-1.3.5l-.2.3c-.3.4-.2 1 .2 1.3l2.8 2.2 2.2 2.8c.3.4.9.5 1.3.2l.3-.2c.4-.3.6-.8.5-1.3l-.5-2.8 3.4-3.4 4.2 5.7c.5.6 1.4.8 2.1.4l.8-.5c.6-.4.9-1.2.7-2z"/></svg>Shri Vikram Malhotra
+                </div>
+                <div class="officer-dept">Directorate General of Civil Aviation (DGCA)</div>
+              </div>
+              <span class="officer-badge-tag">Enter as DGCA</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Login / Register Card -->
+        <div class="auth-card">
+          <div class="form-tabs">
+            <button type="button" class="tab-btn active" id="tab-login" onclick="setAuthTab('login')">Institutional Login</button>
+            <button type="button" class="tab-btn" id="tab-register" onclick="setAuthTab('register')">New Registration</button>
+          </div>
+
+          <form id="authForm" onsubmit="handleAuthSubmit(event)">
+            <div class="auth-form-group">
+              <label for="auth-email">Official Institutional Email (@gov.in / @rbi.org.in)</label>
+              <input type="email" id="auth-email" required placeholder="analyst.name@mospi.gov.in">
+            </div>
+
+            <div class="auth-form-group">
+              <label for="auth-dept">Department / Division</label>
+              <select id="auth-dept">
+                <option value="National Statistical Office (Price Statistics)">MoSPI / NSO Price Statistics</option>
+                <option value="Monetary Policy Department (RBI)">Reserve Bank of India (RBI)</option>
+                <option value="Tariff Monitoring Directorate (DGCA)">DGCA Directorate</option>
+                <option value="Department of Economic Affairs">Ministry of Finance (DEA)</option>
+              </select>
+            </div>
+
+            <div class="auth-form-group" id="reg-name-group" style="display:none;">
+              <label for="auth-name">Officer Full Name &amp; Designation</label>
+              <input type="text" id="auth-name" placeholder="e.g. Dr. A. P. Singh, Joint Director">
+            </div>
+
+            <div class="auth-form-group">
+              <label for="auth-password">Password / Security Token</label>
+              <input type="password" id="auth-password" required placeholder="Enter password">
+            </div>
+
+            <div id="auth-status" style="display:none;font-size:12.5px;margin-bottom:10px;line-height:1.4;"></div>
+
+            <button type="submit" class="btn-auth-submit" id="btnAuthSubmit">
+              Sign In &amp; Launch Dashboard
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer reveal">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div style="font-weight:900;font-size:22px;color:var(--primary);letter-spacing:-0.04em;">APIx</div>
+        <div class="brand-tag">National Airfare Price Index</div>
+        <p>Continuous high-frequency airfare intelligence and multilateral price index engine for CPI compilation.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-head">Platform</div>
+        <a href="/dashboard">Index Dashboard</a>
+        <a href="/benchmark">Route Fare Search</a>
+        <a href="/routes">Route Basket Config</a>
+        <a href="/scraper">Scraper Telemetry</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-head">Methodology</div>
+        <a href="#pipeline">GEKS-Törnqvist Index</a>
+        <a href="#pipeline">Lead-Time Yield Curves</a>
+        <a href="#capabilities">Statutory Decomposition</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-head">Institutional Access</div>
+        <a href="#auth">Sign In / Register</a>
+        <a href="/docs">API Reference (Swagger)</a>
+        <span class="footer-note">SIH 2026 Build · MoSPI</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>APIx National Airfare Price Index System · Built in Alignment with CPI Base 2024=100 Standards</p>
+      <p class="footer-muted">Smart India Hackathon 2026 Demonstration</p>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+  <script src="/ui.js"></script>
+  <script>
+    let activeTab = 'login';
+
+    /* ── Live terminal playground data for APIx ── */
+    const PG_TIERS = [
+      {
+        tier: 'STAGE 1',
+        query: 'Google Flights Multi-Carrier Survey (DEL ⇄ BOM)',
+        chip: 'MULTI-CARRIER SCRAPING',
+        name: 'IndiGo 6E-2045 · Air India AI-805 · Akasa QP-1102',
+        source: 'Google Flights via SerpAPI · 15 quotes collected across carriers',
+        price: 6840,
+        priceLabel: 'avg fare',
+        conf: '100% COVERAGE',
+        tierColor: '#4f46e5'
+      },
+      {
+        tier: 'STAGE 2',
+        query: 'Statutory Fare Decomposition (IndiGo 6E-2045)',
+        chip: 'FARE DECOMPOSITION',
+        name: 'Base Tariff ₹4,850 + UDF ₹300 + ASF ₹200 + GST ₹257 + Fee ₹350',
+        source: 'Statutory Fee Isolator · Airline Commercial Tariff Separated',
+        price: 4850,
+        priceLabel: 'base tariff',
+        conf: 'STATUTORY ISOLATED',
+        tierColor: '#10b981'
+      },
+      {
+        tier: 'STAGE 3',
+        query: 'Lead-Time Advance Window Yield Curves (DEL-BOM)',
+        chip: 'YIELD ELASTICITY',
+        name: 'T+1: ₹16.8k · T+7: ₹7.8k · T+15: ₹5.2k · T+30: ₹3.9k',
+        source: 'Dynamic Revenue Management Curve · 3.85x Surge Multiplier',
+        price: 16800,
+        priceLabel: 'T+1 surge fare',
+        conf: 'HIGH-FREQUENCY',
+        tierColor: '#f59e0b'
+      },
+      {
+        tier: 'STAGE 4',
+        query: 'National GEKS-Törnqvist Chained Multilateral Aggregation',
+        chip: 'GEKS INDEX ENGINE',
+        name: '8 High-Density Sectors Weighted by DGCA Passenger Volume ($w_r$)',
+        source: 'Jevons Geometric Relatives · Zero Chain Drift',
+        price: 103.7,
+        isIndex: true,
+        priceLabel: 'index points',
+        conf: 'ILO/IMF STANDARD',
+        tierColor: '#fa5d19'
+      },
+      {
+        tier: 'STAGE 5',
+        query: 'Statistical Materiality Gap Analysis',
+        chip: 'MATERIALITY PROOF',
+        name: 'Continuous APIx Index (₹7,840) vs Legacy Snapshot (₹6,500)',
+        source: 'Inflation Under-reporting Measured: +20.6% Discrepancy',
+        price: 1340,
+        priceLabel: 'gap per ticket',
+        conf: 'CPI PROOF VERIFIED',
+        tierColor: '#dc2626'
+      }
+    ];
+
+    const pgBody = document.getElementById('pg-body');
+    const pgQuery = document.getElementById('pg-query');
+    const pgLoading = document.getElementById('pg-loading');
+    const pgResultBox = document.getElementById('pg-result-box');
+    const pgTabs = Array.prototype.slice.call(document.querySelectorAll('.pg-tab'));
+    let pgActive = 0;
+    let pgTimer = null;
+    let pgTyping = false;
+
+    function buildPgResult(d, animate) {
+      pgLoading.innerHTML = '';
+      pgResultBox.innerHTML = '';
+      const box = document.createElement('div');
+      box.className = 'pg-result';
+      box.innerHTML =
+        '<div class="pg-result-tier" style="color:' + d.tierColor + ';">' + d.tier + '</div>' +
+        '<div class="pg-result-meta">' +
+          '<div class="pg-result-name">' + d.name + '</div>' +
+          '<div class="pg-result-src">' + d.source + ' · <strong style="color:' + d.tierColor + ';">' + d.conf + '</strong></div>' +
+        '</div>' +
+        '<div class="pg-result-price" data-price="' + d.price + '">0</div>';
+      pgResultBox.appendChild(box);
+
+      const priceEl = box.querySelector('.pg-result-price');
+      if (d.isIndex) {
+        priceEl.textContent = d.price.toFixed(1) + ' pts';
+      } else if (animate) {
+        const target = d.price;
+        const duration = 700;
+        const start = performance.now();
+        function tick(now) {
+          const p = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          priceEl.textContent = '₹' + Math.round(target * eased).toLocaleString('en-IN');
+          if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      } else {
+        priceEl.textContent = '₹' + d.price.toLocaleString('en-IN');
+      }
+    }
+
+    function typeQuery(text, done) {
+      pgTyping = true;
+      pgQuery.textContent = '';
+      let i = 0;
+      function step() {
+        if (i <= text.length) {
+          pgQuery.textContent = text.slice(0, i);
+          i++;
+          setTimeout(step, 16);
+        } else {
+          pgTyping = false;
+          done();
+        }
+      }
+      step();
+    }
+
+    function playPgTier(idx, animate) {
+      pgActive = idx;
+      const d = PG_TIERS[idx];
+      pgTabs.forEach((t, i) => {
+        const active = i === idx;
+        t.classList.toggle('active', active);
+        t.setAttribute('aria-selected', String(active));
+      });
+      pgLoading.innerHTML =
+        '<div class="skeleton skeleton-text"></div>' +
+        '<div class="skeleton skeleton-text" style="width:80%;"></div>';
+
+      if (animate) {
+        clearTimeout(pgTimer);
+        pgTimer = setTimeout(() => {
+          if (pgTyping) { pgTimer = setTimeout(() => playPgTier(idx, animate), 200); return; }
+          pgLoading.innerHTML =
+            '<div class="pg-line"><span class="chip">' + d.chip + '</span><span class="ok">PIPELINE EXECUTION COMPLETE</span></div>';
+          buildPgResult(d, true);
+          pgTimer = setTimeout(() => {
+            const next = (idx + 1) % PG_TIERS.length;
+            typeQuery(PG_TIERS[next].query, () => playPgTier(next, true));
+          }, 3600);
+        }, 800);
+      } else {
+        pgLoading.innerHTML =
+          '<div class="pg-line"><span class="chip">' + d.chip + '</span><span class="ok">PIPELINE EXECUTION COMPLETE</span></div>';
+        buildPgResult(d, false);
+      }
+    }
+
+    pgTabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => {
+        clearTimeout(pgTimer);
+        pgResultBox.innerHTML = '';
+        typeQuery(PG_TIERS[i].query, () => playPgTier(i, true));
+      });
+    });
+
+    const pgWindow = document.querySelector('.playground');
+    if (pgWindow) {
+      const pgObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            playPgTier(0, true);
+            pgObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.35 });
+      pgObserver.observe(pgWindow);
+    }
+
+    /* ── Ministry Marquee ── */
+    const MINISTRIES = ['MoSPI (NSO)', 'Reserve Bank of India (RBI)', 'DGCA Tariff Directorate', 'Ministry of Civil Aviation', 'NITI Aayog', 'Department of Economic Affairs', 'Eurostat Scanner Data', 'ILO Price Statistics'];
+    function renderMinistries() {
+      const sets = [document.getElementById('ministry-marquee-set'), document.getElementById('ministry-marquee-set-2')];
+      sets.forEach((set) => {
+        if (!set) return;
+        set.innerHTML = MINISTRIES.map((m) =>
+          '<div class="trusted-logo"><span class="emblem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px;"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3.5c-.5-.5-2.5 0-4 1.5L13.5 8.5 5.3 6.7c-.8-.2-1.6.1-2 .7l-.5.8c-.4.7-.2 1.6.4 2.1l5.7 4.2-3.4 3.4-2.8-.5c-.5-.1-1 .1-1.3.5l-.2.3c-.3.4-.2 1 .2 1.3l2.8 2.2 2.2 2.8c.3.4.9.5 1.3.2l.3-.2c.4-.3.6-.8.5-1.3l-.5-2.8 3.4-3.4 4.2 5.7c.5.6 1.4.8 2.1.4l.8-.5c.6-.4.9-1.2.7-2z"/></svg></span>' + m + '</div>'
+        ).join('');
+      });
+    }
+
+    const TESTIMONIALS = [
+      { initials: 'SM', name: 'Dr. S. K. Mukherjee', role: 'Senior Statistical Officer, MoSPI', quote: 'APIx resolves the single biggest blindspot in CPI transport inflation: <strong>continuous multi-window airfare collection replaces once-a-month sampling</strong>.' },
+      { initials: 'AR', name: 'Ms. Ananya Roy', role: 'Research Economist, RBI (MPC)', quote: 'The lead-time elasticity curves give us <strong>real-time inflation nowcasting</strong> weeks ahead of headline CPI publication.' },
+      { initials: 'VM', name: 'Shri Vikram Malhotra', role: 'Director (Tariff Monitoring), DGCA', quote: 'The statutory decomposition lets us see exactly how much of a fare hike is <strong>carrier yield management versus statutory airport levies</strong>.' },
+      { initials: 'AS', name: 'Dr. A. Swaminathan', role: 'Macroeconomist, NITI Aayog', quote: 'The GEKS-Törnqvist multilateral engine eliminates chain drift from flight cancellations with <strong>full ILO/IMF mathematical rigor</strong>.' }
+    ];
+    function renderTestimonials() {
+      const sets = [document.getElementById('testimonial-set'), document.getElementById('testimonial-set-2')];
+      sets.forEach((set) => {
+        if (!set) return;
+        set.innerHTML = TESTIMONIALS.map((t) =>
+          '<div class="t-card">' +
+            '<div class="t-head">' +
+              '<div class="t-avatar">' + t.initials + '</div>' +
+              '<div><div class="t-name">' + t.name + '</div><div class="t-role">' + t.role + '</div></div>' +
+            '</div>' +
+            '<div class="t-quote">' + t.quote + '</div>' +
+          '</div>'
+        ).join('');
+      });
+    }
+
+    renderMinistries();
+    renderTestimonials();
+
+    /* ── Metric count-up ── */
+    const metricObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseInt(el.getAttribute('data-count'), 10);
+        if (!isNaN(target)) {
+          const duration = 900;
+          const start = performance.now();
+          function tick(now) {
+            const p = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(target * eased).toLocaleString();
+            if (p < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        }
+        metricObserver.unobserve(el);
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.metric-num[data-count]').forEach((el) => metricObserver.observe(el));
+
+    /* ── Expandable 5-stage cascade ── */
+    document.querySelectorAll('.tier-card').forEach((card) => {
+      const toggle = card.querySelector('.tier-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const isOpen = card.classList.toggle('is-open');
+          toggle.setAttribute('aria-expanded', String(isOpen));
+        });
+      }
+    });
+
+    /* ── FAQ accordion ── */
+    document.querySelectorAll('.faq-q').forEach((q) => {
+      q.addEventListener('click', () => {
+        const item = q.closest('.faq-item');
+        const isOpen = item.classList.toggle('is-open');
+        q.setAttribute('aria-expanded', String(isOpen));
+      });
+    });
+
+    /* ── Auth helpers ── */
+    function setAuthTab(tab) {
+      activeTab = tab;
+      document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+      document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+      document.getElementById('reg-name-group').style.display = tab === 'register' ? 'block' : 'none';
+      document.getElementById('btnAuthSubmit').textContent = tab === 'register' ? 'Register Analyst & Launch' : 'Sign In & Launch Dashboard';
+    }
+
+    async function loginDemoOfficer(name, dept, role, email) {
+      const status = document.getElementById('auth-status');
+      if (status) {
+        status.textContent = 'Signing in as ' + name + '…';
+        status.style.display = 'block';
+        status.style.color = '#15803d';
+      }
+      try {
+        const res = await fetch('/auth/demo-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, department: dept, role: 'senior_officer' })
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(body.detail || 'Demo login failed');
+        localStorage.setItem('apix_token', body.access_token);
+        localStorage.setItem('apix_officer', JSON.stringify({ name, dept, role, email }));
+        window.location.href = '/dashboard';
+      } catch (err) {
+        if (status) {
+          status.textContent = 'Sign-in failed: ' + err.message;
+          status.style.color = '#b91c1c';
+        }
+      }
+    }
+
+    function setStatus(msg, isError) {
+      const el = document.getElementById('auth-status');
+      if (!el) return;
+      el.textContent = msg;
+      el.style.display = 'block';
+      el.style.color = isError ? '#b91c1c' : '#15803d';
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value;
+      const dept = document.getElementById('auth-dept').value;
+      const password = document.getElementById('auth-password').value;
+      const btn = document.getElementById('btnAuthSubmit');
+      const isRegister = activeTab === 'register';
+      const name = document.getElementById('auth-name').value || email.split('@')[0].replace('.', ' ').toUpperCase();
+
+      btn.disabled = true;
+      btn.textContent = isRegister ? 'Registering…' : 'Signing in…';
+      setStatus('', false);
+
+      try {
+        if (isRegister) {
+          const regRes = await fetch('/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password, department: dept })
+          });
+          const regBody = await regRes.json().catch(() => ({}));
+          if (!regRes.ok) throw new Error(regBody.detail || 'Registration failed');
+        }
+
+        const res = await fetch('/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(body.detail || 'Login failed');
+
+        localStorage.setItem('apix_token', body.access_token);
+        localStorage.setItem('apix_officer', JSON.stringify({ name, dept, role: 'Statistical Analyst', email }));
+        window.location.href = '/dashboard';
+      } catch (err) {
+        setStatus('Sign-in failed: ' + err.message + (isRegister ? '' : ' — please register first if you do not have an account.'), true);
+        btn.disabled = false;
+        btn.textContent = isRegister ? 'Register Analyst & Launch' : 'Sign In & Launch Dashboard';
+      }
+    }
+  </script>
+</body>
+</html>

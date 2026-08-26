@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APIx — Route Basket & DGCA Passenger Weighting Studio</title>
+  <meta name="description" content="National Statistical Office (NSO) domestic airfare route basket configuration, DGCA passenger traffic weighting, and city-pair basket management.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/base.css">
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+  <style>
+    .basket-table-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    .basket-row {
+      display: grid;
+      grid-template-columns: 140px 1.5fr 120px 140px 100px 120px;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-faint);
+      transition: background 0.15s;
+    }
+    .basket-row:hover { background: var(--surface-raised); }
+    .basket-row:last-child { border-bottom: none; }
+    .basket-head {
+      background: var(--surface-raised);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 12px 20px;
+    }
+    .weight-meter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .weight-bar-bg {
+      flex: 1;
+      height: 8px;
+      background: var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .weight-bar-fill {
+      height: 100%;
+      background: var(--heat-100);
+      border-radius: 4px;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: 14px;
+      border: 1px solid var(--border-loud);
+      max-width: 480px;
+      width: 90%;
+      padding: 26px;
+      box-shadow: var(--shadow-lg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Banner -->
+  <div class="announce-bar" style="background: var(--heat-100); color: #fff; text-align: center; font-size: 13px; font-weight: 600; padding: 8px 16px; display:flex; align-items:center; justify-content:center; gap:6px;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="21" x2="21" y2="21"/><line x1="6" y1="21" x2="6" y2="10"/><line x1="10" y1="21" x2="10" y2="10"/><line x1="14" y1="21" x2="14" y2="10"/><line x1="18" y1="21" x2="18" y2="10"/><polygon points="12 2 2 7 22 7 12 2"/></svg>
+    <span>Directorate General of Civil Aviation (DGCA) Domestic Passenger Traffic Weighting Reference · Bulletin 2026-Q2</span>
+  </div>
+
+  <!-- Top Navbar -->
+  <header class="navbar" style="background: rgba(10, 10, 10, 0.92); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); position: sticky; top: 0; z-index: 100;">
+    <div style="max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; width: 100%;">
+      <a href="/" class="nav-brand" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+        <span style="font-weight: 900; font-size: 22px; color: var(--primary); letter-spacing: -0.04em;">APIx</span>
+        <span class="badge" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.16); font-size: 11px;">Route Studio</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/dashboard" class="nav-link">Index Dashboard</a>
+        <a href="/benchmark" class="nav-link">Route Discovery</a>
+        <a href="/routes" class="nav-link active" style="color: var(--primary); font-weight:700;">Route Basket</a>
+        <a href="/scraper" class="nav-link">Scraper Telemetry</a>
+      </nav>
+
+      <div class="nav-right" style="display: flex; align-items: center; gap: 10px;">
+        <div style="font-size: 12px; font-weight: 600; color: #86efac; background: rgba(34, 197, 94, 0.12); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(34, 197, 94, 0.25); display:flex; align-items:center; gap:5px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 100% WEIGHT NORMALIZED
+        </div>
+        <button class="btn-theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width: 1180px; margin: 30px auto; padding: 0 20px;">
+    
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div style="font-family:'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">
+          National Statistical Office · CPI Item Basket
+        </div>
+        <h1 style="font-size: 28px; font-weight: 800; color: var(--navy-900); margin: 0;">
+          Domestic Airfare Route Basket &amp; Traffic Weights
+        </h1>
+        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">
+          Define the official city-pairs and passenger volume weights ($w_r$) used for the National APIx Index aggregation.
+        </p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-secondary" onclick="exportBasketJson()" style="font-size: 13px; display:inline-flex; align-items:center; gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export JSON
+        </button>
+        <button class="btn-primary" onclick="openAddModal()" style="font-size: 13px; font-weight: 700;">
+          + Add Sector to Basket
+        </button>
+      </div>
+    </div>
+
+    <!-- Weight Sum KPI Card -->
+    <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 12px; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <div>
+        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Total Basket Passenger Weight ($\sum w_r$)</div>
+        <div style="font-family:'Outfit', sans-serif; font-size: 24px; font-weight: 900; color: var(--navy-900);" id="totalWeightVal">1.000 (100.0%)</div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Active Domestic Sectors</div>
+        <div style="font-family:'Outfit', sans-serif; font-size: 24px; font-weight: 900; color: var(--primary);" id="totalRoutesVal">8 City-Pairs</div>
+      </div>
+    </div>
+
+    <!-- Basket Table Card -->
+    <div class="basket-table-card">
+      <div class="basket-row basket-head">
+        <span>Route ID</span>
+        <span>City-Pair Sector</span>
+        <span>Daily Flights</span>
+        <span>DGCA Traffic Weight</span>
+        <span>Status</span>
+        <span>Action</span>
+      </div>
+      <div id="basketTableBody">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Add Route Modal -->
+  <div id="add-modal" class="modal-backdrop">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+        <h3 style="font-size: 18px; font-weight: 800; margin: 0; color: var(--navy-900);">Add New Sector to Index Basket</h3>
+        <button onclick="closeAddModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      <form id="add-route-form" onsubmit="handleAddRoute(event)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 4px;">Origin IATA</label>
+            <input type="text" id="add-orig-iata" required placeholder="e.g. PNQ" maxlength="3" style="width: 100%; padding: 8px 12px; text-transform: uppercase; border-radius: 6px; border: 1px solid var(--border);">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 4px;">Destination IATA</label>
+            <input type="text" id="add-dest-iata" required placeholder="e.g. DEL" maxlength="3" style="width: 100%; padding: 8px 12px; text-transform: uppercase; border-radius: 6px; border: 1px solid var(--border);">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 4px;">Origin City</label>
+            <input type="text" id="add-orig-city" required placeholder="e.g. Pune" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 4px;">Destination City</label>
+            <input type="text" id="add-dest-city" required placeholder="e.g. New Delhi" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);">
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;">
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 4px;">DGCA Weight ($w_r$)</label>
+            <input type="number" id="add-weight" required step="0.01" min="0.01" max="1.0" value="0.05" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);">
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 4px;">Daily Flight Count</label>
+            <input type="number" id="add-flights" required min="1" value="25" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);">
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" onclick="closeAddModal()" class="btn-secondary">Cancel</button>
+          <button type="submit" class="btn-primary" style="font-weight: 700;">Add to Basket</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+  <script>
+    let currentRoutes = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadRouteBasket();
+    });
+
+    async function loadRouteBasket() {
+      try {
+        const res = await fetch('/api/v1/routes');
+        if (!res.ok) return;
+        currentRoutes = await res.json();
+        renderBasketTable(currentRoutes);
+      } catch (e) {
+        console.error('Error loading routes:', e);
+      }
+    }
+
+    function renderBasketTable(routes) {
+      document.getElementById('totalRoutesVal').textContent = routes.length + ' City-Pairs';
+      const sumWeight = routes.reduce((acc, r) => acc + r.dgca_weight, 0);
+      document.getElementById('totalWeightVal').textContent = sumWeight.toFixed(3) + ' (' + (sumWeight * 100).toFixed(1) + '%)';
+
+      const container = document.getElementById('basketTableBody');
+      if (!routes || !routes.length) {
+        container.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted);">No routes configured in basket.</div>';
+        return;
+      }
+
+      container.innerHTML = routes.map(r => `
+        <div class="basket-row">
+          <div>
+            <strong style="font-family:'JetBrains Mono', monospace; font-size:14px; color:var(--navy-900);">${r.id}</strong>
+          </div>
+          <div>
+            <div style="font-size:13.5px; font-weight:600; color:var(--navy-900);">${r.origin_city} ⇄ ${r.destination_city}</div>
+            <div style="font-size:11px; color:var(--text-muted);">${r.origin_iata} ⇄ ${r.destination_iata}</div>
+          </div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--navy-800);">${r.daily_flights} flights/day</div>
+          <div class="weight-meter">
+            <div class="weight-bar-bg">
+              <div class="weight-bar-fill" style="width: ${(r.dgca_weight * 100 * 3.5)}%;"></div>
+            </div>
+            <span style="font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:700; color:var(--primary);">${(r.dgca_weight * 100).toFixed(1)}%</span>
+          </div>
+          <div>
+            <span class="badge" style="background:rgba(16, 185, 129, 0.1); color:#10b981; border:1px solid rgba(16, 185, 129, 0.25);">ACTIVE</span>
+          </div>
+          <div>
+            <button onclick="surveyRouteDirect('${r.id}')" class="btn-secondary" style="font-size:11px; padding:4px 8px;">Survey ↗</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function surveyRouteDirect(routeId) {
+      window.location.href = '/benchmark?route=' + encodeURIComponent(routeId) + '&window=7';
+    }
+
+    function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
+    function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; }
+
+    async function handleAddRoute(e) {
+      e.preventDefault();
+      const orig = document.getElementById('add-orig-iata').value.toUpperCase();
+      const dest = document.getElementById('add-dest-iata').value.toUpperCase();
+      const routeId = orig + '-' + dest;
+
+      const payload = {
+        id: routeId,
+        origin_iata: orig,
+        destination_iata: dest,
+        origin_city: document.getElementById('add-orig-city').value,
+        destination_city: document.getElementById('add-dest-city').value,
+        dgca_weight: parseFloat(document.getElementById('add-weight').value),
+        daily_flights: parseInt(document.getElementById('add-flights').value),
+        is_active: true
+      };
+
+      try {
+        const res = await fetch('/api/v1/routes', {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Failed to create route');
+        showToast(`Route ${routeId} added to national basket!`, 'success');
+        closeAddModal();
+        await loadRouteBasket();
+      } catch (err) {
+        showToast('Error adding route: ' + err.message, 'error');
+      }
+    }
+
+    function exportBasketJson() {
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(currentRoutes, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = 'nso_airfare_route_basket.json';
+      a.click();
+      showToast('Route basket JSON exported successfully', 'success');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "apix-client"
+version = "1.0.0"
+authors = [
+  { name="APIx Team", email="team@apix.gov.in" },
+]
+description = "Official Python client for the APIx Real-Time Airfare Price Index & Analytics Engine"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "httpx>=0.24.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Tejas3479/APIx"
+"Bug Tracker" = "https://github.com/Tejas3479/APIx/issues"

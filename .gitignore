@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.so
+.eggs/
+.mypy_cache/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# Databases & Runtime SQLite
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+data/exports/
+data/uploads/
+data/reports/
+data/sessions.json
+data/test_apix.db
+
+# Keep seed data tracked
+!data/fare_demo_cache.json
+!data/dgca_benchmark.json
+!data/route_basket.json
+
+# HackForge analysis files
+.hackforge/
+hackforge/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Playwright / browser artifacts
+playwright-report/
+test-results/
+
+# Node
+node_modules/
+
+# Firecrawl temp
+.firecrawl/

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APIx — Real-Time Airfare Price Index Dashboard</title>
+  <meta name="description" content="National high-frequency airfare intelligence, GEKS-Törnqvist price index, lead-time elasticity curves, and route heatmaps for CPI compilation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/base.css">
+  <script src="/chart.umd.min.js"></script>
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+  <style>
+    /* Toast notifications */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .toast {
+      background: rgba(220, 38, 38, 0.95);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      animation: toastIn 0.3s ease-out;
+      max-width: 360px;
+    }
+    .toast.toast-warn {
+      background: rgba(245, 158, 11, 0.95);
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .freq-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .freq-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 960px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+    .chart-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 20px 24px;
+      position: relative;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .chart-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin: 0;
+    }
+    .chart-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: 100px repeat(14, 1fr);
+      gap: 6px;
+      align-items: center;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .heatmap-header-cell {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--text-muted);
+      text-align: center;
+      white-space: nowrap;
+    }
+    .heatmap-route-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+    .carrier-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .carrier-name {
+      width: 80px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy-900);
+    }
+    .carrier-track {
+      flex: 1;
+      height: 10px;
+      background: var(--border-subtle);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .carrier-fill {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.6s ease;
+    }
+    .carrier-val {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      width: 70px;
+      text-align: right;
+    }
+    .materiality-box {
+      background: linear-gradient(135deg, rgba(250, 93, 25, 0.05) 0%, rgba(250, 93, 25, 0.12) 100%);
+      border: 1px solid rgba(250, 93, 25, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      margin-top: 16px;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      max-width: 520px;
+      width: 90%;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+  </style>
+</head>
+<body>
+<div class="toast-container" id="toast-container"></div>
+
+  <!-- Top Navigation -->
+  <nav class="navbar" aria-label="Main Navigation">
+    <div class="nav-brand">
+      <a href="/" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+        <span class="brand-text" style="font-weight: 800; font-size: 19px; color: var(--primary); letter-spacing: -0.03em;">APIx</span>
+        <span class="brand-tag badge" style="background: var(--heat-8); color: var(--primary); border: 1px solid var(--heat-24); font-size: 11px;">MoSPI / CPI Engine</span>
+      </a>
+    </div>
+    <div class="nav-links">
+      <a href="/dashboard" class="nav-link active" style="font-weight: 600;">Dashboard</a>
+      <a href="/benchmark" class="nav-link">Route Search</a>
+      <a href="/routes" class="nav-link">Route Basket</a>
+      <a href="/scraper" class="nav-link">Scraper Health</a>
+      <button id="theme-toggle" class="btn btn-secondary btn-icon" title="Toggle Theme" aria-label="Toggle Theme">
+        <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div id="user-chip" class="badge badge-subtle" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px;">
+        <span class="pulse-live"></span>
+        <span id="officer-name" style="font-weight: 600;">Dr. S. K. Mukherjee</span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-container" style="max-width: 1280px; margin: 0 auto; padding: 24px 20px;">
+    
+    <!-- Hero Header -->
+    <div class="hero" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div class="badge badge-accent" style="margin-bottom: 8px;">CPI (Base 2024=100) Transport Series</div>
+        <h1 style="font-size: 26px; font-weight: 800; margin: 0; color: var(--navy-900); letter-spacing: -0.02em;">
+          Real-Time Airfare Price Index Intelligence
+        </h1>
+        <p style="font-size: 14px; color: var(--text-muted); margin: 6px 0 0 0;">
+          Continuous multi-carrier digital fare collection across 8 high-density Indian domestic city-pairs.
+        </p>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/api/v1/export/csv" download class="btn btn-secondary" style="display: flex; align-items: center; gap: 6px; text-decoration: none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export Microdata (CSV)
+        </a>
+        <button onclick="openScrapeModal()" class="btn btn-primary" style="display: flex; align-items: center; gap: 6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Trigger Live Scrape
+        </button>
+        <button onclick="recomputeIndex()" class="btn btn-secondary" style="display: flex; align-items: center; gap: 6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Recompute Index
+        </button>
+      </div>
+    </div>
+
+    <!-- Metric Cards Row -->
+    <div class="stat-row stagger-enter" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+      <div class="stat-card card">
+        <div class="stat-title"><span class="term-tooltip" data-tooltip="National airfare index compiled using Jevons geometric mean and DGCA volume weighting.">Today's National APIx</span></div>
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <div class="stat-val" id="kpi-today-index" style="color: var(--primary);">103.7</div>
+          <span class="badge badge-success" style="font-size: 11px;">+1.2% 24h</span>
+        </div>
+        <div class="stat-sparkline">
+          <div class="bar" style="height: 35%;"></div>
+          <div class="bar" style="height: 48%;"></div>
+          <div class="bar" style="height: 60%;"></div>
+          <div class="bar" style="height: 75%;"></div>
+          <div class="bar" style="height: 90%;"></div>
+          <div class="bar" style="height: 82%;"></div>
+          <div class="bar" style="height: 100%;"></div>
+        </div>
+        <div class="stat-sub">Base: Aug 1, 2026 = 100.0</div>
+      </div>
+
+      <div class="stat-card card">
+        <div class="stat-title"><span class="term-tooltip" data-tooltip="Top 8 domestic sectors representing over 68% of scheduled passenger traffic.">Active Route Basket</span></div>
+        <div class="stat-val" id="kpi-active-routes">8</div>
+        <div class="stat-sub" style="color: #10b981; font-weight: 500; display:flex; align-items:center; gap:4px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 100% DGCA Coverage
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">Top sectors by passenger volume</div>
+      </div>
+
+      <div class="stat-card card">
+        <div class="stat-title"><span class="term-tooltip" data-tooltip="Verified live flight fare observations scraped across 5 advance purchase horizons.">Total Fare Quotes</span></div>
+        <div class="stat-val" id="kpi-total-quotes">2,247</div>
+        <div class="stat-sub">+142 quotes collected today</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">5 booking windows (T+1 to T+45)</div>
+      </div>
+
+      <div class="stat-card card">
+        <div class="stat-title"><span class="term-tooltip" data-tooltip="Weighted mean economy airfare across all surveyed sectors and carriers.">Avg Economy Airfare</span></div>
+        <div class="stat-val" id="kpi-avg-fare">₹6,840</div>
+        <div class="stat-sub"><span style="color: #ef4444; font-weight: 600;">3.85x</span> Lead-Time Spread</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">T+1 (₹16.8k) vs T+30 (₹3.9k)</div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="dashboard-grid">
+      <!-- Left Chart: Daily Index Time Series -->
+      <div class="chart-card card">
+        <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 class="chart-title" id="timeSeriesChartTitle">APIx National Index Series</h2>
+            <div class="chart-subtitle" id="timeSeriesChartSubtitle">Jevons Geometric Mean Chained Daily Series</div>
+          </div>
+          <div style="display: flex; gap: 6px; background: rgba(0,0,0,0.06); padding: 3px; border-radius: 8px;">
+            <button id="tab-daily" class="freq-btn active" onclick="switchFrequency('daily')">Daily</button>
+            <button id="tab-weekly" class="freq-btn" onclick="switchFrequency('weekly')">Weekly (7D)</button>
+            <button id="tab-monthly" class="freq-btn" onclick="switchFrequency('monthly')">Monthly CPI</button>
+          </div>
+        </div>
+        <div style="height: 280px; position: relative;">
+          <canvas id="indexTimeSeriesChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Right Chart: Lead-Time Elasticity Yield Curve -->
+      <div class="chart-card card">
+        <div class="chart-header">
+          <div>
+            <h2 class="chart-title">Lead-Time Yield Elasticity</h2>
+            <div class="chart-subtitle">Average Fare (₹) by Advance Window</div>
+          </div>
+          <span class="badge" style="background: rgba(79, 70, 229, 0.1); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25); font-size: 11px;">DEL-BOM</span>
+        </div>
+        <div style="height: 280px; position: relative;">
+          <canvas id="elasticityChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Heatmap & Materiality Section -->
+    <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+      
+      <!-- Route Heatmap Card -->
+      <div class="chart-card card">
+        <div class="chart-header">
+          <div>
+            <h2 class="chart-title">Sector Fare Intensity Heatmap (Last 14 Days)</h2>
+            <div class="chart-subtitle">City-Pair pricing levels: Green (&lt;₹5k), Amber (₹5-8k), Orange (₹8-14k), Red (&gt;₹14k Surge)</div>
+          </div>
+          <div style="display: flex; gap: 6px; font-size: 11px; align-items: center;">
+            <span class="badge heatmap-low" style="padding: 2px 6px;">Low</span>
+            <span class="badge heatmap-mid" style="padding: 2px 6px;">Mid</span>
+            <span class="badge heatmap-high" style="padding: 2px 6px;">High</span>
+            <span class="badge heatmap-surge" style="padding: 2px 6px;">Surge</span>
+          </div>
+        </div>
+        <div id="heatmap-container" class="heatmap-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Materiality Gap Analysis Card -->
+      <div class="chart-card card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div class="chart-header">
+            <div>
+              <h2 class="chart-title">Statistical Materiality Gap</h2>
+              <div class="chart-subtitle">Single Monthly Snapshot vs. Continuous Index</div>
+            </div>
+            <span class="badge badge-danger" style="font-size: 11px;">MoSPI Proof</span>
+          </div>
+          
+          <div class="materiality-box">
+            <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Inflation Measurement Error</div>
+            <div style="font-size: 28px; font-weight: 800; color: var(--primary); font-family: var(--font-mono); margin: 4px 0;">
+              +20.6% <span style="font-size: 14px; font-weight: 500; color: var(--text-main);">(₹1,340 / ticket)</span>
+            </div>
+            <p style="font-size: 12.5px; color: var(--text-main); margin: 6px 0 0 0; line-height: 1.45;">
+              Monthly snapshot methodology records <strong>₹6,500</strong> by sampling once mid-month. The actual continuous weighted index is <strong>₹7,840</strong> — significantly under-reporting true travel costs.
+            </p>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
+          <div style="font-size: 12px; font-weight: 600; color: var(--navy-900); margin-bottom: 8px;">Domestic Carrier Market Share & Yield</div>
+          <div id="carrier-bars-container">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Modal: Trigger On-Demand Scrape -->
+  <div id="scrape-modal" class="modal-backdrop">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 18px; font-weight: 700; margin: 0; color: var(--navy-900);">Trigger Airfare Scrape Survey</h3>
+        <button onclick="closeScrapeModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      <form id="scrape-form" onsubmit="handleScrapeSubmit(event)">
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 12.5px; font-weight: 600; color: var(--navy-900); display: block; margin-bottom: 4px;">Target City-Pair Route</label>
+          <select id="scrape-route" class="input" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);">
+            <option value="DEL-BOM">DEL-BOM (New Delhi ⇄ Mumbai)</option>
+            <option value="DEL-BLR">DEL-BLR (New Delhi ⇄ Bengaluru)</option>
+            <option value="BOM-BLR">BOM-BLR (Mumbai ⇄ Bengaluru)</option>
+            <option value="DEL-CCU">DEL-CCU (New Delhi ⇄ Kolkata)</option>
+            <option value="BLR-HYD">BLR-HYD (Bengaluru ⇄ Hyderabad)</option>
+            <option value="BOM-GOI">BOM-GOI (Mumbai ⇄ Goa)</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 12.5px; font-weight: 600; color: var(--navy-900); display: block; margin-bottom: 4px;">Advance Purchase Windows</label>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <label style="font-size: 12px;"><input type="checkbox" name="adv_window" value="1" checked> T+1 (Emergency)</label>
+            <label style="font-size: 12px;"><input type="checkbox" name="adv_window" value="7" checked> T+7 (Business)</label>
+            <label style="font-size: 12px;"><input type="checkbox" name="adv_window" value="15" checked> T+15 (Regular)</label>
+            <label style="font-size: 12px;"><input type="checkbox" name="adv_window" value="30" checked> T+30 (Planned)</label>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" onclick="closeScrapeModal()" class="btn btn-secondary">Cancel</button>
+          <button type="submit" id="btn-submit-scrape" class="btn btn-primary">Start Live Scrape</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+  <script src="/ui.js"></script>
+  <script>
+    function showToast(msg, type = 'error') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast' + (type === 'warn' ? ' toast-warn' : '');
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
+    }
+
+    let timeSeriesChart = null;
+    let elasticityChart = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await ensureAuth();
+      await loadDashboardStats();
+      await loadTimeSeriesChart();
+      await loadElasticityChart();
+      await loadHeatmap();
+      await loadCarriers();
+    });
+
+    async function loadDashboardStats() {
+      try {
+        const res = await fetch('/api/v1/dashboard/stats');
+        if (!res.ok) { showToast('Dashboard stats unavailable', 'warn'); return; }
+        const data = await res.json();
+        animateIndex(document.getElementById('kpi-today-index'), data.today_index, 1);
+        animateInteger(document.getElementById('kpi-active-routes'), data.active_routes_count);
+        animateInteger(document.getElementById('kpi-total-quotes'), data.total_quotes_count);
+        animatePriceCount(document.getElementById('kpi-avg-fare'), data.avg_fare_today);
+      } catch (e) {
+        console.error('Stats error:', e);
+        showToast('Could not load dashboard stats');
+      }
+    }
+
+    let currentFrequency = 'daily';
+
+    async function switchFrequency(freq) {
+      currentFrequency = freq;
+      document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`tab-${freq}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const titleEl = document.getElementById('timeSeriesChartTitle');
+      const subtitleEl = document.getElementById('timeSeriesChartSubtitle');
+
+      if (freq === 'daily') {
+        if (titleEl) titleEl.textContent = 'APIx National Daily Index';
+        if (subtitleEl) subtitleEl.textContent = 'Jevons Geometric Mean Chained Daily Series (Last 15 Days)';
+      } else if (freq === 'weekly') {
+        if (titleEl) titleEl.textContent = 'APIx 7-Day Rolling Multilateral Series';
+        if (subtitleEl) subtitleEl.textContent = 'Smoothed Multilateral Weekly Trend (Eurostat Guideline Standard)';
+      } else if (freq === 'monthly') {
+        if (titleEl) titleEl.textContent = 'APIx Official Monthly Publication Series';
+        if (subtitleEl) subtitleEl.textContent = 'MoSPI CPI 2024=100 Base Revision Chained Series';
+      }
+
+      await loadTimeSeriesChart(freq);
+    }
+
+    async function loadTimeSeriesChart(freq = 'daily') {
+      try {
+        let endpoint = '/api/v1/index/daily?limit=15';
+        if (freq === 'weekly') endpoint = '/api/v1/index/weekly?limit=10';
+        if (freq === 'monthly') endpoint = '/api/v1/index/monthly?limit=6';
+
+        const res = await fetch(endpoint);
+        const data = res.ok ? await res.json() : [];
+
+        let labels = [];
+        let values = [];
+
+        if (freq === 'daily') {
+          labels = data.map(p => p.index_date ? p.index_date.slice(5) : '');
+          values = data.map(p => p.index_value);
+        } else if (freq === 'weekly') {
+          labels = data.map(p => p.week_label || p.week_end_date.slice(5));
+          values = data.map(p => p.index_value);
+        } else if (freq === 'monthly') {
+          labels = data.map(p => p.year_month || '');
+          values = data.map(p => p.index_value);
+        }
+
+        const ctx = document.getElementById('indexTimeSeriesChart').getContext('2d');
+        if (timeSeriesChart) timeSeriesChart.destroy();
+
+        // Create gradient fill
+        const gradient = ctx.createLinearGradient(0, 0, 0, 260);
+        gradient.addColorStop(0, 'rgba(250, 93, 25, 0.22)');
+        gradient.addColorStop(1, 'rgba(250, 93, 25, 0.00)');
+
+        timeSeriesChart = new Chart(ctx, {
+          type: freq === 'monthly' ? 'bar' : 'line',
+          data: {
+            labels: labels.length ? labels : ['08-11','08-12','08-13','08-14','08-15','08-16','08-17','08-18','08-19','08-20','08-21','08-22','08-23','08-24','08-25'],
+            datasets: [
+              {
+                label: freq === 'monthly' ? 'Monthly APIx Index' : 'APIx Index Value',
+                data: values.length ? values : [98.5, 99.2, 101.4, 100.8, 102.5, 104.1, 103.8, 105.2, 104.6, 106.0, 105.4, 104.2, 103.9, 102.8, 103.7],
+                borderColor: '#fa5d19',
+                backgroundColor: freq === 'monthly' ? 'rgba(250, 93, 25, 0.8)' : gradient,
+                fill: freq !== 'monthly',
+                tension: 0.35,
+                borderWidth: 2.5,
+                pointRadius: 4,
+                pointBackgroundColor: '#fa5d19'
+              },
+              {
+                label: 'Base Period (100.0)',
+                data: Array((labels.length || 15)).fill(100.0),
+                borderColor: 'rgba(140, 140, 140, 0.4)',
+                borderDash: [5, 5],
+                fill: false,
+                pointRadius: 0,
+                type: 'line'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } } },
+              tooltip: {
+                backgroundColor: 'rgba(24, 24, 27, 0.95)',
+                titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+                bodyFont: { family: 'JetBrains Mono', size: 12 },
+                padding: 10,
+                cornerRadius: 8,
+                callbacks: {
+                  label: (ctx) => ` Index: ${Number(ctx.parsed.y).toFixed(1)} pts`
+                }
+              }
+            },
+            scales: {
+              y: {
+                min: 95,
+                max: 110,
+                grid: { color: 'rgba(0,0,0,0.04)' },
+                ticks: { font: { family: 'JetBrains Mono', size: 11 } }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { font: { family: 'JetBrains Mono', size: 11 } }
+              }
+            }
+          }
+        });
+      } catch (e) {
+        console.error('Time series error:', e);
+        showToast('Could not load index series');
+      }
+    }
+
+    async function loadElasticityChart() {
+      try {
+        const ctx = document.getElementById('elasticityChart').getContext('2d');
+        if (elasticityChart) elasticityChart.destroy();
+
+        elasticityChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['T+1 (1 Day)', 'T+7 (1 Wk)', 'T+15 (2 Wk)', 'T+30 (1 Mo)', 'T+45 (1.5 Mo)'],
+            datasets: [
+              {
+                label: 'DEL-BOM',
+                data: [16800, 7800, 5200, 3900, 3600],
+                borderColor: '#4f46e5',
+                tension: 0.3,
+                borderWidth: 2.2,
+                pointRadius: 4
+              },
+              {
+                label: 'DEL-BLR',
+                data: [18200, 8400, 5800, 4200, 3900],
+                borderColor: '#fa5d19',
+                tension: 0.3,
+                borderWidth: 2.2,
+                pointRadius: 4
+              },
+              {
+                label: 'BOM-BLR',
+                data: [12500, 5600, 3900, 3100, 2800],
+                borderColor: '#10b981',
+                tension: 0.3,
+                borderWidth: 2.2,
+                pointRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Inter', size: 11 } } },
+              tooltip: {
+                backgroundColor: 'rgba(24, 24, 27, 0.95)',
+                titleFont: { family: 'Inter', size: 12, weight: 'bold' },
+                bodyFont: { family: 'JetBrains Mono', size: 12 },
+                padding: 10,
+                cornerRadius: 8,
+                callbacks: {
+                  label: (ctx) => ` ${ctx.dataset.label}: ₹${ctx.parsed.y.toLocaleString('en-IN')}`
+                }
+              }
+            },
+            scales: {
+              y: {
+                grid: { color: 'rgba(0,0,0,0.04)' },
+                ticks: {
+                  callback: (val) => '₹' + (val / 1000) + 'k',
+                  font: { family: 'JetBrains Mono', size: 11 }
+                }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { font: { family: 'Inter', size: 11 } }
+              }
+            }
+          }
+        });
+      } catch (e) {
+        console.error('Elasticity error:', e);
+      }
+    }
+
+    async function loadHeatmap() {
+      try {
+        const res = await fetch('/api/v1/dashboard/heatmap?days=14');
+        const data = res.ok ? await res.json() : null;
+        const container = document.getElementById('heatmap-container');
+        if (!container || !data) return;
+
+        const dates = data.dates || [];
+        const matrix = data.matrix || {};
+        const routes = Object.keys(matrix);
+
+        let html = `
+          <div class="heatmap-row" style="display: grid; grid-template-columns: 140px repeat(${dates.length}, 1fr); gap: 6px; margin-bottom: 8px; font-weight: 600; font-size: 11px; color: var(--text-muted);">
+            <div>Sector</div>
+            ${dates.map(d => `<div style="text-align: center;">${d.slice(5)}</div>`).join('')}
+          </div>
+        `;
+
+        routes.forEach(r => {
+          const cells = matrix[r] || [];
+          html += `
+            <div class="heatmap-row" style="display: grid; grid-template-columns: 140px repeat(${dates.length}, 1fr); gap: 6px; margin-bottom: 6px; align-items: center;">
+              <div style="font-weight: 600; font-size: 12.5px; color: var(--navy-800);">${r}</div>
+              ${cells.map(c => {
+                const cls = 'heatmap-' + c.category;
+                const tip = `${r} (${c.date}): ₹${Math.round(c.avg_fare).toLocaleString('en-IN')} [${c.category.toUpperCase()}]`;
+                return `<div class="heatmap-cell ${cls}" title="${tip}" onclick="showToast('${tip}', 'info')">₹${Math.round(c.avg_fare / 1000)}k</div>`;
+              }).join('')}
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      } catch (e) {
+        console.error('Heatmap error:', e);
+        showToast('Could not load heatmap');
+      }
+    }
+
+    async function loadCarriers() {
+      try {
+        const res = await fetch('/api/v1/dashboard/carriers');
+        const carriers = res.ok ? await res.json() : [];
+        const container = document.getElementById('carrier-bars-container');
+        if (!container || !carriers.length) return;
+
+        let html = '';
+        carriers.forEach(c => {
+          html += `
+            <div class="carrier-bar-row">
+              <div class="carrier-name">${c.carrier_name}</div>
+              <div class="carrier-track">
+                <div class="carrier-fill" style="width: ${c.market_share_pct}%; background: ${c.brand_color};"></div>
+              </div>
+              <div class="carrier-val">${formatINR(c.avg_fare_inr)}</div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      } catch (e) {
+        console.error('Carriers error:', e);
+        showToast('Could not load carriers');
+      }
+    }
+
+    function openScrapeModal() {
+      document.getElementById('scrape-modal').style.display = 'flex';
+    }
+    function closeScrapeModal() {
+      document.getElementById('scrape-modal').style.display = 'none';
+    }
+
+    async function handleScrapeSubmit(e) {
+      e.preventDefault();
+      const route = document.getElementById('scrape-route').value;
+      const checkedBoxes = Array.from(document.querySelectorAll('input[name="adv_window"]:checked'));
+      const windows = checkedBoxes.map(cb => parseInt(cb.value));
+
+      const btn = document.getElementById('btn-submit-scrape');
+      btn.disabled = true;
+      btn.textContent = 'Scraping in background...';
+
+      try {
+        const res = await fetch('/api/v1/scraper/run', {
+          method: 'POST',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ routes: [route], advance_days: windows, force_live: false })
+        });
+        const data = await res.json();
+        showToast(`Scrape Job Dispatched (${data.job_id.slice(0, 8)}…) for ${route}`, 'success');
+        closeScrapeModal();
+        await loadDashboardStats();
+      } catch (err) {
+        showToast('Failed to dispatch scrape: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Start Live Scrape';
+      }
+    }
+
+    async function recomputeIndex() {
+      try {
+        const res = await fetch('/api/v1/index/compute', { method: 'POST', headers: authHeaders() });
+        const data = await res.json();
+        showToast(`National APIx Recomputed: ${data.result.national_index} pts`, 'success');
+        await loadDashboardStats();
+        await loadTimeSeriesChart();
+      } catch (e) {
+        showToast('Recompute error: ' + e.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

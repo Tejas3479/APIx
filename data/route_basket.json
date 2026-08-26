@@ -1,0 +1,82 @@
+[
+  {
+    "id": "DEL-BOM",
+    "origin_iata": "DEL",
+    "origin_city": "New Delhi",
+    "destination_iata": "BOM",
+    "destination_city": "Mumbai",
+    "dgca_weight": 0.22,
+    "daily_flights": 110,
+    "is_active": true
+  },
+  {
+    "id": "DEL-BLR",
+    "origin_iata": "DEL",
+    "origin_city": "New Delhi",
+    "destination_iata": "BLR",
+    "destination_city": "Bengaluru",
+    "dgca_weight": 0.18,
+    "daily_flights": 85,
+    "is_active": true
+  },
+  {
+    "id": "BOM-BLR",
+    "origin_iata": "BOM",
+    "origin_city": "Mumbai",
+    "destination_iata": "BLR",
+    "destination_city": "Bengaluru",
+    "dgca_weight": 0.14,
+    "daily_flights": 65,
+    "is_active": true
+  },
+  {
+    "id": "DEL-CCU",
+    "origin_iata": "DEL",
+    "origin_city": "New Delhi",
+    "destination_iata": "CCU",
+    "destination_city": "Kolkata",
+    "dgca_weight": 0.12,
+    "daily_flights": 50,
+    "is_active": true
+  },
+  {
+    "id": "BLR-HYD",
+    "origin_iata": "BLR",
+    "origin_city": "Bengaluru",
+    "destination_iata": "HYD",
+    "destination_city": "Hyderabad",
+    "dgca_weight": 0.10,
+    "daily_flights": 45,
+    "is_active": true
+  },
+  {
+    "id": "DEL-HYD",
+    "origin_iata": "DEL",
+    "origin_city": "New Delhi",
+    "destination_iata": "HYD",
+    "destination_city": "Hyderabad",
+    "dgca_weight": 0.09,
+    "daily_flights": 40,
+    "is_active": true
+  },
+  {
+    "id": "MAA-DEL",
+    "origin_iata": "MAA",
+    "origin_city": "Chennai",
+    "destination_iata": "DEL",
+    "destination_city": "New Delhi",
+    "dgca_weight": 0.08,
+    "daily_flights": 35,
+    "is_active": true
+  },
+  {
+    "id": "BOM-GOI",
+    "origin_iata": "BOM",
+    "origin_city": "Mumbai",
+    "destination_iata": "GOI",
+    "destination_city": "Goa",
+    "dgca_weight": 0.07,
+    "daily_flights": 30,
+    "is_active": true
+  }
+]

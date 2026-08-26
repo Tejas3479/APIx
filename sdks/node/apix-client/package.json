@@ -1,0 +1,21 @@
+{
+  "name": "apix-client",
+  "version": "1.0.0",
+  "description": "Official Node.js client for the APIx Real-Time Airfare Price Index & Analytics Engine",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["apix", "airfare", "cpi", "index", "scraper", "api", "client"],
+  "author": "APIx Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0"
+  }
+}

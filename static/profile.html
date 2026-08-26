@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APIx — Institutional Analyst Profile &amp; Settings</title>
+  <meta name="description" content="Signed-in statistical analyst profile, API tokens for programmatic RBI/MoSPI pipelines, and econometric compilation preferences.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/base.css">
+  <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
+  <style>
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 860px) {
+      .profile-grid { grid-template-columns: 1fr; }
+    }
+    .profile-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-loud);
+      box-shadow: var(--shadow-sm);
+      padding: 26px 24px;
+      text-align: center;
+    }
+    .avatar {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fa5d19, #ff8a5c);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      box-shadow: 0 4px 16px rgba(250, 93, 25, 0.35);
+    }
+    .profile-name { font-size: 19px; font-weight: 700; color: var(--navy-900); }
+    .profile-role { font-size: 12.5px; color: var(--primary); font-weight: 600; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .profile-dept { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+
+    .info-list { margin: 22px 0 0; padding: 0; list-style: none; text-align: left; border-top: 1px solid var(--border-subtle); }
+    .info-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 2px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 13px;
+    }
+    .info-key { color: var(--text-muted); font-weight: 500; }
+    .info-val { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--navy-900); }
+
+    .settings-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-loud);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .settings-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+    }
+    .settings-head h2 { font-size: 16px; font-weight: 700; color: var(--navy-900); margin: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar" style="background: rgba(10, 10, 10, 0.92); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); position: sticky; top: 0; z-index: 100;">
+    <div style="max-width: 1240px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; width: 100%;">
+      <a href="/" class="nav-brand" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+        <span style="font-weight: 900; font-size: 22px; color: var(--primary); letter-spacing: -0.04em;">APIx</span>
+        <span class="badge" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.16); font-size: 11px;">Analyst Profile</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/dashboard" class="nav-link">Index Dashboard</a>
+        <a href="/benchmark" class="nav-link">Route Discovery</a>
+        <a href="/routes" class="nav-link">Route Basket</a>
+        <a href="/scraper" class="nav-link">Scraper Telemetry</a>
+      </nav>
+
+      <div class="nav-right" style="display: flex; align-items: center; gap: 10px;">
+        <button onclick="logout()" class="btn-secondary" style="font-size: 12px; padding: 5px 12px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+          Sign Out
+        </button>
+        <button class="btn-theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width: 1180px; margin: 30px auto; padding: 0 20px;">
+    
+    <div class="profile-grid">
+      <!-- Profile Card -->
+      <div class="profile-card">
+        <div class="avatar" id="profAvatar">SM</div>
+        <div class="profile-name" id="profName">Dr. S. K. Mukherjee</div>
+        <div class="profile-role" id="profRole">Senior Statistical Officer</div>
+        <div class="profile-dept" id="profDept">National Statistical Office (Price Statistics)</div>
+
+        <ul class="info-list">
+          <li>
+            <span class="info-key">Official Email</span>
+            <span class="info-val" id="profEmail">sk.mukherjee@mospi.gov.in</span>
+          </li>
+          <li>
+            <span class="info-key">Authority Level</span>
+            <span class="info-val" style="color: #10b981;">Level 1 (Full Index Access)</span>
+          </li>
+          <li>
+            <span class="info-key">Active Session</span>
+            <span class="info-val">JWT HS256 Verified</span>
+          </li>
+          <li>
+            <span class="info-key">Organization</span>
+            <span class="info-val">Government of India</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Settings & API Access -->
+      <div>
+        <!-- API Access Tokens Card -->
+        <div class="settings-card">
+          <div class="settings-head">
+            <h2>Programmatic API Access &amp; Pipeline Token</h2>
+            <span class="badge" style="background: rgba(79, 70, 229, 0.1); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25);">Active</span>
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+            Use this bearer token to query the APIx Index and Route Discovery endpoints directly from automated Python/R macroeconomic pipelines (e.g. RBI MPC nowcasting models).
+          </p>
+          <div style="display: flex; gap: 8px; align-items: center; background: var(--surface-raised); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;">
+            <input type="text" id="apiTokenInput" readonly value="apix-demo-acac02b69b00fb4ce7bfbe1d" style="flex:1; background:transparent; border:none; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--navy-900); outline:none;">
+            <button onclick="copyToken()" class="btn-secondary" style="font-size: 11px; padding: 4px 10px;">Copy</button>
+          </div>
+        </div>
+
+        <!-- Econometric Methodology Preferences -->
+        <div class="settings-card">
+          <div class="settings-head">
+            <h2>Econometric Methodology Settings</h2>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25);">CPI 2024=100 Aligned</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div>
+              <label style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 4px;">Index Aggregation Standard</label>
+              <select class="form-input" style="width: 100%; padding: 8px 12px;">
+                <option value="geks" selected>Multilateral GEKS-Törnqvist (Eurostat/IMF)</option>
+                <option value="jevons">Jevons Elementary Geometric Mean</option>
+                <option value="dutot">Dutot Arithmetic Ratio</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 4px;">Base Reference Date</label>
+              <input type="date" value="2026-08-01" class="form-input" style="width: 100%; padding: 8px 12px;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const officerStr = localStorage.getItem('apix_officer');
+      if (officerStr) {
+        try {
+          const off = JSON.parse(officerStr);
+          document.getElementById('profName').textContent = off.name || 'Dr. S. K. Mukherjee';
+          document.getElementById('profRole').textContent = off.role || 'Senior Statistical Officer';
+          document.getElementById('profDept').textContent = off.dept || 'National Statistical Office (Price Statistics)';
+          document.getElementById('profEmail').textContent = off.email || 'sk.mukherjee@mospi.gov.in';
+          const initials = (off.name || 'SM').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+          document.getElementById('profAvatar').textContent = initials;
+        } catch (e) {}
+      }
+    });
+
+    function copyToken() {
+      const input = document.getElementById('apiTokenInput');
+      copyToClipboard(input.value, 'Bearer token copied to clipboard!');
+    }
+
+    function logout() {
+      localStorage.removeItem('apix_token');
+      localStorage.removeItem('apix_officer');
+      showToast('Session logged out', 'info');
+      setTimeout(() => window.location.href = '/', 400);
+    }
+  </script>
+</body>
+</html>

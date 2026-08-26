@@ -1,0 +1,24 @@
+services:
+  apix-api:
+    build: .
+    container_name: apix-api
+    ports:
+      - "8001:8000"
+    environment:
+      - PORT=8000
+      - DEMO_MODE=true
+      - DATABASE_URL=sqlite+aiosqlite:///data/apix.db
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET_KEY=apix-production-secret-key-32-chars-long-min
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: apix-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
