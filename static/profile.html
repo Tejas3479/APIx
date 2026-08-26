@@ -237,6 +237,10 @@
     .form-input-pro:focus {
       border-color: var(--heat-100);
     }
+
+    @media (max-width: 500px) {
+      .prefs-form-grid { grid-template-columns: 1fr !important; }
+    }
   </style>
 </head>
 <body>
@@ -371,22 +375,27 @@
             </div>
             <span class="badge badge-success" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">CPI 2024=100 ALIGNED</span>
           </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="prefs-form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
             <div>
-              <label style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px; font-family: 'Outfit', sans-serif;">Index Aggregation Standard</label>
-              <select class="form-input-pro" style="width: 100%; padding: 10px 14px;">
+              <label for="indexStandard" style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px; font-family: 'Outfit', sans-serif;">Index Aggregation Standard</label>
+              <select id="indexStandard" class="form-input-pro" style="width: 100%; padding: 10px 14px;">
                 <option value="geks" selected>Multilateral GEKS-Törnqvist (Eurostat/IMF)</option>
                 <option value="jevons">Jevons Elementary Geometric Mean</option>
                 <option value="dutot">Dutot Arithmetic Ratio</option>
               </select>
             </div>
             <div>
-              <label style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px; font-family: 'Outfit', sans-serif;">Base Reference Date</label>
-              <input type="date" value="2026-08-01" class="form-input-pro" style="width: 100%; padding: 9px 14px;">
+              <label for="baseDate" style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px; font-family: 'Outfit', sans-serif;">Base Reference Date</label>
+              <input id="baseDate" type="date" value="2026-08-01" class="form-input-pro" style="width: 100%; padding: 9px 14px;">
             </div>
           </div>
           <div style="margin-top: 18px; display: flex; justify-content: flex-end;">
-            <button onclick="showToast('Methodology preferences saved', 'success')" class="btn-dash btn-dash-primary">
+            <button onclick="(() => { 
+  const method = document.querySelector('select').value;
+  const baseDate = document.querySelector('input[type=date]').value;
+  localStorage.setItem('apix_prefs', JSON.stringify({ method, baseDate }));
+  showToast('Methodology preferences saved', 'success');
+})()" class="btn-dash btn-dash-primary">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Save Preferences
             </button>
           </div>
@@ -422,6 +431,14 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      const tokenInput = document.getElementById('apiTokenInput');
+      const storedToken = localStorage.getItem('apix_token');
+      if (tokenInput && storedToken) tokenInput.value = storedToken;
+
+      const prefs = JSON.parse(localStorage.getItem('apix_prefs') || '{}');
+      if (prefs.method) document.querySelector('select').value = prefs.method;
+      if (prefs.baseDate) document.querySelector('input[type=date]').value = prefs.baseDate;
+
       const officerStr = localStorage.getItem('apix_officer');
       if (officerStr) {
         try {
@@ -432,6 +449,9 @@
           if (document.getElementById('profEmail')) document.getElementById('profEmail').textContent = off.email || 'sk.mukherjee@mospi.gov.in';
           const initials = (off.name || 'SM').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
           if (document.getElementById('profAvatar')) document.getElementById('profAvatar').textContent = initials;
+          
+          const badgeNameEl = document.querySelector('#officerBadge span:last-child');
+          if (badgeNameEl && off.name) badgeNameEl.textContent = off.name + (off.dept ? ` (${off.dept})` : '');
         } catch (e) {}
       }
     });

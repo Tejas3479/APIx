@@ -22,7 +22,7 @@
  * orange accent (#fa5d19) used sparingly, and alpha ramps for hovers/surfaces.
  */
 /* Google Fonts Inter & JetBrains Mono */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 :root {
   --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -99,10 +99,6 @@
   --border-muted: #e8e8e8;
   --border-loud: #e6e6e6;
 
-  --primary: #fa5d19;
-  --primary-hover: #e2530f;
-  --primary-light: #fff1ea;
-
   --success: #16a34a;
   --success-bg: #dcfce7;
   --danger: #dc2626;
@@ -137,7 +133,6 @@
   --shadow-glow-tier2: 0 0 20px -5px rgba(109, 40, 217, 0.3);
   --shadow-glow-tier3: 0 0 20px -5px rgba(180, 83, 9, 0.3);
   --shadow-glow-tier4: 0 0 20px -5px rgba(185, 28, 28, 0.3);
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-spring: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -326,14 +321,6 @@
 }
 .officer-pill:hover {
   background: rgba(255, 255, 255, 0.12);
-}
-.pulse-live {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
-  animation: apix-blink 1.8s steps(1) infinite;
 }
 
 /* ── Page & Component Entrance Animations ── */
@@ -633,6 +620,8 @@ html.js .reveal.revealed { opacity: 1; transform: none; }
 }
 
 /* Dark mode support (Firecrawl dark: near-black surfaces, inverted alpha ramps) */
+/* Note: Dark mode tokens are intentionally duplicated below.
+ * The media query handles system preference while html.dark handles manual toggle. */
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0a0a0a;

@@ -212,7 +212,7 @@
       border: 1px solid var(--border-loud);
       border-radius: 16px;
       box-shadow: var(--shadow-sm);
-      overflow: hidden;
+      overflow-x: auto;
       margin-bottom: 30px;
     }
     .basket-row-pro {
@@ -344,7 +344,7 @@
           Domestic Airfare <span>Route Basket & Weights</span>
         </h1>
         <p class="routes-desc">
-          Configure official high-density domestic city-pairs and passenger volume weights ($w_r$) used for National APIx index compilation and monetary policy nowcasting.
+          Configure official high-density domestic city-pairs and passenger volume weights (w<sub>r</sub>) used for National APIx index compilation and monetary policy nowcasting.
         </p>
       </div>
 
@@ -361,7 +361,7 @@
     <!-- Weight & Traffic Summary Grid -->
     <div class="stat-grid-pro">
       <div class="stat-card-pro">
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Total Passenger Weight ($\sum w_r$)</div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Total Passenger Weight (Σw<sub>r</sub>)</div>
         <div style="font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 800; color: var(--navy-900); margin: 6px 0 2px;" id="totalWeightVal">1.000 (100.0%)</div>
         <div style="font-size: 11.5px; color: #10b981; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mathematically Exact Unity
@@ -397,7 +397,7 @@
         <div class="weight-stack-seg" style="width: 4.5%; background: #06b6d4;" title="MAA-DEL (4.5%)"></div>
         <div class="weight-stack-seg" style="width: 2.5%; background: #64748b;" title="BOM-GOI (2.5%)"></div>
       </div>
-      <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
         <span>DEL-BOM (28.5%)</span>
         <span>DEL-BLR (22.0%)</span>
         <span>BOM-BLR (16.5%)</span>
@@ -424,40 +424,40 @@
   </main>
 
   <!-- Add Route Modal -->
-  <div id="add-modal" class="modal-backdrop-pro">
+  <div id="add-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="add-modal-title">
     <div class="modal-content-pro">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-loud); padding-bottom: 14px;">
-        <h3 style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin: 0; color: var(--navy-900);">Add New Sector to Index Basket</h3>
-        <button onclick="closeAddModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+        <h3 id="add-modal-title" style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin: 0; color: var(--navy-900);">Add New Sector to Index Basket</h3>
+        <button onclick="closeAddModal()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
       </div>
       <form id="add-route-form" onsubmit="handleAddRoute(event)">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
           <div>
-            <label style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Origin IATA</label>
+            <label for="add-orig-iata" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Origin IATA</label>
             <input type="text" id="add-orig-iata" required placeholder="e.g. PNQ" maxlength="3" style="width: 100%; padding: 10px 12px; text-transform: uppercase; border-radius: 8px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-weight: 700;">
           </div>
           <div>
-            <label style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Destination IATA</label>
+            <label for="add-dest-iata" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Destination IATA</label>
             <input type="text" id="add-dest-iata" required placeholder="e.g. DEL" maxlength="3" style="width: 100%; padding: 10px 12px; text-transform: uppercase; border-radius: 8px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-weight: 700;">
           </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
           <div>
-            <label style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Origin City</label>
+            <label for="add-orig-city" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Origin City</label>
             <input type="text" id="add-orig-city" required placeholder="e.g. Pune" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif;">
           </div>
           <div>
-            <label style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Destination City</label>
+            <label for="add-dest-city" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Destination City</label>
             <input type="text" id="add-dest-city" required placeholder="e.g. New Delhi" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif;">
           </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
           <div>
-            <label style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">DGCA Weight ($w_r$)</label>
+            <label for="add-weight" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">DGCA Weight (w<sub>r</sub>)</label>
             <input type="number" id="add-weight" required step="0.01" min="0.01" max="1.0" value="0.05" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace;">
           </div>
           <div>
-            <label style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Daily Flight Count</label>
+            <label for="add-flights" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Daily Flight Count</label>
             <input type="number" id="add-flights" required min="1" value="25" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace;">
           </div>
         </div>
@@ -482,56 +482,97 @@
       setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
     }
 
+    // fallback if app.js doesn't provide esc or escapeHtml
+    function escapeHtml(s) {
+      if (typeof window.esc === 'function') return window.esc(s);
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      // Dynamic officer name
+      const officer = JSON.parse(localStorage.getItem('apix_officer') || '{}');
+      const badgeNameEl = document.querySelector('#officerBadge span:last-child');
+      if (badgeNameEl && officer.name) {
+        badgeNameEl.textContent = officer.name + (officer.dept ? ` (${officer.dept})` : '');
+      }
+
       loadRouteBasket();
     });
 
     async function loadRouteBasket() {
       try {
-        const res = await fetch('/api/v1/routes');
-        if (!res.ok) return;
+        const res = await fetch('/api/v1/routes', {
+          headers: typeof authHeaders === 'function' ? authHeaders() : {}
+        });
+        if (!res.ok) {
+          showToast('Failed to load routes: ' + res.statusText, 'error');
+          return;
+        }
         currentRoutes = await res.json();
         renderBasketTable(currentRoutes);
       } catch (e) {
         console.error('Error loading routes:', e);
+        showToast('Error loading routes: ' + e.message, 'error');
       }
     }
 
     function renderBasketTable(routes) {
       document.getElementById('totalRoutesVal').textContent = routes.length + ' City-Pairs';
-      const sumWeight = routes.reduce((acc, r) => acc + r.dgca_weight, 0);
+      const sumWeight = routes.reduce((acc, r) => acc + (r.dgca_weight || 0), 0);
       document.getElementById('totalWeightVal').textContent = sumWeight.toFixed(3) + ' (' + (sumWeight * 100).toFixed(1) + '%)';
 
       const container = document.getElementById('basketTableBody');
       if (!routes || !routes.length) {
         container.innerHTML = '<div style="padding: 28px; text-align: center; color: var(--text-muted); font-family: \'Inter\', sans-serif;">No routes configured in basket.</div>';
-        return;
+      } else {
+        container.innerHTML = routes.map(r => `
+          <div class="basket-row-pro">
+            <div>
+              <strong style="font-family: 'JetBrains Mono', monospace; font-size: 14.5px; font-weight: 700; color: var(--navy-900);">${escapeHtml(r.id)}</strong>
+            </div>
+            <div>
+              <div style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--navy-900);">${escapeHtml(r.origin_city)} ⇄ ${escapeHtml(r.destination_city)}</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);">${escapeHtml(r.origin_iata)} ⇄ ${escapeHtml(r.destination_iata)}</div>
+            </div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--navy-800);">${r.daily_flights || 0} flights/day</div>
+            <div class="weight-meter-pro">
+              <div class="weight-track-pro">
+                <div class="weight-fill-pro" style="width: ${((r.dgca_weight || 0) * 100 * 3.2)}%;"></div>
+              </div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--heat-100); width: 45px; text-align: right;">${((r.dgca_weight || 0) * 100).toFixed(1)}%</span>
+            </div>
+            <div>
+              <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px;">ACTIVE</span>
+            </div>
+            <div>
+              <button onclick="surveyRouteDirect('${escapeHtml(r.id)}')" class="btn-dash btn-dash-secondary" style="font-size: 11px; padding: 4px 10px;">Survey ↗</button>
+            </div>
+          </div>
+        `).join('');
       }
 
-      container.innerHTML = routes.map(r => `
-        <div class="basket-row-pro">
-          <div>
-            <strong style="font-family: 'JetBrains Mono', monospace; font-size: 14.5px; font-weight: 700; color: var(--navy-900);">${r.id}</strong>
-          </div>
-          <div>
-            <div style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--navy-900);">${r.origin_city} ⇄ ${r.destination_city}</div>
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);">${r.origin_iata} ⇄ ${r.destination_iata}</div>
-          </div>
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--navy-800);">${r.daily_flights} flights/day</div>
-          <div class="weight-meter-pro">
-            <div class="weight-track-pro">
-              <div class="weight-fill-pro" style="width: ${(r.dgca_weight * 100 * 3.2)}%;"></div>
-            </div>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--heat-100); width: 45px; text-align: right;">${(r.dgca_weight * 100).toFixed(1)}%</span>
-          </div>
-          <div>
-            <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px;">ACTIVE</span>
-          </div>
-          <div>
-            <button onclick="surveyRouteDirect('${r.id}')" class="btn-dash btn-dash-secondary" style="font-size: 11px; padding: 4px 10px;">Survey ↗</button>
-          </div>
-        </div>
-      `).join('');
+      // Update dynamic weight stack bar
+      const barContainer = document.getElementById('weightStackBar');
+      const colors = ['#fa5d19', '#4f46e5', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b', '#94a3b8'];
+      if (barContainer) {
+        barContainer.innerHTML = routes.map((r, i) => {
+          const color = colors[i % colors.length];
+          const pct = ((r.dgca_weight || 0) * 100).toFixed(1);
+          return `<div class="weight-stack-seg" style="width: ${pct}%; background: ${color};" title="${escapeHtml(r.id)} (${pct}%)"></div>`;
+        }).join('');
+      }
+
+      // Update daily flights stat card
+      const totalFlights = routes.reduce((acc, r) => acc + (r.daily_flights || 0), 0);
+      const statCards = document.querySelectorAll('.stat-grid-pro .stat-card-pro');
+      if (statCards && statCards.length >= 3) {
+        const flightsEl = statCards[2].querySelector('div:nth-child(2)');
+        if (flightsEl) {
+          flightsEl.textContent = totalFlights + '+ Flights';
+        }
+      }
     }
 
     function surveyRouteDirect(routeId) {
@@ -561,7 +602,7 @@
       try {
         const res = await fetch('/api/v1/routes', {
           method: 'POST',
-          headers: authHeaders({ 'Content-Type': 'application/json' }),
+          headers: typeof authHeaders === 'function' ? authHeaders({ 'Content-Type': 'application/json' }) : { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error('Failed to create route');

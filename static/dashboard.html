@@ -484,7 +484,7 @@
           National Real-Time Airfare <span>Price Index</span>
         </h1>
         <p class="dash-desc">
-          Continuous multi-carrier digital fare sampling across 8 DGCA high-density domestic corridors ($T+1 \dots T+45$ booking horizons).
+          Continuous multi-carrier digital fare sampling across 8 DGCA high-density domestic corridors (T+1 … T+45 booking horizons).
         </p>
       </div>
 
@@ -575,7 +575,7 @@
           </div>
         </div>
         <div style="height: 300px; position: relative;">
-          <canvas id="indexTimeSeriesChart"></canvas>
+          <canvas id="indexTimeSeriesChart">Multi-frequency airfare index time series chart</canvas>
         </div>
       </div>
 
@@ -584,7 +584,7 @@
         <div class="card-header-pro">
           <div>
             <h2 class="card-title-pro">Lead-Time Yield Elasticity</h2>
-            <div class="card-subtitle-pro">Dynamic Fare by Booking Horizon ($T+1 \dots T+45$)</div>
+            <div class="card-subtitle-pro">Dynamic Fare by Booking Horizon (T+1 … T+45)</div>
           </div>
           <select id="elasticity-route-select" class="route-select-pro" onchange="updateElasticityChart(this.value)">
             <option value="DEL-BOM">DEL-BOM (Delhi ⇄ Mumbai)</option>
@@ -596,7 +596,7 @@
           </select>
         </div>
         <div style="height: 300px; position: relative;">
-          <canvas id="elasticityChart"></canvas>
+          <canvas id="elasticityChart">Lead-time yield elasticity curve chart</canvas>
         </div>
       </div>
 
@@ -712,6 +712,9 @@
             <option value="DEL-BLR">DEL-BLR (Delhi ⇄ Bangalore)</option>
             <option value="BOM-BLR">BOM-BLR (Mumbai ⇄ Bangalore)</option>
             <option value="DEL-CCU">DEL-CCU (Delhi ⇄ Kolkata)</option>
+            <option value="BLR-HYD">BLR-HYD (Bangalore ⇄ Hyderabad)</option>
+            <option value="DEL-HYD">DEL-HYD (Delhi ⇄ Hyderabad)</option>
+            <option value="MAA-DEL">MAA-DEL (Chennai ⇄ Delhi)</option>
           </select>
         </div>
 
@@ -727,7 +730,7 @@
       <div class="card-header-pro">
         <div>
           <h2 class="card-title-pro">Sector Inflation Contribution Breakdown</h2>
-          <div class="card-subtitle-pro">Route-level percentage point impact on headline airfare CPI (\Delta I_r \times w_r)</div>
+          <div class="card-subtitle-pro">Route-level percentage point impact on headline airfare CPI (ΔI<sub>r</sub> × w<sub>r</sub>)</div>
         </div>
         <span class="badge badge-accent" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">RBI Anchor</span>
       </div>
@@ -740,11 +743,11 @@
   </main>
 
   <!-- Modal: Trigger On-Demand Scrape -->
-  <div id="scrape-modal" class="modal-backdrop-pro">
+  <div id="scrape-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="scrape-modal-title">
     <div class="modal-content-pro">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-        <h3 style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin: 0; color: var(--navy-900);">Trigger On-Demand Flight Survey</h3>
-        <button onclick="closeScrapeModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+        <h3 id="scrape-modal-title" style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin: 0; color: var(--navy-900);">Trigger On-Demand Flight Survey</h3>
+        <button onclick="closeScrapeModal()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
       </div>
       <form id="scrape-form" onsubmit="handleScrapeSubmit(event)">
         <div style="margin-bottom: 16px;">
@@ -756,6 +759,8 @@
             <option value="DEL-CCU">DEL-CCU (New Delhi ⇄ Kolkata)</option>
             <option value="BLR-HYD">BLR-HYD (Bengaluru ⇄ Hyderabad)</option>
             <option value="BOM-GOI">BOM-GOI (Mumbai ⇄ Goa)</option>
+            <option value="DEL-HYD">DEL-HYD (New Delhi ⇄ Hyderabad)</option>
+            <option value="MAA-DEL">MAA-DEL (Chennai ⇄ New Delhi)</option>
           </select>
         </div>
         <div style="margin-bottom: 16px;">
@@ -777,14 +782,14 @@
   </div>
 
   <!-- Modal: Official NSO Bulletin Preview -->
-  <div id="bulletin-modal" class="modal-backdrop-pro">
+  <div id="bulletin-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="bulletin-modal-title">
     <div class="modal-content-pro" style="max-width: 720px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-loud); padding-bottom: 14px;">
         <div>
           <span class="badge badge-accent" style="font-size: 10.5px;">Statutory Release</span>
-          <h3 style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin: 4px 0 0; color: var(--navy-900);">MoSPI Monthly Statistical Bulletin</h3>
+          <h3 id="bulletin-modal-title" style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin: 4px 0 0; color: var(--navy-900);">MoSPI Monthly Statistical Bulletin</h3>
         </div>
-        <button onclick="closeBulletinModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+        <button onclick="closeBulletinModal()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
       </div>
       <div id="bulletin-body" style="font-size: 13px; line-height: 1.6; color: var(--navy-800);">
         <p>Loading official statistical bulletin...</p>
@@ -797,7 +802,7 @@
   </div>
 
   <!-- Modal: AI Macro Diagnostic -->
-  <div id="ai-modal" class="modal-backdrop-pro">
+  <div id="ai-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title">
     <div class="modal-content-pro" style="max-width: 680px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-loud); padding-bottom: 14px;">
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -805,11 +810,11 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </div>
           <div>
-            <h3 style="font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 800; margin: 0; color: var(--navy-900);">AI Macroeconomic Inflation Diagnostic</h3>
+            <h3 id="ai-modal-title" style="font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 800; margin: 0; color: var(--navy-900);">AI Macroeconomic Inflation Diagnostic</h3>
             <div style="font-size: 11.5px; color: var(--text-muted);">Gemini Econometric Reasoning on ATF Pass-Through & Corridor Elasticity</div>
           </div>
         </div>
-        <button onclick="closeAiModal()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+        <button onclick="closeAiModal()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
       </div>
       <div id="ai-modal-body" style="font-size: 13.5px; line-height: 1.65; color: var(--navy-900);">
         <p>Analyzing route volatility and jet fuel dynamics...</p>
@@ -821,7 +826,7 @@
   </div>
 
   <!-- Modal: Heatmap Corridor Deep-Dive -->
-  <div id="heatmap-drilldown-modal" class="modal-backdrop-pro">
+  <div id="heatmap-drilldown-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="drilldown-title">
     <div class="modal-content-pro" style="max-width: 620px;">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
         <div>
@@ -831,7 +836,7 @@
           </div>
           <div id="drilldown-subtitle" style="font-size: 12px; color: var(--text-muted); margin-top: 4px; font-family: 'JetBrains Mono', monospace;">Departure Date: 2026-08-26 · Real-Time Sector Diagnostics</div>
         </div>
-        <button onclick="closeHeatmapDrilldown()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+        <button onclick="closeHeatmapDrilldown()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
       </div>
 
       <div id="drilldown-body">
@@ -863,6 +868,11 @@
     let currentFrequency = 'daily';
 
     document.addEventListener('DOMContentLoaded', async () => {
+      // Hydrate officer name from session
+      const officer = JSON.parse(localStorage.getItem('apix_officer') || '{}');
+      const badgeNameEl = document.querySelector('#officerBadge span:last-child');
+      if (badgeNameEl && officer.name) badgeNameEl.textContent = officer.name + (officer.dept ? ` (${officer.dept})` : '');
+
       await ensureAuth();
       await loadDashboardStats();
       await loadTimeSeriesChart('daily');
@@ -1287,7 +1297,10 @@
               return `
                 <div class="heatmap-cell heatmap-cell-pro ${cls}" 
                      title="${tip}" 
-                     onclick="openHeatmapDrilldown('${r}', '${c.date}', ${c.avg_fare}, ${c.min_fare}, ${c.max_fare}, '${lvl}')">
+                     tabindex="0"
+                     role="button"
+                     onclick="openHeatmapDrilldown('${r}', '${c.date}', ${c.avg_fare}, ${c.min_fare}, ${c.max_fare}, '${lvl}')"
+                     onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }">
                   ${displayVal}
                 </div>
               `;

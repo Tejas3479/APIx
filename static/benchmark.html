@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/base.css">
-  <script src="/chart.umd.min.js"></script>
+
   <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
   <style>
     /* Toast Notifications */
@@ -307,12 +307,33 @@
       padding: 14px 18px;
       border-bottom: 1px solid var(--border-subtle);
       transition: background 0.15s ease;
+      min-width: 660px;
     }
     .quote-row-pro:hover {
       background: var(--surface-raised);
     }
     .quote-row-pro:last-child {
       border-bottom: none;
+    }
+    .quotes-scroll-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Responsive: Search Form + Quotes Table */
+    @media (max-width: 768px) {
+      .search-form-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+      }
+      .search-form-grid .form-group:last-child {
+        grid-column: 1 / -1;
+      }
+    }
+    @media (max-width: 480px) {
+      .search-form-grid {
+        grid-template-columns: 1fr !important;
+      }
     }
 
     /* Button Cluster */
@@ -426,7 +447,7 @@
           Route Airfare Search & <span>Statutory Decomposition</span>
         </h1>
         <p class="bench-desc">
-          Execute on-demand multi-carrier surveys, inspect advance lead-time elasticity curves ($T+1 \dots T+45$), and decompose pure air travel tariffs from airport levies (UDF, ASF, GST).
+          Execute on-demand multi-carrier surveys, inspect advance lead-time elasticity curves (T+1 … T+45), and decompose pure air travel tariffs from airport levies (UDF, ASF, GST).
         </p>
       </div>
 
@@ -442,7 +463,7 @@
 
     <!-- Search Form Card -->
     <div class="search-card-pro">
-      <div style="display: grid; grid-template-columns: 1.5fr 1.5fr 1.2fr 1fr auto; gap: 16px; align-items: flex-end;">
+      <div class="search-form-grid" style="display: grid; grid-template-columns: 1.5fr 1.5fr 1.2fr 1fr auto; gap: 16px; align-items: flex-end;">
         <div>
           <label class="form-label-pro">Origin City / IATA</label>
           <select id="originSelect" class="select-pro">
@@ -608,7 +629,7 @@
             </div>
             <div class="decomp-box-pro">
               <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">ASF Security Fee</div>
-              <div style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #10b981; margin-top: 2px;">₹200</div>
+              <div id="lblAsfVal" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #10b981; margin-top: 2px;">₹200</div>
               <div style="font-size: 10.5px; color: var(--text-muted);">MoCA Fixed Charge</div>
             </div>
             <div class="decomp-box-pro">
@@ -755,15 +776,17 @@
       document.getElementById('lblBaseVal').textContent = '₹' + rep.base_fare.toLocaleString('en-IN');
       document.getElementById('lblFuelVal').textContent = '₹' + rep.fuel_surcharge.toLocaleString('en-IN');
       document.getElementById('lblUdfVal').textContent = '₹' + rep.udf.toLocaleString('en-IN');
+      document.getElementById('lblAsfVal').textContent = '₹' + rep.asf.toLocaleString('en-IN');
       document.getElementById('lblGstVal').textContent = '₹' + rep.gst.toLocaleString('en-IN');
       document.getElementById('lblFeeVal').textContent = '₹' + rep.convenience_fee.toLocaleString('en-IN');
 
       // Carrier quotes table
       const rows = quotes.map(q => {
-        const carrierBadge = q.carrier_code === '6E' ? '<span class="carrier-pill carrier-indigo">IndiGo</span>' :
-                            (q.carrier_code === 'AI' ? '<span class="carrier-pill carrier-airindia">Air India</span>' :
-                            (q.carrier_code === 'QP' ? '<span class="carrier-pill carrier-akasa">Akasa Air</span>' :
-                            '<span class="carrier-pill carrier-spicejet">SpiceJet</span>'));
+        const carrierBadge = q.carrier_code === '6E' ? '<span class="badge-status badge-carrier-6e" style="border: 1px solid;">IndiGo</span>' :
+                            (q.carrier_code === 'AI' ? '<span class="badge-status badge-carrier-ai" style="border: 1px solid;">Air India</span>' :
+                            (q.carrier_code === 'QP' ? '<span class="badge-status badge-carrier-qp" style="border: 1px solid;">Akasa Air</span>' :
+                            (q.carrier_code === 'SG' ? '<span class="badge-status badge-carrier-sg" style="border: 1px solid;">SpiceJet</span>' :
+                            `<span class="badge-status" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1;">${q.carrier_code || 'Other'}</span>`)));
 
         return `
           <div class="quote-row-pro">
