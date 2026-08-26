@@ -82,6 +82,62 @@
       transform: translateY(-1px);
     }
 
+    /* ── Ambient Background Mesh Gradient Orbs ── */
+    .ambient-mesh {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(110px);
+      -webkit-filter: blur(110px);
+      opacity: 0.06;
+      will-change: transform;
+    }
+    html.dark .ambient-orb {
+      opacity: 0.14;
+    }
+    .orb-1 {
+      width: 52vw;
+      height: 52vw;
+      background: radial-gradient(circle, #fa5d19 0%, rgba(250, 93, 25, 0) 70%);
+      top: -12%;
+      left: -10%;
+      animation: ambient-float-1 28s ease-in-out infinite alternate;
+    }
+    .orb-2 {
+      width: 42vw;
+      height: 42vw;
+      background: radial-gradient(circle, #4f46e5 0%, rgba(79, 70, 229, 0) 70%);
+      bottom: 2%;
+      right: -12%;
+      animation: ambient-float-2 24s ease-in-out infinite alternate;
+    }
+    .orb-3 {
+      width: 36vw;
+      height: 36vw;
+      background: radial-gradient(circle, #10b981 0%, rgba(16, 185, 129, 0) 70%);
+      top: 38%;
+      right: 22%;
+      animation: ambient-float-3 32s ease-in-out infinite alternate;
+    }
+    @keyframes ambient-float-1 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 40px) scale(1.08); }
+    }
+    @keyframes ambient-float-2 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-45px, -55px) scale(1.12); }
+    }
+    @keyframes ambient-float-3 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-35px, 45px) scale(0.96); }
+    }
+
     /* Executive Hero Header */
     .dash-hero {
       margin-bottom: 28px;
@@ -108,6 +164,23 @@
       color: var(--navy-700);
       margin-bottom: 12px;
       box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-pill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+      transform: skewX(-20deg);
+      animation: pill-shimmer 6s ease-in-out infinite;
+    }
+    @keyframes pill-shimmer {
+      0%, 75% { left: -100%; }
+      100% { left: 220%; }
     }
     .hero-pill .dot {
       width: 7px;
@@ -126,7 +199,20 @@
       margin: 0;
       line-height: 1.15;
     }
-    .dash-title span { color: var(--heat-100); }
+    .dash-title .gradient-text {
+      background: linear-gradient(120deg, #fa5d19 0%, #f59e0b 50%, #fa5d19 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shine-gradient 5s ease-in-out infinite;
+      display: inline-block;
+    }
+    @keyframes shine-gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
     .dash-desc {
       font-size: 14.5px;
       color: var(--text-muted);
@@ -152,17 +238,38 @@
       gap: 6px;
       cursor: pointer;
       text-decoration: none;
-      transition: all 0.15s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-dash:active {
+      transform: scale(0.97);
     }
     .btn-dash-primary {
       background: var(--heat-100);
       color: #fff;
       border: 1px solid var(--heat-100);
-      box-shadow: 0 2px 8px rgba(250, 93, 25, 0.25);
+      box-shadow: 0 2px 10px rgba(250, 93, 25, 0.28);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-dash-primary::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+      transform: skewX(-25deg);
+      animation: btn-shine-sweep 4.5s ease-in-out infinite;
+    }
+    @keyframes btn-shine-sweep {
+      0%, 75% { left: -150%; }
+      100% { left: 250%; }
     }
     .btn-dash-primary:hover {
       background: var(--primary-hover);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(250, 93, 25, 0.35);
     }
     .btn-dash-secondary {
       background: var(--card-bg);
@@ -171,20 +278,27 @@
     }
     .btn-dash-secondary:hover {
       background: var(--alpha-4);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      border-color: var(--navy-700);
     }
     .btn-dash-ai {
       background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
       color: #fff;
       border: none;
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+      box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3);
+      position: relative;
+      animation: ai-glow-pulse 3.2s infinite;
+    }
+    @keyframes ai-glow-pulse {
+      0%, 100% { box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3); }
+      50% { box-shadow: 0 0 18px rgba(124, 58, 237, 0.6); }
     }
     .btn-dash-ai:hover {
       opacity: 0.95;
-      transform: translateY(-1px);
+      transform: translateY(-2px);
     }
 
-    /* Metric Cards */
+    /* Metric Cards Grid */
     .stat-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -192,19 +306,25 @@
       margin-bottom: 24px;
     }
     .stat-card-pro {
-      background: var(--card-bg);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border-loud);
-      border-radius: 12px;
-      padding: 18px 20px;
+      border-radius: 14px;
+      padding: 20px 22px;
       box-shadow: var(--shadow-sm);
       position: relative;
       overflow: visible;
       z-index: 1;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, z-index 0s;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+    }
+    html.dark .stat-card-pro {
+      background: rgba(23, 23, 23, 0.82);
+      border-color: rgba(255, 255, 255, 0.10);
     }
     .stat-card-pro:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -6px rgba(250, 93, 25, 0.18), 0 0 0 1px rgba(250, 93, 25, 0.25);
       z-index: 50;
     }
     .stat-card-pro::before {
@@ -214,9 +334,9 @@
       left: 0;
       right: 0;
       height: 3px;
-      background: linear-gradient(90deg, var(--heat-100), transparent);
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
+      background: linear-gradient(90deg, var(--heat-100), rgba(245, 158, 11, 0.8), transparent);
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
     }
     .stat-label-pro {
       font-family: 'JetBrains Mono', monospace;
@@ -263,12 +383,25 @@
       .dashboard-grid { grid-template-columns: 1fr; }
     }
     .card-pro {
-      background: var(--card-bg);
-      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
       border: 1px solid var(--border-loud);
       box-shadow: var(--shadow-sm);
-      padding: 22px 24px;
+      padding: 24px 26px;
       position: relative;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+    }
+    html.dark .card-pro {
+      background: rgba(23, 23, 23, 0.82);
+      border-color: rgba(255, 255, 255, 0.10);
+    }
+    .card-pro:hover {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+    html.dark .card-pro:hover {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42);
     }
     .card-header-pro {
       display: flex;
@@ -299,37 +432,47 @@
       padding: 3px;
       border-radius: 8px;
       gap: 4px;
+      border: 1px solid var(--border-subtle);
     }
     .freq-btn-pro {
       border: none;
       background: transparent;
       color: var(--text-muted);
-      padding: 5px 12px;
+      padding: 6px 13px;
       font-size: 11.5px;
       font-weight: 700;
       font-family: 'Outfit', sans-serif;
       border-radius: 6px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .freq-btn-pro:hover {
+      color: var(--navy-900);
     }
     .freq-btn-pro.active {
       background: var(--card-bg);
       color: var(--heat-100);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+      transform: scale(1.02);
     }
 
     /* Sector Selector */
     .route-select-pro {
-      padding: 6px 12px;
+      padding: 7px 14px;
       font-family: 'Outfit', sans-serif;
       font-size: 12px;
       font-weight: 700;
       color: var(--navy-800);
       background: var(--surface-raised);
       border: 1px solid var(--border-loud);
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .route-select-pro:focus {
+      border-color: var(--heat-100);
+      box-shadow: 0 0 0 3px var(--heat-12);
     }
 
     /* Heatmap Grid */
@@ -337,39 +480,143 @@
       overflow-x: auto;
       padding-bottom: 6px;
     }
+    .heatmap-row-pro {
+      transition: background 0.15s ease;
+      border-radius: 8px;
+      padding: 3px 0;
+    }
+    .heatmap-row-pro:hover {
+      background: var(--alpha-4);
+    }
+    .heatmap-cell-pro {
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease, filter 0.18s ease !important;
+    }
+    .heatmap-cell-pro:hover {
+      transform: translateY(-3px) scale(1.15) !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28) !important;
+      z-index: 30 !important;
+      filter: brightness(1.08) !important;
+    }
 
-    /* Carrier Progress Rows */
+    /* Enhanced Carrier Rows with Badges */
     .carrier-row-pro {
       display: flex;
       align-items: center;
       gap: 12px;
       margin-bottom: 12px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      transition: background 0.15s ease;
+    }
+    .carrier-row-pro:hover {
+      background: var(--alpha-4);
+    }
+    .carrier-badge-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 20px;
+      border-radius: 4px;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      margin-right: 6px;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
     .carrier-name-pro {
-      width: 100px;
+      display: flex;
+      align-items: center;
+      width: 140px;
       font-size: 13px;
       font-weight: 700;
       color: var(--navy-900);
+      flex-shrink: 0;
     }
     .carrier-track-pro {
       flex: 1;
-      height: 9px;
-      background: var(--border-faint);
-      border-radius: 6px;
+      height: 14px;
+      background: var(--alpha-4);
+      border-radius: 7px;
       overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border-subtle);
     }
     .carrier-fill-pro {
       height: 100%;
-      border-radius: 6px;
-      transition: width 0.6s ease;
+      border-radius: 7px;
+      transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .carrier-share-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      width: 48px;
+      text-align: right;
+      flex-shrink: 0;
     }
     .carrier-val-pro {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-main);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--navy-900);
       width: 75px;
       text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* Diverging Inflation Bar Chart */
+    .inflation-row-pro {
+      display: grid;
+      grid-template-columns: 180px 1fr 100px;
+      align-items: center;
+      gap: 14px;
+      padding: 9px 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.15s ease;
+      border-radius: 6px;
+    }
+    .inflation-row-pro:hover {
+      background: var(--alpha-4);
+    }
+    .inflation-bar-track {
+      position: relative;
+      height: 16px;
+      background: var(--alpha-4);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border-subtle);
+    }
+    .inflation-bar-center {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border-loud);
+      z-index: 2;
+    }
+    .inflation-bar-fill-pos {
+      position: absolute;
+      left: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, #f97316 0%, #dc2626 100%);
+      border-radius: 0 8px 8px 0;
+      transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .inflation-bar-fill-neg {
+      position: absolute;
+      right: 50%;
+      height: 100%;
+      background: linear-gradient(270deg, #10b981 0%, #059669 100%);
+      border-radius: 8px 0 0 8px;
+      transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Materiality Highlight Box */
@@ -393,6 +640,10 @@
       border: 1px solid var(--border-loud);
       border-radius: 10px;
       padding: 14px 16px;
+      transition: transform 0.2s ease;
+    }
+    .method-pill-box:hover {
+      transform: translateY(-2px);
     }
     .method-pill-box.highlight {
       border-color: var(--heat-100);
@@ -426,10 +677,26 @@
       from { opacity: 0; transform: scale(0.96) translateY(8px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
+
+    /* Vestibular Protection */
+    @media (prefers-reduced-motion: reduce) {
+      .ambient-orb { animation: none !important; }
+      .dash-title .gradient-text { animation: none !important; }
+      .hero-pill::after { animation: none !important; }
+      .btn-dash-primary::after { animation: none !important; }
+      .btn-dash-ai { animation: none !important; }
+    }
   </style>
 </head>
 <body>
 <div class="toast-container" id="toast-container"></div>
+
+  <!-- Ambient Floating Background Mesh -->
+  <div class="ambient-mesh" aria-hidden="true">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
 
   <!-- Top Announcement Ribbon -->
   <div class="announcement-ribbon">
@@ -480,7 +747,7 @@
           <span>Continuous High-Frequency Collection Active</span>
         </div>
         <h1 class="dash-title">
-          National Real-Time Airfare <span>Price Index</span>
+          National Real-Time Airfare <span class="gradient-text">Price Index</span>
         </h1>
         <p class="dash-desc">
           Continuous multi-carrier digital fare sampling across 8 DGCA high-density domestic corridors (T+1 … T+45 booking horizons).
@@ -530,29 +797,56 @@
 
       <div class="stat-card-pro">
         <div class="stat-label-pro"><span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="Top 8 domestic sectors representing over 68% of scheduled passenger traffic.">Domestic Corridor Basket</span></div>
-        <div class="stat-val-pro" id="kpi-active-routes">8</div>
-        <div style="color: #10b981; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 4px; margin-top: 6px;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 100% DGCA Traffic Coverage
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <div class="stat-val-pro" id="kpi-active-routes">8</div>
+          <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); font-size: 11px; font-weight: 700;">100% Calibrated</span>
         </div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">DEL, BOM, BLR, CCU, HYD, MAA, GOI</div>
+        <div class="stat-sparkline">
+          <div class="bar" style="height: 70%; background: rgba(16, 185, 129, 0.35);"></div>
+          <div class="bar" style="height: 85%; background: rgba(16, 185, 129, 0.35);"></div>
+          <div class="bar" style="height: 60%; background: rgba(16, 185, 129, 0.35);"></div>
+          <div class="bar" style="height: 95%; background: rgba(16, 185, 129, 0.35);"></div>
+          <div class="bar" style="height: 80%; background: rgba(16, 185, 129, 0.35);"></div>
+          <div class="bar" style="height: 90%; background: rgba(16, 185, 129, 0.35);"></div>
+          <div class="bar" style="height: 100%; background: #10b981;"></div>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">DEL, BOM, BLR, CCU, HYD, MAA, GOI</div>
       </div>
 
       <div class="stat-card-pro">
         <div class="stat-label-pro"><span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="Verified flight fare quotes scraped across 5 advance purchase horizons.">Total Fare Quotes</span></div>
-        <div class="stat-val-pro" id="kpi-total-quotes">4,800</div>
-        <div style="color: var(--text-main); font-size: 12px; font-weight: 500; margin-top: 6px;">
-          +160 quotes collected in latest cycle
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <div class="stat-val-pro" id="kpi-total-quotes">4,800</div>
+          <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25); font-size: 11px; font-weight: 700;">+160 / cycle</span>
         </div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">5 booking windows (T+1 to T+45)</div>
+        <div class="stat-sparkline">
+          <div class="bar" style="height: 45%; background: rgba(79, 70, 229, 0.3);"></div>
+          <div class="bar" style="height: 55%; background: rgba(79, 70, 229, 0.3);"></div>
+          <div class="bar" style="height: 70%; background: rgba(79, 70, 229, 0.3);"></div>
+          <div class="bar" style="height: 65%; background: rgba(79, 70, 229, 0.3);"></div>
+          <div class="bar" style="height: 80%; background: rgba(79, 70, 229, 0.3);"></div>
+          <div class="bar" style="height: 90%; background: rgba(79, 70, 229, 0.3);"></div>
+          <div class="bar" style="height: 100%; background: #4f46e5;"></div>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">5 booking horizons (T+1 … T+45)</div>
       </div>
 
       <div class="stat-card-pro">
         <div class="stat-label-pro"><span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="Weighted mean economy airfare across surveyed sectors and carriers.">Avg Economy Airfare</span></div>
-        <div class="stat-val-pro" id="kpi-avg-fare">₹7,840</div>
-        <div style="color: #ef4444; font-weight: 700; font-size: 12px; margin-top: 6px;">
-          3.85x Lead-Time Spread
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <div class="stat-val-pro" id="kpi-avg-fare">₹7,840</div>
+          <span class="badge badge-danger" style="font-size: 11px; font-weight: 700;">3.85x Surge</span>
         </div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">T+1 (₹16.8k) vs T+30 (₹3.9k)</div>
+        <div class="stat-sparkline">
+          <div class="bar" style="height: 100%; background: #ef4444;"></div>
+          <div class="bar" style="height: 75%; background: rgba(239, 68, 68, 0.5);"></div>
+          <div class="bar" style="height: 50%; background: rgba(239, 68, 68, 0.4);"></div>
+          <div class="bar" style="height: 35%; background: rgba(239, 68, 68, 0.3);"></div>
+          <div class="bar" style="height: 25%; background: rgba(239, 68, 68, 0.3);"></div>
+          <div class="bar" style="height: 22%; background: rgba(239, 68, 68, 0.25);"></div>
+          <div class="bar" style="height: 20%; background: rgba(239, 68, 68, 0.2);"></div>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">T+1 (₹16.8k) vs T+30 (₹3.9k)</div>
       </div>
 
     </div>
@@ -1430,12 +1724,18 @@
 
         let html = '';
         carriers.forEach(c => {
+          const code = c.carrier_code || (c.carrier_name.includes('IndiGo') ? '6E' : (c.carrier_name.includes('Air India') ? 'AI' : (c.carrier_name.includes('Akasa') ? 'QP' : 'SG')));
+          const brandColor = c.brand_color || (code === '6E' ? '#4f46e5' : (code === 'AI' ? '#dc2626' : (code === 'QP' ? '#f97316' : '#eab308')));
           html += `
             <div class="carrier-row-pro">
-              <div class="carrier-name-pro">${c.carrier_name}</div>
-              <div class="carrier-track-pro">
-                <div class="carrier-fill-pro" style="width: ${c.market_share_pct}%; background: ${c.brand_color};"></div>
+              <div class="carrier-name-pro">
+                <span class="carrier-badge-chip" style="background: ${brandColor};">${escapeHtml(code)}</span>
+                <span>${escapeHtml(c.carrier_name)}</span>
               </div>
+              <div class="carrier-track-pro" title="${escapeHtml(c.carrier_name)}: ${c.market_share_pct}% market share">
+                <div class="carrier-fill-pro" style="width: ${c.market_share_pct}%; background: ${brandColor};"></div>
+              </div>
+              <div class="carrier-share-label">${c.market_share_pct}%</div>
               <div class="carrier-val-pro">${formatINR(c.avg_fare_inr)}</div>
             </div>
           `;
@@ -1512,28 +1812,58 @@
         }
 
         let html = `
-          <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border-loud);">
+          <div style="display: grid; grid-template-columns: 180px 1fr 100px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border-loud); text-transform: uppercase;">
             <span>Sector Corridor</span>
-            <span>Weight · Contribution</span>
+            <div style="display: flex; justify-content: space-between; padding: 0 4px;">
+              <span>◀ Deflationary</span>
+              <span>Inflationary Push ▶</span>
+            </div>
+            <div style="text-align: right;">Impact (pp)</div>
           </div>
         `;
 
-        routes.slice(0, 6).forEach(r => {
-          const isPos = r.contribution_to_national_inflation_pts >= 0;
+        const maxAbs = Math.max(...routes.map(r => Math.abs(r.contribution_to_national_inflation_pts || 0)), 0.08);
+
+        routes.slice(0, 8).forEach(r => {
+          const val = r.contribution_to_national_inflation_pts || 0;
+          const isPos = val >= 0;
           const sign = isPos ? '+' : '';
-          const color = isPos ? '#dc2626' : '#16a34a';
+          const color = isPos ? '#ea580c' : '#10b981';
+          const pctOfHalf = Math.min(Math.round((Math.abs(val) / maxAbs) * 50), 50);
+
           html += `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-subtle); font-size: 12.5px;">
+            <div class="inflation-row-pro">
               <div>
-                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--navy-900);">${r.route_id}</span>
-                <span style="color: var(--text-muted); font-size: 11px; margin-left: 6px;">(${r.dgca_weight_pct}%)</span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13px; color: var(--navy-900);">${escapeHtml(r.route_id)}</span>
+                  <span class="badge" style="font-size: 10px; font-weight: 700; background: var(--alpha-4); padding: 1px 6px;">${r.dgca_weight_pct}% wt</span>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(r.route_name || '')}</div>
               </div>
-              <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: ${color};">
-                ${sign}${r.contribution_to_national_inflation_pts.toFixed(3)} pp
+
+              <div class="inflation-bar-track" title="${escapeHtml(r.route_id)}: ${sign}${val.toFixed(3)} pp contribution">
+                <div class="inflation-bar-center"></div>
+                ${isPos 
+                  ? `<div class="inflation-bar-fill-pos" style="width: ${pctOfHalf}%;"></div>`
+                  : `<div class="inflation-bar-fill-neg" style="width: ${pctOfHalf}%;"></div>`
+                }
+              </div>
+
+              <div style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13px; color: ${color}; text-align: right;">
+                ${sign}${val.toFixed(3)} <span style="font-size: 10px; font-weight: 600; color: var(--text-muted);">pp</span>
               </div>
             </div>
           `;
         });
+
+        if (data.policy_summary) {
+          html += `
+            <div style="margin-top: 14px; padding: 10px 14px; background: var(--alpha-4); border-radius: 8px; border: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-main);">
+              <span style="color: var(--heat-100); font-size: 14px;">💡</span>
+              <span><strong>NSO Policy Insight:</strong> ${escapeHtml(data.policy_summary)}</span>
+            </div>
+          `;
+        }
 
         container.innerHTML = html;
       } catch (e) {
