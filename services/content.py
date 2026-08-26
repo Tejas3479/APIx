@@ -234,8 +234,8 @@ async def process_content(
                             if current_provider == "openai":
                                 target_model = (
                                     llm_model
-                                    if current_provider == llm_provider
-                                    else "gpt-5.6-luna"
+                                    if (current_provider == llm_provider and llm_model)
+                                    else "gpt-4o-mini"
                                 )
                                 req_headers = {
                                     "Authorization": f"Bearer {current_key}",
@@ -274,8 +274,8 @@ async def process_content(
                             elif current_provider == "anthropic":
                                 target_model = (
                                     llm_model
-                                    if current_provider == llm_provider
-                                    else "claude-opus-5"
+                                    if (current_provider == llm_provider and llm_model)
+                                    else "claude-3-5-sonnet-20241022"
                                 )
                                 req_headers = {
                                     "x-api-key": current_key,
@@ -301,8 +301,8 @@ async def process_content(
                             elif current_provider == "gemini":
                                 target_model = (
                                     llm_model
-                                    if current_provider == llm_provider
-                                    else "gemini-3.6-flash"
+                                    if (current_provider == llm_provider and llm_model)
+                                    else "gemini-1.5-flash"
                                 )
                                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{target_model}:generateContent?key={current_key}"
                                 req_headers = {"Content-Type": "application/json"}

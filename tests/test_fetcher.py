@@ -1,4 +1,12 @@
 import os
+import sys
+
+if sys.platform == "win32":
+    import asyncio
+    try:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    except Exception:
+        pass
 
 os.environ["AUTH_DISABLED"] = "true"
 
@@ -65,8 +73,68 @@ async def test_structured_json_extraction_mocked(async_client):
 
         with patch("routers.fetch.DEMO_MODE", False):
             response = await async_client.post("/fetch", headers=headers, json=payload)
-        print("RESPONSE STATUS:", response.status_code)
         data = response.json()
-        print("RESPONSE DATA:", data)
         assert data.get("success") is True, f"Failed: {data}"
         assert data["content"] == {"title": "Test Title", "links": ["http://test.com"]}
+
+
+@pytest.mark.asyncio
+async def test_content_processor_markdown_and_html():
+    from services.content import process_content
+
+    html_doc = """
+    <html>
+      <head><title>Airline Quotes</title></head>
+      <body>
+        <nav><a href="/home">Home</a></nav>
+        <div id="fares">
+          <h1>DEL-BOM Fares</h1>
+          <p>IndiGo 6E-204: <strong>₹6,250</strong></p>
+          <a href="https://goindigo.in">Book Now</a>
+        </div>
+        <footer>Copyright MoSPI</footer>
+      </body>
+    </html>
+    """
+
+    # Test markdown format
+    md = await process_content(
+        html=html_doc,
+        output_format="markdown",
+        base_url="https://example.com/flights",
+        strip_links=False,
+    )
+    assert "# DEL-BOM Fares" in md
+    assert "₹6,250" in md
+    assert "Copyright MoSPI" not in md  # footer stripped
+
+    # Test css_selector pruning
+    md_pruned = await process_content(
+        html=html_doc,
+        output_format="markdown",
+        base_url="https://example.com/flights",
+        css_selector="#fares",
+    )
+    assert "# DEL-BOM Fares" in md_pruned
+    assert "Home" not in md_pruned
+
+    # Test html passthrough
+    raw = await process_content(
+        html=html_doc,
+        output_format="html",
+        base_url="https://example.com/flights",
+    )
+    assert "<title>Airline Quotes</title>" in raw
+
+
+@pytest.mark.asyncio
+async def test_ssrf_protection(monkeypatch):
+    from services.ssrf import is_ssrf_safe
+
+    monkeypatch.delenv("DISABLE_SSRF_CHECK", raising=False)
+    assert await is_ssrf_safe("https://google.com") is True
+    assert await is_ssrf_safe("http://127.0.0.1:8000") is False
+    assert await is_ssrf_safe("http://localhost:8000") is False
+    assert await is_ssrf_safe("http://10.0.0.1") is False
+    assert await is_ssrf_safe("http://169.254.169.254/latest/meta-data/") is False
+

@@ -140,35 +140,42 @@ async def run_fetch(
                 elif body is not None:
                     kwargs["content"] = body.encode()
 
-                current_url = str(url)
-                redirects = 0
-                while redirects < 10:
-                    resp = await curl_session.request(method, current_url, **kwargs)
-                    if (
-                        resp.status_code in (301, 302, 303, 307, 308)
-                        and "Location" in resp.headers
-                    ):
-                        next_url = urljoin(current_url, resp.headers["Location"])
-                        if not await is_ssrf_safe(next_url):
-                            raise ValueError(
-                                "SSRF restricted address detected in redirect hop"
-                            )
-                        current_url = next_url
-                        redirects += 1
-                    else:
-                        break
+                try:
+                    current_url = str(url)
+                    redirects = 0
+                    while redirects < 10:
+                        resp = await curl_session.request(method, current_url, **kwargs)
+                        if (
+                            resp.status_code in (301, 302, 303, 307, 308)
+                            and "Location" in resp.headers
+                        ):
+                            next_url = urljoin(current_url, resp.headers["Location"])
+                            if not await is_ssrf_safe(next_url):
+                                raise ValueError(
+                                    "SSRF restricted address detected in redirect hop"
+                                )
+                            current_url = next_url
+                            redirects += 1
+                        else:
+                            break
 
-                _t_connect = _time.monotonic()  # first response received
-                final_url = str(resp.url)
-                status_code = resp.status_code
-                raw_html = resp.text
-                _t_ttfb = _time.monotonic()  # content fully read
-                last_status = status_code
+                    _t_connect = _time.monotonic()  # first response received
+                    final_url = str(resp.url)
+                    status_code = resp.status_code
+                    raw_html = resp.text
+                    _t_ttfb = _time.monotonic()  # content fully read
+                    last_status = status_code
 
-                resp_cookies_dict = dict(resp.cookies)
-                all_cookies.update(resp_cookies_dict)
-                if session:
-                    session["cookies"].update(resp_cookies_dict)
+                    resp_cookies_dict = dict(resp.cookies)
+                    all_cookies.update(resp_cookies_dict)
+                    if session:
+                        session["cookies"].update(resp_cookies_dict)
+                finally:
+                    if session is None and curl_session is not None:
+                        try:
+                            await curl_session.close()
+                        except Exception:
+                            pass
 
             else:
                 # PLAYWRIGHT PATH
