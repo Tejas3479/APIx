@@ -4936,7 +4936,9 @@ print("Materiality Gap:", materiality["materiality_gap_pct"], "%")
 # 4. Instant sector airfare survey & statutory decomposition
 quotes = client.survey_route(route_id="DEL-BOM", advance_days=7)
 for q in quotes:
-    print(f"{q['carrier']}: Total ₹{q['total_fare']} | Base ₹{q['base_fare']} | Taxes ₹{q['taxes']}")
+    print(
+        f"{q['carrier']}: Total ₹{q['total_fare']} | Base ₹{q['base_fare']} | Taxes ₹{q['taxes']}"
+    )
 ```
 `
 

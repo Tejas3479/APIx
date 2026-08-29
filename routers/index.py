@@ -8,8 +8,19 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import desc, select
 
 from auth import verify_api_key
-from database import DailyIndex, FareAnomalyReport, FareQuote, RouteIndex, async_session_maker
-from models import AiDiagnoseRequest, AtfCrossValidationResponse, DailyIndexResponse, MaterialityGapResponse
+from database import (
+    DailyIndex,
+    FareAnomalyReport,
+    FareQuote,
+    RouteIndex,
+    async_session_maker,
+)
+from models import (
+    AiDiagnoseRequest,
+    AtfCrossValidationResponse,
+    DailyIndexResponse,
+    MaterialityGapResponse,
+)
 from services.atf_validator import AtfValidator
 from services.index_engine import AirfareIndexEngine
 
@@ -97,12 +108,16 @@ async def get_methodology_comparison(route_id: str = "DEL-BOM"):
 
         if quotes:
             current_prices = [q.total_fare for q in quotes if q.total_fare > 0]
-            base_prices = [q.base_fare + q.fuel_surcharge for q in quotes if q.base_fare > 0]
+            base_prices = [
+                q.base_fare + q.fuel_surcharge for q in quotes if q.base_fare > 0
+            ]
         else:
             current_prices = [5800.0, 7200.0, 9400.0, 12800.0, 16500.0]
             base_prices = [5200.0, 5200.0, 5200.0, 5200.0, 5200.0]
 
-    result = AirfareIndexEngine.compute_methodology_comparison(current_prices, base_prices)
+    result = AirfareIndexEngine.compute_methodology_comparison(
+        current_prices, base_prices
+    )
     result["route_id"] = route_id
     result["quotes_analyzed"] = len(current_prices)
     return result
@@ -111,7 +126,9 @@ async def get_methodology_comparison(route_id: str = "DEL-BOM"):
 @router.get("/inflation-contribution")
 async def get_inflation_contribution(target_date: date | None = None):
     """Decompose percentage point contribution of each route corridor to national inflation."""
-    result = await AirfareIndexEngine.compute_inflation_contribution(target_date=target_date)
+    result = await AirfareIndexEngine.compute_inflation_contribution(
+        target_date=target_date
+    )
     return result
 
 
@@ -180,11 +197,13 @@ async def get_statistical_bulletin(year_month: str = "2026-08"):
         **bulletin,
         "bulletin": {
             "title": bulletin.get("publication_title", ""),
-            "headline_index": bulletin.get("headline_metrics", {}).get("national_index_value", 100.0),
+            "headline_index": bulletin.get("headline_metrics", {}).get(
+                "national_index_value", 100.0
+            ),
             "base_period": bulletin.get("base_period", ""),
             "executive_summary": ". ".join(bulletin.get("methodology_notes", [])),
-            **bulletin
-        }
+            **bulletin,
+        },
     }
 
 
@@ -202,7 +221,7 @@ async def diagnose_fare_anomaly(
         current_avg_fare = req_body.current_avg_fare or current_avg_fare
         benchmark_fare = req_body.benchmark_fare or benchmark_fare
     """Diagnose price surge or capacity shocks using Gemini AI or econometric heuristics."""
-    from database import FareAnomalyReport, async_session_maker
+    from database import async_session_maker
     from services.gemini_grounding import analyze_fare_anomaly
 
     ai_result = await analyze_fare_anomaly(
@@ -215,15 +234,21 @@ async def diagnose_fare_anomaly(
 
     if not ai_result:
         # High-precision econometric heuristic fallback
-        surge_mult = round(current_avg_fare / benchmark_fare if benchmark_fare > 0 else 1.0, 2)
+        surge_mult = round(
+            current_avg_fare / benchmark_fare if benchmark_fare > 0 else 1.0, 2
+        )
         ai_result = {
             "is_anomaly": surge_mult > 1.8,
-            "surge_category": "LAST_MINUTE_YIELD" if advance_days <= 3 else "NORMAL_FLUCTUATION",
+            "surge_category": "LAST_MINUTE_YIELD"
+            if advance_days <= 3
+            else "NORMAL_FLUCTUATION",
             "root_cause_explanation": (
                 f"Surge factor {surge_mult:.2f}x observed for {route} (T+{advance_days}). "
                 f"Statutory components (UDF, ₹200 ASF, 5% GST) remained invariant, confirming movement is driven by dynamic RBD tariff buckets."
             ),
-            "cpi_materiality_verdict": "HIGH_IMPACT" if surge_mult > 2.0 else "MODERATE",
+            "cpi_materiality_verdict": "HIGH_IMPACT"
+            if surge_mult > 2.0
+            else "MODERATE",
             "statistical_recommendation": "Incorporate in current period Jevons geometric mean aggregate without manual trimming.",
         }
 
@@ -234,7 +259,9 @@ async def diagnose_fare_anomaly(
                 route_id=route,
                 survey_date=datetime.now(timezone.utc).date(),
                 advance_days=advance_days,
-                surge_multiplier=round(current_avg_fare / benchmark_fare if benchmark_fare > 0 else 1.0, 2),
+                surge_multiplier=round(
+                    current_avg_fare / benchmark_fare if benchmark_fare > 0 else 1.0, 2
+                ),
                 diagnosis_text=ai_result.get("root_cause_explanation", ""),
                 ai_model=os.getenv("GEMINI_MODEL", "gemini-3.7-flash"),
                 flagged_by="econometric_survey",
@@ -250,7 +277,7 @@ async def diagnose_fare_anomaly(
             "anomaly_detected": ai_result.get("is_anomaly", False),
             "economic_explanation": ai_result.get("root_cause_explanation", ""),
             "policy_recommendation": ai_result.get("statistical_recommendation", ""),
-            **ai_result
+            **ai_result,
         }
     }
 
@@ -260,4 +287,3 @@ async def get_atf_cross_validation():
     """Cross-validate statutory fuel surcharges against official PPAC domestic ATF benchmark rates."""
     result = await AtfValidator.cross_validate_fuel_surcharges()
     return result
-

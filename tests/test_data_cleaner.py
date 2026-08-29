@@ -74,5 +74,7 @@ def test_impute_missing_route():
     imputed = DataCleaner.impute_missing_route("DEL-BOM", base_period_fares=baseline)
     assert imputed == 5850.0
 
-    fallback = DataCleaner.impute_missing_route("UNKNOWN-ROUTE", base_period_fares=baseline, all_active_fares=[4000.0, 6000.0])
+    fallback = DataCleaner.impute_missing_route(
+        "UNKNOWN-ROUTE", base_period_fares=baseline, all_active_fares=[4000.0, 6000.0]
+    )
     assert fallback == 5000.0

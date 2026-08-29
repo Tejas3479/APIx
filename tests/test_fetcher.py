@@ -3,6 +3,7 @@ import sys
 
 if sys.platform == "win32":
     import asyncio
+
     try:
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     except Exception:
@@ -137,4 +138,3 @@ async def test_ssrf_protection(monkeypatch):
     assert await is_ssrf_safe("http://localhost:8000") is False
     assert await is_ssrf_safe("http://10.0.0.1") is False
     assert await is_ssrf_safe("http://169.254.169.254/latest/meta-data/") is False
-

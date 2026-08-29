@@ -97,11 +97,7 @@ async def export_microdata_csv(limit: int = 5000):
 async def export_index_series_csv(limit: int = 365):
     """Export national APIx time series as a CSV table for RBI monetary policy modeling."""
     async with async_session_maker() as session:
-        stmt = (
-            select(DailyIndex)
-            .order_by(DailyIndex.index_date)
-            .limit(limit)
-        )
+        stmt = select(DailyIndex).order_by(DailyIndex.index_date).limit(limit)
         indices = (await session.execute(stmt)).scalars().all()
 
     output = io.StringIO()

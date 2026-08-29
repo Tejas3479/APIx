@@ -91,7 +91,9 @@ def test_geks_tornqvist_expenditure_weights():
         "2026-08-03": {"DEL-BOM": 6000.0, "DEL-BLR": 6600.0},
     }
     weights = {"DEL-BOM": 0.22, "DEL-BLR": 0.18}
-    geks = AirfareIndexEngine.compute_geks_tornqvist_window(matrix, weights_matrix=weights)
+    geks = AirfareIndexEngine.compute_geks_tornqvist_window(
+        matrix, weights_matrix=weights
+    )
     assert geks["2026-08-01"] == 100.0
     assert geks["2026-08-02"] > 100.0
     assert geks["2026-08-03"] > geks["2026-08-02"]
@@ -100,6 +102,7 @@ def test_geks_tornqvist_expenditure_weights():
 def test_bootstrap_route_confidence_interval():
     """Bootstrap CI must obey sample floor and produce deterministic 95% intervals."""
     from datetime import date
+
     test_date = date(2026, 8, 15)
 
     # Sparse sample (< 8 quotes) must return insufficient_sample
@@ -114,7 +117,17 @@ def test_bootstrap_route_confidence_interval():
     assert ci_sparse["std_error"] is None
 
     # Adequate sample (>= 8 quotes) must produce valid CI bounds
-    adequate_fares = [4800.0, 5000.0, 5200.0, 5100.0, 5300.0, 4900.0, 5050.0, 5150.0, 5250.0]
+    adequate_fares = [
+        4800.0,
+        5000.0,
+        5200.0,
+        5100.0,
+        5300.0,
+        4900.0,
+        5050.0,
+        5150.0,
+        5250.0,
+    ]
     ci_full = AirfareIndexEngine.bootstrap_route_confidence_interval(
         fares=adequate_fares,
         base_fare=5000.0,
@@ -124,4 +137,3 @@ def test_bootstrap_route_confidence_interval():
     assert ci_full["insufficient_sample"] is False
     assert ci_full["std_error"] > 0.0
     assert ci_full["ci_lower_95"] <= ci_full["ci_upper_95"]
-

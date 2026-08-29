@@ -200,12 +200,30 @@ class RouteBasketConfig(BaseModel):
 
 
 class RouteBasketCreate(BaseModel):
-    origin_iata: str = Field(..., min_length=3, max_length=3, description="Origin 3-letter IATA (e.g. DEL)")
-    origin_city: str = Field(..., min_length=2, max_length=100, description="City name (e.g. New Delhi)")
-    destination_iata: str = Field(..., min_length=3, max_length=3, description="Destination 3-letter IATA (e.g. BOM)")
-    destination_city: str = Field(..., min_length=2, max_length=100, description="City name (e.g. Mumbai)")
-    dgca_weight: float = Field(..., ge=0.0, le=1.0, description="Official DGCA passenger volume weight (0.0 to 1.0)")
-    daily_flights: int | None = Field(None, ge=0, description="Daily scheduled direct flights")
+    origin_iata: str = Field(
+        ..., min_length=3, max_length=3, description="Origin 3-letter IATA (e.g. DEL)"
+    )
+    origin_city: str = Field(
+        ..., min_length=2, max_length=100, description="City name (e.g. New Delhi)"
+    )
+    destination_iata: str = Field(
+        ...,
+        min_length=3,
+        max_length=3,
+        description="Destination 3-letter IATA (e.g. BOM)",
+    )
+    destination_city: str = Field(
+        ..., min_length=2, max_length=100, description="City name (e.g. Mumbai)"
+    )
+    dgca_weight: float = Field(
+        ...,
+        ge=0.0,
+        le=1.0,
+        description="Official DGCA passenger volume weight (0.0 to 1.0)",
+    )
+    daily_flights: int | None = Field(
+        None, ge=0, description="Daily scheduled direct flights"
+    )
 
     @field_validator("origin_iata", "destination_iata")
     @classmethod

@@ -47,7 +47,10 @@ def _find_cached_quotes(
     matches = []
 
     for item in cache:
-        if item.get("route_id") == route_clean and item.get("advance_days") == advance_days:
+        if (
+            item.get("route_id") == route_clean
+            and item.get("advance_days") == advance_days
+        ):
             if target_date:
                 dep_date = item.get("departure_date")
                 if dep_date == target_date.isoformat():
@@ -62,17 +65,21 @@ def _find_cached_quotes(
     return matches[:20]
 
 
-
-
-async def _scrape_ota_fares(origin: str, dest: str, dep_date: str, advance_days: int, route_id: str) -> list[dict]:
+async def _scrape_ota_fares(
+    origin: str, dest: str, dep_date: str, advance_days: int, route_id: str
+) -> list[dict]:
     """Scrape fares from Ixigo OTA portal via Playwright headless browser."""
     try:
         import datetime
-        date_obj = datetime.datetime.strptime(dep_date, "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
+
+        date_obj = datetime.datetime.strptime(dep_date, "%Y-%m-%d").replace(
+            tzinfo=datetime.timezone.utc
+        )
         ixigo_date = date_obj.strftime("%d%m%Y")
         url = f"https://www.ixigo.com/search/result/flight/{origin}-{dest}-{ixigo_date}//1/0/0/e?source=Search%20Form"
-        
+
         from services.browser_manager import playwright_mgr
+
         res = await run_fetch(
             url,
             "GET",
@@ -94,10 +101,15 @@ async def _scrape_ota_fares(origin: str, dest: str, dep_date: str, advance_days:
             "gemini",
             None,
             stealth=True,
-            wait_until="networkidle"
+            wait_until="networkidle",
         )
         if res.get("content"):
-            fares = extract_fares_from_content(res["content"], carrier="Ixigo OTA", route=route_id, source_platform="playwright_ota")
+            fares = extract_fares_from_content(
+                res["content"],
+                carrier="Ixigo OTA",
+                route=route_id,
+                source_platform="playwright_ota",
+            )
             for f in fares:
                 f["advance_days"] = advance_days
                 f["departure_date"] = date_obj.date()
@@ -107,14 +119,21 @@ async def _scrape_ota_fares(origin: str, dest: str, dep_date: str, advance_days:
         logger.warning(f"OTA Playwright scrape failed for {route_id}: {e}")
     return []
 
-async def _scrape_airline_fares(origin: str, dest: str, dep_date: str, advance_days: int, route_id: str) -> list[dict]:
+
+async def _scrape_airline_fares(
+    origin: str, dest: str, dep_date: str, advance_days: int, route_id: str
+) -> list[dict]:
     """Attempt direct airline portal scrape (SpiceJet) via Playwright (best-effort)."""
     try:
         import datetime
-        date_obj = datetime.datetime.strptime(dep_date, "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
+
+        date_obj = datetime.datetime.strptime(dep_date, "%Y-%m-%d").replace(
+            tzinfo=datetime.timezone.utc
+        )
         url = f"https://www.spicejet.com/search?from={origin}&to={dest}&date={dep_date}&adult=1"
-        
+
         from services.browser_manager import playwright_mgr
+
         res = await run_fetch(
             url,
             "GET",
@@ -136,10 +155,15 @@ async def _scrape_airline_fares(origin: str, dest: str, dep_date: str, advance_d
             "gemini",
             None,
             stealth=True,
-            wait_until="domcontentloaded"
+            wait_until="domcontentloaded",
         )
         if res.get("content"):
-            fares = extract_fares_from_content(res["content"], carrier="SpiceJet", route=route_id, source_platform="playwright_airline")
+            fares = extract_fares_from_content(
+                res["content"],
+                carrier="SpiceJet",
+                route=route_id,
+                source_platform="playwright_airline",
+            )
             for f in fares:
                 f["advance_days"] = advance_days
                 f["departure_date"] = date_obj.date()
@@ -148,6 +172,7 @@ async def _scrape_airline_fares(origin: str, dest: str, dep_date: str, advance_d
     except Exception as e:
         logger.warning(f"Airline Playwright scrape failed for {route_id}: {e}")
     return []
+
 
 async def run_fare_survey(
     route: str,  # e.g., "DEL-BOM"
@@ -167,7 +192,9 @@ async def run_fare_survey(
     route_upper = route.upper().strip()
     parts = route_upper.split("-")
     if len(parts) != 2:
-        logger.error("Invalid route format '%s'. Expected 'ORIGIN-DEST' (e.g. DEL-BOM)", route)
+        logger.error(
+            "Invalid route format '%s'. Expected 'ORIGIN-DEST' (e.g. DEL-BOM)", route
+        )
         return []
 
     origin_iata, dest_iata = parts[0], parts[1]
@@ -196,10 +223,14 @@ async def run_fare_survey(
     )
 
     # 3. OTA Playwright Scrape (if SerpAPI returned few results, or just to supplement)
-    ota_results = await _scrape_ota_fares(origin_iata, dest_iata, str(dep_date), advance_days, route_upper)
-    
+    ota_results = await _scrape_ota_fares(
+        origin_iata, dest_iata, str(dep_date), advance_days, route_upper
+    )
+
     # 4. Airline Playwright Scrape (best-effort probe)
-    airline_results = await _scrape_airline_fares(origin_iata, dest_iata, str(dep_date), advance_days, route_upper)
+    airline_results = await _scrape_airline_fares(
+        origin_iata, dest_iata, str(dep_date), advance_days, route_upper
+    )
 
     quotes.extend(ota_results)
     quotes.extend(airline_results)
@@ -265,7 +296,11 @@ async def run_fare_survey(
                     )
                     session.add(db_quote)
                 await session.commit()
-                logger.info("Saved %d fare quotes to database for %s", len(enriched_quotes), route_upper)
+                logger.info(
+                    "Saved %d fare quotes to database for %s",
+                    len(enriched_quotes),
+                    route_upper,
+                )
         except Exception as e:
             logger.warning("Could not persist fare quotes to DB: %s", e)
 

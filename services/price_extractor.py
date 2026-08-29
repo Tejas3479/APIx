@@ -39,8 +39,8 @@ CARRIER_BAG_SURCHARGES: dict[str, float] = {
     "6E": 599.0,  # IndiGo: Unbundled Lite/Saver
     "QP": 549.0,  # Akasa Air: Unbundled Saver
     "SG": 574.0,  # SpiceJet: Unbundled Saver
-    "AI": 0.0,    # Air India: 15kg standard check-in included in base economy
-    "IX": 0.0,    # Air India Express: 15kg standard check-in included
+    "AI": 0.0,  # Air India: 15kg standard check-in included in base economy
+    "IX": 0.0,  # Air India Express: 15kg standard check-in included
 }
 DEFAULT_UNBUNDLED_BAG_FEE = 550.0
 
@@ -59,7 +59,9 @@ def compute_quality_adjusted_fare(
         return 0.0
     if includes_bag:
         return total_fare
-    surcharge = CARRIER_BAG_SURCHARGES.get(carrier_code.upper(), DEFAULT_UNBUNDLED_BAG_FEE)
+    surcharge = CARRIER_BAG_SURCHARGES.get(
+        carrier_code.upper(), DEFAULT_UNBUNDLED_BAG_FEE
+    )
     return round(total_fare + surcharge, 2)
 
 
@@ -127,7 +129,9 @@ def decompose_fare(
     base_fare = round(base_plus_fuel - fuel_surcharge, 2)
 
     # Adjust rounding differences into base_fare so sum == total_fare exactly
-    calculated_sum = base_fare + fuel_surcharge + udf + asf + gst_amount + convenience_fee
+    calculated_sum = (
+        base_fare + fuel_surcharge + udf + asf + gst_amount + convenience_fee
+    )
     rounding_diff = round(total_fare - calculated_sum, 2)
     base_fare = round(base_fare + rounding_diff, 2)
 
@@ -165,7 +169,9 @@ def extract_fares_from_content(
 
     for match in inr_matches:
         price = _parse_price(match)
-        if price is not None and price >= 1500:  # Exclude baggage fees / add-ons < ₹1500
+        if (
+            price is not None and price >= 1500
+        ):  # Exclude baggage fees / add-ons < ₹1500
             prices_found.append(price)
 
     # Keep unique prices sorted

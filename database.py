@@ -67,10 +67,13 @@ async def init_db():
             ]
             for table_name, col_name, col_type in migrations:
                 try:
-                    await conn.execute(text(f"ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type};"))
+                    await conn.execute(
+                        text(
+                            f"ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type};"
+                        )
+                    )
                 except Exception:
                     pass
-
 
 
 async def get_session() -> AsyncSession:
@@ -109,7 +112,9 @@ class User(SQLModel, table=True):  # type: ignore[call-arg]
     hashed_password: str
     department: str | None = Field(default=None, max_length=200)
     organization: str | None = Field(default=None, max_length=200)
-    role: str = Field(default="user", max_length=50)  # "admin", "senior_officer", "analyst"
+    role: str = Field(
+        default="user", max_length=50
+    )  # "admin", "senior_officer", "analyst"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
@@ -124,8 +129,12 @@ class RouteConfig(SQLModel, table=True):  # type: ignore[call-arg]
     origin_city: str = Field(max_length=100)  # "New Delhi"
     destination_iata: str = Field(index=True, max_length=3)  # "BOM"
     destination_city: str = Field(max_length=100)  # "Mumbai"
-    dgca_weight: float = Field(default=0.0, ge=0.0, le=1.0)  # Official DGCA passenger weight (wr)
-    daily_flights: int | None = Field(default=None, ge=0)  # Total scheduled daily flights
+    dgca_weight: float = Field(
+        default=0.0, ge=0.0, le=1.0
+    )  # Official DGCA passenger weight (wr)
+    daily_flights: int | None = Field(
+        default=None, ge=0
+    )  # Total scheduled daily flights
     is_active: bool = Field(default=True, index=True)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -147,22 +156,32 @@ class FareQuote(SQLModel, table=True):  # type: ignore[call-arg]
     base_fare: float = Field(ge=0.0)  # Dynamic airline commercial tariff (INR)
     fuel_surcharge: float = Field(default=0.0, ge=0.0)  # YQ/YR
     udf: float = Field(default=0.0, ge=0.0)  # User Development Fee
-    asf: float = Field(default=200.0, ge=0.0)  # Statutory flat Aviation Security Fee (₹200)
+    asf: float = Field(
+        default=200.0, ge=0.0
+    )  # Statutory flat Aviation Security Fee (₹200)
     gst: float = Field(default=0.0, ge=0.0)  # 5% economy / 12% business
     convenience_fee: float = Field(default=0.0, ge=0.0)  # OTA/airline platform fee
     total_fare: float = Field(ge=0.0, index=True)  # Full ticket price paid by passenger
-    quality_adjusted_fare: float | None = Field(default=None)  # Constant-quality economy bundle (with bag)
+    quality_adjusted_fare: float | None = Field(
+        default=None
+    )  # Constant-quality economy bundle (with bag)
     includes_checked_bag: bool = Field(default=False)
     source_confidence: float = Field(default=0.8, ge=0.0, le=1.0)
-    fare_class: str | None = Field(default=None, max_length=5)  # RBD bucket: U, T, L, V, Q
-    cabin_class: str = Field(default="economy", max_length=30)  # economy, premium_economy, business
+    fare_class: str | None = Field(
+        default=None, max_length=5
+    )  # RBD bucket: U, T, L, V, Q
+    cabin_class: str = Field(
+        default="economy", max_length=30
+    )  # economy, premium_economy, business
     stops: int = Field(default=0, ge=0)  # 0 = nonstop
     source_platform: str = Field(default="google_flights", max_length=50)
     source_url: str | None = None
     is_sold_out: bool = Field(default=False)
     is_demo_data: bool = Field(default=False, index=True)
     raw_data: dict[str, Any] = Field(default={}, sa_column=Column(JSON))
-    scraped_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), index=True)
+    scraped_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), index=True
+    )
 
 
 class DailyIndex(SQLModel, table=True):  # type: ignore[call-arg]
@@ -170,20 +189,32 @@ class DailyIndex(SQLModel, table=True):  # type: ignore[call-arg]
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     index_date: date = Field(index=True)  # Reference computation date
-    frequency: str = Field(default="daily", max_length=20)  # "daily", "weekly", "monthly"
+    frequency: str = Field(
+        default="daily", max_length=20
+    )  # "daily", "weekly", "monthly"
     index_value: float = Field(ge=0.0, index=True)  # APIx index number (Base = 100.0)
     base_period_value: float = Field(default=100.0)  # Reference base (100.0)
-    methodology: str = Field(default="jevons", max_length=50)  # "jevons", "geks_tornqvist_movement_splice"
+    methodology: str = Field(
+        default="jevons", max_length=50
+    )  # "jevons", "geks_tornqvist_movement_splice"
     route_coverage: int = Field(default=0, ge=0)  # Number of routes with live data
     quote_count: int = Field(default=0, ge=0)  # Total quotes aggregated
     missing_routes: list[str] = Field(default=[], sa_column=Column(JSON))
     std_error: float | None = Field(default=None)  # Bootstrap standard error
-    ci_lower_95: float | None = Field(default=None)  # 95% Confidence Interval lower bound
-    ci_upper_95: float | None = Field(default=None)  # 95% Confidence Interval upper bound
-    quality_tier: str = Field(default="HIGH", max_length=20)  # "HIGH", "MODERATE", "IMPUTED"
+    ci_lower_95: float | None = Field(
+        default=None
+    )  # 95% Confidence Interval lower bound
+    ci_upper_95: float | None = Field(
+        default=None
+    )  # 95% Confidence Interval upper bound
+    quality_tier: str = Field(
+        default="HIGH", max_length=20
+    )  # "HIGH", "MODERATE", "IMPUTED"
     is_approved: bool = Field(default=True)  # Institutional publication approval state
     is_demo_data: bool = Field(default=False, index=True)
-    computed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), index=True)
+    computed_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), index=True
+    )
 
 
 class RouteIndex(SQLModel, table=True):  # type: ignore[call-arg]
@@ -239,15 +270,21 @@ class ScrapeJob(SQLModel, table=True):  # type: ignore[call-arg]
     """Scrape job execution and telemetry tracking."""
 
     id: str = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
-    job_type: str = Field(default="manual", max_length=50)  # "scheduled", "manual", "backfill"
-    status: str = Field(default="pending", index=True, max_length=50)  # "pending", "running", "completed", "failed"
+    job_type: str = Field(
+        default="manual", max_length=50
+    )  # "scheduled", "manual", "backfill"
+    status: str = Field(
+        default="pending", index=True, max_length=50
+    )  # "pending", "running", "completed", "failed"
     routes_targeted: int = Field(default=0)
     routes_completed: int = Field(default=0)
     quotes_collected: int = Field(default=0)
     errors: list[dict[str, Any]] = Field(default=[], sa_column=Column(JSON))
     started_at: datetime | None = None
     completed_at: datetime | None = None
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), index=True)
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc), index=True
+    )
 
 
 # ===== PROXY MANAGER =====

@@ -47,8 +47,14 @@ def get_live_telemetry_logs(limit: int = 30) -> list[dict[str, Any]]:
 
 
 # Pre-populate initial system start events
-emit_telemetry("INIT", "APIx Automated Ingestion Engine initialized (Playwright 3-slot pool active)", "info")
-emit_telemetry("ROBOTS", "Robots.txt compliance engine active with async domain cache", "ok")
+emit_telemetry(
+    "INIT",
+    "APIx Automated Ingestion Engine initialized (Playwright 3-slot pool active)",
+    "info",
+)
+emit_telemetry(
+    "ROBOTS", "Robots.txt compliance engine active with async domain cache", "ok"
+)
 
 
 class ScrapeScheduler:
@@ -137,7 +143,11 @@ class ScrapeScheduler:
 
         for r_id in routes:
             try:
-                emit_telemetry("SURVEY", f"Processing route: {r_id} across {len(windows)} advance horizons", "info")
+                emit_telemetry(
+                    "SURVEY",
+                    f"Processing route: {r_id} across {len(windows)} advance horizons",
+                    "info",
+                )
                 for w in windows:
                     quotes = await run_fare_survey(
                         route=r_id,
@@ -146,7 +156,11 @@ class ScrapeScheduler:
                         force_live=force_live,
                     )
                     total_quotes += len(quotes)
-                    emit_telemetry("EXTRACT", f"{r_id} (T+{w}): collected {len(quotes)} carrier quotes", "ok")
+                    emit_telemetry(
+                        "EXTRACT",
+                        f"{r_id} (T+{w}): collected {len(quotes)} carrier quotes",
+                        "ok",
+                    )
                     await asyncio.sleep(0.4)  # Politeness interval
                 routes_done += 1
             except Exception as e:
@@ -177,15 +191,26 @@ class ScrapeScheduler:
 
 async def run_scheduler_loop():
     """Background recurring scheduler loop running inside FastAPI lifespan."""
-    logger.info("APIx Automated Background Scheduler started (Interval: %dh).", SCHEDULED_INTERVAL_HOURS)
-    emit_telemetry("SCHEDULER", f"Background daily scheduler active (Interval: {SCHEDULED_INTERVAL_HOURS}h)", "info")
+    logger.info(
+        "APIx Automated Background Scheduler started (Interval: %dh).",
+        SCHEDULED_INTERVAL_HOURS,
+    )
+    emit_telemetry(
+        "SCHEDULER",
+        f"Background daily scheduler active (Interval: {SCHEDULED_INTERVAL_HOURS}h)",
+        "info",
+    )
 
     while True:
         try:
             # Sleep for interval (e.g. 24 hours)
             await asyncio.sleep(SCHEDULED_INTERVAL_HOURS * 3600)
             logger.info("Triggering automated daily batch airfare scrape...")
-            emit_telemetry("AUTO", "Triggering automated scheduled daily multi-carrier airfare survey", "info")
+            emit_telemetry(
+                "AUTO",
+                "Triggering automated scheduled daily multi-carrier airfare survey",
+                "info",
+            )
             await ScrapeScheduler.run_batch_scrape(job_type="scheduled")
         except asyncio.CancelledError:
             logger.info("Background scheduler loop gracefully cancelled.")

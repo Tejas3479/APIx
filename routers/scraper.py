@@ -17,11 +17,15 @@ logger = logging.getLogger("apix.routers.scraper")
 router = APIRouter(prefix="/api/v1/scraper", tags=["scraper"])
 
 
-@router.post("/run", response_model=dict[str, Any], dependencies=[Depends(verify_api_key)])
+@router.post(
+    "/run", response_model=dict[str, Any], dependencies=[Depends(verify_api_key)]
+)
 async def trigger_scrape(req: ScrapeRequest):
     """Trigger an on-demand airfare survey for designated routes and advance windows."""
     if not req.routes:
-        raise HTTPException(status_code=400, detail="At least one route must be specified.")
+        raise HTTPException(
+            status_code=400, detail="At least one route must be specified."
+        )
 
     # Launch background batch job
     job_id = await ScrapeScheduler.run_batch_scrape(
@@ -40,7 +44,11 @@ async def trigger_scrape(req: ScrapeRequest):
     }
 
 
-@router.post("/survey-instant", response_model=list[dict[str, Any]], dependencies=[Depends(verify_api_key)])
+@router.post(
+    "/survey-instant",
+    response_model=list[dict[str, Any]],
+    dependencies=[Depends(verify_api_key)],
+)
 async def run_single_survey_instant(
     route: str = "DEL-BOM",
     advance_days: int = 7,

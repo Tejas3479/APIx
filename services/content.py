@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from markdownify import markdownify
 
 from models import ALLOWED_LLM_MODELS
+
 from .log_filter import logger
 
 
@@ -235,11 +236,19 @@ async def process_content(
                             if current_provider == "openai":
                                 target_model = (
                                     llm_model
-                                    if (current_provider == llm_provider and llm_model and llm_model in ALLOWED_LLM_MODELS)
+                                    if (
+                                        current_provider == llm_provider
+                                        and llm_model
+                                        and llm_model in ALLOWED_LLM_MODELS
+                                    )
                                     else "gpt-4o-mini"
                                 )
                                 if llm_model and llm_model not in ALLOWED_LLM_MODELS:
-                                    logger.warning("Requested LLM model %s not in ALLOWED_LLM_MODELS. Falling back to %s", llm_model, target_model)
+                                    logger.warning(
+                                        "Requested LLM model %s not in ALLOWED_LLM_MODELS. Falling back to %s",
+                                        llm_model,
+                                        target_model,
+                                    )
                                 req_headers = {
                                     "Authorization": f"Bearer {current_key}",
                                     "Content-Type": "application/json",
@@ -277,11 +286,19 @@ async def process_content(
                             elif current_provider == "anthropic":
                                 target_model = (
                                     llm_model
-                                    if (current_provider == llm_provider and llm_model and llm_model in ALLOWED_LLM_MODELS)
+                                    if (
+                                        current_provider == llm_provider
+                                        and llm_model
+                                        and llm_model in ALLOWED_LLM_MODELS
+                                    )
                                     else "claude-3-5-sonnet-20241022"
                                 )
                                 if llm_model and llm_model not in ALLOWED_LLM_MODELS:
-                                    logger.warning("Requested LLM model %s not in ALLOWED_LLM_MODELS. Falling back to %s", llm_model, target_model)
+                                    logger.warning(
+                                        "Requested LLM model %s not in ALLOWED_LLM_MODELS. Falling back to %s",
+                                        llm_model,
+                                        target_model,
+                                    )
                                 req_headers = {
                                     "x-api-key": current_key,
                                     "anthropic-version": "2023-06-01",
@@ -306,11 +323,19 @@ async def process_content(
                             elif current_provider == "gemini":
                                 target_model = (
                                     llm_model
-                                    if (current_provider == llm_provider and llm_model and llm_model in ALLOWED_LLM_MODELS)
+                                    if (
+                                        current_provider == llm_provider
+                                        and llm_model
+                                        and llm_model in ALLOWED_LLM_MODELS
+                                    )
                                     else os.getenv("GEMINI_MODEL", "gemini-3.7-flash")
                                 )
                                 if llm_model and llm_model not in ALLOWED_LLM_MODELS:
-                                    logger.warning("Requested LLM model %s not in ALLOWED_LLM_MODELS. Falling back to %s", llm_model, target_model)
+                                    logger.warning(
+                                        "Requested LLM model %s not in ALLOWED_LLM_MODELS. Falling back to %s",
+                                        llm_model,
+                                        target_model,
+                                    )
                                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{target_model}:generateContent?key={current_key}"
                                 req_headers = {"Content-Type": "application/json"}
                                 payload = {

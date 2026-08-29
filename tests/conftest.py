@@ -4,6 +4,7 @@ import sys
 
 if sys.platform == "win32":
     import asyncio
+
     try:
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     except Exception:
@@ -47,6 +48,7 @@ def mock_redis(monkeypatch):
 @pytest.fixture
 async def async_client():
     import httpx
+
     async with httpx.AsyncClient(
         transport=httpx.ASGITransport(app=app.app), base_url="http://test"
     ) as ac:

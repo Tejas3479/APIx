@@ -44,7 +44,9 @@ class SessionManager:
             cursor = 0
             count = 0
             while True:
-                cursor, keys = await redis_client.scan(cursor, match="session:*", count=100)
+                cursor, keys = await redis_client.scan(
+                    cursor, match="session:*", count=100
+                )
                 count += len(keys)
                 if cursor == 0:
                     break

@@ -181,7 +181,11 @@ class CaptchaDetector:
 
     @staticmethod
     async def detect_and_solve(page: Page) -> bool:
-        if os.getenv("CAPTCHA_SOLVING_ENABLED", "false").lower() not in ("true", "1", "yes"):
+        if os.getenv("CAPTCHA_SOLVING_ENABLED", "false").lower() not in (
+            "true",
+            "1",
+            "yes",
+        ):
             return False
 
         provider = os.getenv("CAPTCHA_PROVIDER", "").lower()

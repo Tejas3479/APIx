@@ -105,7 +105,9 @@ def _load_json_sync(path: Path) -> Any:
 async def seed_route_basket() -> int:
     """Seed configured city-pair routes into the database if empty."""
     async with async_session_maker() as session:
-        count = (await session.execute(select(func.count()).select_from(RouteConfig))).scalar() or 0
+        count = (
+            await session.execute(select(func.count()).select_from(RouteConfig))
+        ).scalar() or 0
         if count > 0:
             return count
 
@@ -114,7 +116,9 @@ async def seed_route_basket() -> int:
             try:
                 routes_data = _load_json_sync(ROUTE_BASKET_PATH)
             except Exception as e:
-                logger.warning("Could not read %s, using defaults: %s", ROUTE_BASKET_PATH, e)
+                logger.warning(
+                    "Could not read %s, using defaults: %s", ROUTE_BASKET_PATH, e
+                )
 
         for item in routes_data:
             route = RouteConfig(
@@ -137,7 +141,9 @@ async def seed_route_basket() -> int:
 async def seed_demo_fares() -> int:
     """Seed historical demo quotes cache if database has no quotes."""
     async with async_session_maker() as session:
-        count = (await session.execute(select(func.count()).select_from(FareQuote))).scalar() or 0
+        count = (
+            await session.execute(select(func.count()).select_from(FareQuote))
+        ).scalar() or 0
         if count > 0:
             return count
 
@@ -209,7 +215,9 @@ async def seed_dgca_benchmarks() -> int:
     from database import DgcaBenchmark
 
     async with async_session_maker() as session:
-        count = (await session.execute(select(func.count()).select_from(DgcaBenchmark))).scalar() or 0
+        count = (
+            await session.execute(select(func.count()).select_from(DgcaBenchmark))
+        ).scalar() or 0
         if count > 0:
             return count
 
@@ -230,7 +238,9 @@ async def seed_dgca_benchmarks() -> int:
                 dgca_avg_fare=b["dgca_avg_fare"],
                 passenger_load_factor_pct=b.get("passenger_load_factor_pct", 85.0),
                 total_passengers_monthly=b.get("total_passengers_monthly", 0),
-                source_bulletin=b.get("source_bulletin", "DGCA Domestic Air Transport Monthly Report"),
+                source_bulletin=b.get(
+                    "source_bulletin", "DGCA Domestic Air Transport Monthly Report"
+                ),
             )
             session.add(rec)
             added += 1

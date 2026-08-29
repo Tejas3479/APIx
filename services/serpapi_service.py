@@ -41,7 +41,9 @@ async def search_google_flights(
         List of structured flight quote dictionaries
     """
     if not SERPAPI_KEY or SERPAPI_KEY.startswith("your_"):
-        logger.debug("SERPAPI_KEY not configured. Skipping SerpAPI live flights search.")
+        logger.debug(
+            "SERPAPI_KEY not configured. Skipping SerpAPI live flights search."
+        )
         return []
 
     date_str = (
@@ -110,9 +112,7 @@ async def search_google_flights(
                 primary_flight = flights[0] if flights else {}
                 carrier_name = primary_flight.get("airline", "IndiGo")
                 flight_no = primary_flight.get("flight_number")
-                dep_time = (
-                    primary_flight.get("departure_airport", {}).get("time")
-                )
+                dep_time = primary_flight.get("departure_airport", {}).get("time")
                 arr_time = (
                     flights[-1].get("arrival_airport", {}).get("time")
                     if flights
@@ -126,7 +126,11 @@ async def search_google_flights(
                 # Map carrier code
                 carrier_code = "6E"
                 c_lower = carrier_name.lower()
-                if "air india express" in c_lower or "ai express" in c_lower or "express" in c_lower:
+                if (
+                    "air india express" in c_lower
+                    or "ai express" in c_lower
+                    or "express" in c_lower
+                ):
                     carrier_code = "IX"
                     carrier_name = "Air India Express"
                 elif "air india" in c_lower:

@@ -46,14 +46,20 @@ def _demo_snapshot_content(req: FetchRequest) -> str:
             if not isinstance(item, dict):
                 continue
             item_text = f"{item.get('route_id', '')} {item.get('carrier_name', '')} {item.get('carrier_code', '')} {item.get('flight_number', '')}"
-            score = fuzz.token_set_ratio(query.lower(), item_text.lower()) if query else 100
+            score = (
+                fuzz.token_set_ratio(query.lower(), item_text.lower()) if query else 100
+            )
             if score >= 50 or not query:
                 matches.append((score, item))
     elif isinstance(cache, dict):
         for key, results in cache.items():
             if isinstance(results, list):
                 for item in results:
-                    score = fuzz.token_set_ratio(query.lower(), key.lower()) if query else 100
+                    score = (
+                        fuzz.token_set_ratio(query.lower(), key.lower())
+                        if query
+                        else 100
+                    )
                     if score >= 50:
                         matches.append((score, item))
 
@@ -65,7 +71,9 @@ def _demo_snapshot_content(req: FetchRequest) -> str:
         flight_no = item.get("flight_number") or "Direct"
         route = item.get("route_id", "DEL-BOM")
         price = item.get("total_fare") or item.get("price")
-        price_s = f"₹{price:,.2f}" if isinstance(price, (int, float)) else str(price or "—")
+        price_s = (
+            f"₹{price:,.2f}" if isinstance(price, (int, float)) else str(price or "—")
+        )
         adv = f"T+{item.get('advance_days', 7)}"
         source = item.get("source_platform", "google_flights")
         evidence = item.get("source_url", url)
@@ -83,8 +91,12 @@ def _demo_snapshot_content(req: FetchRequest) -> str:
         )
 
     if rows:
-        lines.append("| # | Carrier | Flight | Sector | Horizon | Fare (Total) | Platform | Source |")
-        lines.append("|---|---------|--------|--------|---------|--------------|----------|--------|")
+        lines.append(
+            "| # | Carrier | Flight | Sector | Horizon | Fare (Total) | Platform | Source |"
+        )
+        lines.append(
+            "|---|---------|--------|--------|---------|--------------|----------|--------|"
+        )
         for idx, r in enumerate(rows, start=1):
             evidence_host = urlparse(r["evidence"]).netloc or "flights"
             lines.append(
@@ -93,7 +105,9 @@ def _demo_snapshot_content(req: FetchRequest) -> str:
                 f"| [{evidence_host}]({r['evidence']}) |"
             )
         lines.append("")
-        lines.append(f"*{len(rows)} verified flight quote(s) retrieved from the official APIx baseline cache.*")
+        lines.append(
+            f"*{len(rows)} verified flight quote(s) retrieved from the official APIx baseline cache.*"
+        )
     else:
         lines += [
             "No cached airfare quotes matched this URL or query.",

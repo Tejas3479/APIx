@@ -51,11 +51,15 @@ class RobotsTxtChecker:
         if parser is None:
             parser = RobotFileParser()
             try:
-                async with httpx.AsyncClient(timeout=timeout_sec, follow_redirects=True) as client:
+                async with httpx.AsyncClient(
+                    timeout=timeout_sec, follow_redirects=True
+                ) as client:
                     resp = await client.get(robots_url)
                     if resp.status_code == 200:
                         parser.parse(resp.text.splitlines())
-                        logger.debug("Successfully loaded robots.txt for origin: %s", origin)
+                        logger.debug(
+                            "Successfully loaded robots.txt for origin: %s", origin
+                        )
                     elif resp.status_code in (401, 403):
                         # Site disallows all
                         parser.parse(["User-agent: *", "Disallow: /"])
@@ -63,7 +67,11 @@ class RobotsTxtChecker:
                         # 404 or other status means no restrictions
                         parser.parse(["User-agent: *", "Allow: /"])
             except Exception as e:
-                logger.debug("Could not fetch robots.txt for %s (%s); defaulting to allow", origin, e)
+                logger.debug(
+                    "Could not fetch robots.txt for %s (%s); defaulting to allow",
+                    origin,
+                    e,
+                )
                 parser.parse(["User-agent: *", "Allow: /"])
 
             async with _CACHE_LOCK:

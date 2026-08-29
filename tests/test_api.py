@@ -4,7 +4,6 @@ import os
 
 os.environ["AUTH_DISABLED"] = "true"
 
-import httpx
 import pytest
 from fastapi.testclient import TestClient
 
@@ -100,7 +99,9 @@ async def test_index_endpoints(async_client):
 @pytest.mark.asyncio
 async def test_scraper_endpoints(async_client):
     # Survey instant unauthenticated -> 401
-    unauth_res = await async_client.post("/api/v1/scraper/survey-instant?route=DEL-BOM&advance_days=7")
+    unauth_res = await async_client.post(
+        "/api/v1/scraper/survey-instant?route=DEL-BOM&advance_days=7"
+    )
     assert unauth_res.status_code == 401
 
     # Survey instant authenticated -> 200
@@ -147,4 +148,3 @@ async def test_statistical_bulletin_and_ai_diagnose(async_client):
     diag = d_data["diagnosis"]
     assert "anomaly_detected" in diag
     assert "economic_explanation" in diag
-

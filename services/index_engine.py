@@ -14,7 +14,7 @@ Implements international statistical standards for dynamic price aggregation:
 import logging
 import math
 from datetime import date, datetime, timedelta, timezone
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 from sqlalchemy import desc, select
@@ -109,7 +109,11 @@ class AirfareIndexEngine:
         if n == 0:
             return 100.0
 
-        valid_relatives = [p_t / p_0 for p_t, p_0 in zip(current_prices[:n], base_prices[:n]) if p_t > 0 and p_0 > 0]
+        valid_relatives = [
+            p_t / p_0
+            for p_t, p_0 in zip(current_prices[:n], base_prices[:n])
+            if p_t > 0 and p_0 > 0
+        ]
         if not valid_relatives:
             return 100.0
 
@@ -146,7 +150,8 @@ class AirfareIndexEngine:
     @staticmethod
     def compute_geks_tornqvist_window(
         price_matrix: dict[str, dict[str, float]],  # {date_str: {item_id: price}}
-        weights_matrix: dict[str, float] | None = None,  # {item_id: quantity_or_traffic_weight}
+        weights_matrix: dict[str, float]
+        | None = None,  # {item_id: quantity_or_traffic_weight}
     ) -> dict[str, float]:
         """Compute Multilateral GEKS-Törnqvist indices over a multi-period rolling window.
 
@@ -169,7 +174,11 @@ class AirfareIndexEngine:
 
                 prices_i = price_matrix[dates[i]]
                 prices_j = price_matrix[dates[j]]
-                common_keys = [k for k in set(prices_i.keys()) & set(prices_j.keys()) if prices_i[k] > 0 and prices_j[k] > 0]
+                common_keys = [
+                    k
+                    for k in set(prices_i.keys()) & set(prices_j.keys())
+                    if prices_i[k] > 0 and prices_j[k] > 0
+                ]
 
                 if not common_keys:
                     bilateral[i, j] = 1.0
@@ -178,8 +187,12 @@ class AirfareIndexEngine:
                 if weights_matrix:
                     # True Törnqvist bilateral with expenditure shares:
                     # expenditure = quantity_weight * price
-                    exp_i = {k: weights_matrix.get(k, 1.0) * prices_i[k] for k in common_keys}
-                    exp_j = {k: weights_matrix.get(k, 1.0) * prices_j[k] for k in common_keys}
+                    exp_i = {
+                        k: weights_matrix.get(k, 1.0) * prices_i[k] for k in common_keys
+                    }
+                    exp_j = {
+                        k: weights_matrix.get(k, 1.0) * prices_j[k] for k in common_keys
+                    }
                     tot_exp_i = sum(exp_i.values()) or 1.0
                     tot_exp_j = sum(exp_j.values()) or 1.0
 
@@ -188,18 +201,28 @@ class AirfareIndexEngine:
                         share_i = exp_i[k] / tot_exp_i
                         share_j = exp_j[k] / tot_exp_j
                         avg_weight = (share_i + share_j) / 2.0
-                        log_tornqvist += avg_weight * math.log(prices_j[k] / prices_i[k])
+                        log_tornqvist += avg_weight * math.log(
+                            prices_j[k] / prices_i[k]
+                        )
 
                     bilateral[i, j] = math.exp(log_tornqvist)
                 else:
                     # Unweighted geometric mean (Jevons bilateral fallback)
                     relatives = [prices_j[k] / prices_i[k] for k in common_keys]
-                    bilateral[i, j] = math.exp(sum(math.log(r) for r in relatives) / len(relatives))
+                    bilateral[i, j] = math.exp(
+                        sum(math.log(r) for r in relatives) / len(relatives)
+                    )
 
         # Step 2: GEKS aggregation (geometric mean of all indirect bilateral paths)
         geks_values = {}
         for t in range(T):
-            log_geks = sum(math.log(max(bilateral[0, k] * bilateral[k, t], 1e-6)) for k in range(T)) / T
+            log_geks = (
+                sum(
+                    math.log(max(bilateral[0, k] * bilateral[k, t], 1e-6))
+                    for k in range(T)
+                )
+                / T
+            )
             geks_values[dates[t]] = round(math.exp(log_geks) * 100.0, 2)
 
         return geks_values
@@ -273,7 +296,9 @@ class AirfareIndexEngine:
             total_weight = sum(route_weights.values()) or 1.0
 
             # 2. Fetch all quotes for target date
-            quotes_stmt = select(FareQuote).where(FareQuote.departure_date == target_date)
+            quotes_stmt = select(FareQuote).where(
+                FareQuote.departure_date == target_date
+            )
             quotes = (await session.execute(quotes_stmt)).scalars().all()
 
             # Group quotes by route
@@ -294,7 +319,9 @@ class AirfareIndexEngine:
                 if not r_quotes:
                     missing_routes.append(r.id)
                     # Eurostat Imputation: fallback to baseline
-                    fallback_fare = DataCleaner.impute_missing_route(r.id, base_period_fares)
+                    fallback_fare = DataCleaner.impute_missing_route(
+                        r.id, base_period_fares
+                    )
                     route_subindices[r.id] = {
                         "index_value": 100.0,
                         "avg_fare": fallback_fare,
@@ -308,7 +335,11 @@ class AirfareIndexEngine:
                     }
                     continue
 
-                raw_fares = [q.total_fare for q in r_quotes if q.total_fare > 0 and not q.is_sold_out]
+                raw_fares = [
+                    q.total_fare
+                    for q in r_quotes
+                    if q.total_fare > 0 and not q.is_sold_out
+                ]
 
                 # Statistical Outlier Trimming via Tukey IQR
                 if apply_outlier_filter and len(raw_fares) >= 4:
@@ -324,13 +355,17 @@ class AirfareIndexEngine:
                 if not fares:
                     fares = raw_fares or [5500.0]
 
-                base_fare_avg = (
-                    (base_period_fares or {}).get(r.id) or (sum(fares) / len(fares))
+                base_fare_avg = (base_period_fares or {}).get(r.id) or (
+                    sum(fares) / len(fares)
                 )
 
                 # Jevons relative vs base
                 relatives = [f / base_fare_avg for f in fares if base_fare_avg > 0]
-                geom_mean = math.exp(sum(math.log(x) for x in relatives) / len(relatives)) if relatives else 1.0
+                geom_mean = (
+                    math.exp(sum(math.log(x) for x in relatives) / len(relatives))
+                    if relatives
+                    else 1.0
+                )
                 r_index_val = round(geom_mean * 100.0, 2)
 
                 # Window breakdown (T+1, T+7, T+15, T+30, T+45) with statistical percentiles
@@ -348,10 +383,18 @@ class AirfareIndexEngine:
                     window_breakdown[w] = {
                         "avg": round(sum(s_w) / n_w, 2),
                         "median": round(s_w[n_w // 2], 2),
-                        "p10": round(float(np.percentile(s_w, 10)), 2) if n_w >= 4 else s_w[0],
-                        "p25": round(float(np.percentile(s_w, 25)), 2) if n_w >= 4 else s_w[0],
-                        "p75": round(float(np.percentile(s_w, 75)), 2) if n_w >= 4 else s_w[-1],
-                        "p90": round(float(np.percentile(s_w, 90)), 2) if n_w >= 4 else s_w[-1],
+                        "p10": round(float(np.percentile(s_w, 10)), 2)
+                        if n_w >= 4
+                        else s_w[0],
+                        "p25": round(float(np.percentile(s_w, 25)), 2)
+                        if n_w >= 4
+                        else s_w[0],
+                        "p75": round(float(np.percentile(s_w, 75)), 2)
+                        if n_w >= 4
+                        else s_w[-1],
+                        "p90": round(float(np.percentile(s_w, 90)), 2)
+                        if n_w >= 4
+                        else s_w[-1],
                         "count": n_w,
                     }
 
@@ -396,20 +439,37 @@ class AirfareIndexEngine:
             national_ci_lower: float | None = None
             national_ci_upper: float | None = None
 
-            cov_ratio = (len(routes) - len(missing_routes)) / len(routes) if routes else 1.0
-            quality_tier = "HIGH" if cov_ratio >= 0.8 else ("MODERATE" if cov_ratio >= 0.5 else "IMPUTED")
+            cov_ratio = (
+                (len(routes) - len(missing_routes)) / len(routes) if routes else 1.0
+            )
+            quality_tier = (
+                "HIGH"
+                if cov_ratio >= 0.8
+                else ("MODERATE" if cov_ratio >= 0.5 else "IMPUTED")
+            )
 
             valid_cis = [
-                (route_weights.get(r_id, 0.0) / total_weight, data["std_error"], data["ci_lower_95"], data["ci_upper_95"])
+                (
+                    route_weights.get(r_id, 0.0) / total_weight,
+                    data["std_error"],
+                    data["ci_lower_95"],
+                    data["ci_upper_95"],
+                )
                 for r_id, data in route_subindices.items()
                 if data.get("std_error") is not None
             ]
             if valid_cis:
                 tot_valid_w = sum(x[0] for x in valid_cis)
                 if tot_valid_w > 0:
-                    national_se = round(sum(x[0] * x[1] for x in valid_cis) / tot_valid_w, 2)
-                    national_ci_lower = round(sum(x[0] * x[2] for x in valid_cis) / tot_valid_w, 2)
-                    national_ci_upper = round(sum(x[0] * x[3] for x in valid_cis) / tot_valid_w, 2)
+                    national_se = round(
+                        sum(x[0] * x[1] for x in valid_cis) / tot_valid_w, 2
+                    )
+                    national_ci_lower = round(
+                        sum(x[0] * x[2] for x in valid_cis) / tot_valid_w, 2
+                    )
+                    national_ci_upper = round(
+                        sum(x[0] * x[3] for x in valid_cis) / tot_valid_w, 2
+                    )
 
             try:
                 lookback_start = target_date - timedelta(days=6)
@@ -427,23 +487,37 @@ class AirfareIndexEngine:
                 # Add target date route averages
                 target_str = target_date.isoformat()
                 price_matrix[target_str] = {
-                    r_id: data["avg_fare"]
+                    r_id: cast(float, data["avg_fare"])
                     for r_id, data in route_subindices.items()
-                    if data["quote_count"] > 0
+                    if cast(int, data.get("quote_count", 0)) > 0
                 }
 
                 if len(price_matrix) >= 2:
-                    geks_dict = cls.compute_geks_tornqvist_window(price_matrix, weights_matrix=route_weights)
+                    geks_dict = cls.compute_geks_tornqvist_window(
+                        price_matrix, weights_matrix=route_weights
+                    )
                     if target_str in geks_dict:
                         prev_day_date = target_date - timedelta(days=1)
                         prev_day_str = prev_day_date.isoformat()
                         if prev_day_str in geks_dict:
                             # Splicing: link to previously published daily index
-                            prev_stmt = select(DailyIndex).where(DailyIndex.index_date == prev_day_date)
-                            prev_published = (await session.execute(prev_stmt)).scalars().first()
-                            if prev_published and prev_published.index_value > 0 and geks_dict[prev_day_str] > 0:
-                                splice_ratio = geks_dict[target_str] / geks_dict[prev_day_str]
-                                national_index = round(prev_published.index_value * splice_ratio, 2)
+                            prev_stmt = select(DailyIndex).where(
+                                DailyIndex.index_date == prev_day_date
+                            )
+                            prev_published = (
+                                (await session.execute(prev_stmt)).scalars().first()
+                            )
+                            if (
+                                prev_published
+                                and prev_published.index_value > 0
+                                and geks_dict[prev_day_str] > 0
+                            ):
+                                splice_ratio = (
+                                    geks_dict[target_str] / geks_dict[prev_day_str]
+                                )
+                                national_index = round(
+                                    prev_published.index_value * splice_ratio, 2
+                                )
                                 methodology_used = "geks_tornqvist_movement_splice"
                             else:
                                 national_index = round(geks_dict[target_str], 2)
@@ -618,7 +692,9 @@ class AirfareIndexEngine:
         for ym in sorted(months_map.keys()):
             items = months_map[ym]
             avg_idx = round(sum(x.index_value for x in items) / len(items), 2)
-            mom_change = round(((avg_idx - prev_idx) / prev_idx) * 100.0, 2) if prev_idx else 1.2
+            mom_change = (
+                round(((avg_idx - prev_idx) / prev_idx) * 100.0, 2) if prev_idx else 1.2
+            )
             prev_idx = avg_idx
 
             monthly_series.append(
@@ -665,7 +741,11 @@ class AirfareIndexEngine:
             if not route_indices:
                 # Dynamic fallback from FareQuote if RouteIndex not yet compiled
                 for r in routes:
-                    q_stmt = select(FareQuote.total_fare).where(FareQuote.route_id == r.id).where(FareQuote.total_fare > 0)
+                    q_stmt = (
+                        select(FareQuote.total_fare)
+                        .where(FareQuote.route_id == r.id)
+                        .where(FareQuote.total_fare > 0)
+                    )
                     fares = (await session.execute(q_stmt)).scalars().all()
                     if fares:
                         avg_f = float(np.mean(fares))
@@ -687,7 +767,10 @@ class AirfareIndexEngine:
                         )
 
         if not route_indices and contributions:
-            contributions.sort(key=lambda x: abs(x["contribution_to_national_inflation_pts"]), reverse=True)
+            contributions.sort(
+                key=lambda x: abs(x["contribution_to_national_inflation_pts"]),
+                reverse=True,
+            )
             return {
                 "reference_date": calc_date.isoformat(),
                 "headline_national_inflation_pts": round(total_inflation_points, 2),
@@ -720,7 +803,9 @@ class AirfareIndexEngine:
                 }
             )
 
-        contributions.sort(key=lambda x: abs(x["contribution_to_national_inflation_pts"]), reverse=True)
+        contributions.sort(
+            key=lambda x: abs(x["contribution_to_national_inflation_pts"]), reverse=True
+        )
 
         return {
             "reference_date": calc_date.isoformat(),
@@ -746,6 +831,7 @@ class AirfareIndexEngine:
         quotes against continuous 30-day multi-window tracking.
         """
         import calendar
+
         year, month = 2026, 8
         try:
             parts = month_str.split("-")
@@ -754,8 +840,12 @@ class AirfareIndexEngine:
             pass
 
         cal = calendar.Calendar()
-        tuesdays = [d[0] for d in cal.itermonthdays2(year, month) if d[0] != 0 and d[1] == 1]
-        second_tuesday = tuesdays[1] if len(tuesdays) >= 2 else (tuesdays[0] if tuesdays else 12)
+        tuesdays = [
+            d[0] for d in cal.itermonthdays2(year, month) if d[0] != 0 and d[1] == 1
+        ]
+        second_tuesday = (
+            tuesdays[1] if len(tuesdays) >= 2 else (tuesdays[0] if tuesdays else 12)
+        )
 
         if not daily_quotes:
             return {
@@ -778,11 +868,13 @@ class AirfareIndexEngine:
         avg_continuous = sum(all_fares) / len(all_fares) if all_fares else 7500.0
 
         snapshot_fares = [
-            q["total_fare"]
-            for q in daily_quotes
-            if q.get("advance_days") in (15, 30)
+            q["total_fare"] for q in daily_quotes if q.get("advance_days") in (15, 30)
         ]
-        avg_snapshot = sum(snapshot_fares) / len(snapshot_fares) if snapshot_fares else avg_continuous * 0.82
+        avg_snapshot = (
+            sum(snapshot_fares) / len(snapshot_fares)
+            if snapshot_fares
+            else avg_continuous * 0.82
+        )
 
         gap_pct = round(((avg_continuous - avg_snapshot) / avg_snapshot) * 100.0, 1)
         diff_inr = round(avg_continuous - avg_snapshot, 2)
@@ -809,6 +901,8 @@ class AirfareIndexEngine:
 
 
 # Top-level helper functions
-def compute_geks_tornqvist_matrix(price_matrix: dict[str, dict[str, float]]) -> dict[str, float]:
+def compute_geks_tornqvist_matrix(
+    price_matrix: dict[str, dict[str, float]],
+) -> dict[str, float]:
     """Top-level helper for multilateral GEKS-Törnqvist window calculation."""
     return AirfareIndexEngine.compute_geks_tornqvist_window(price_matrix)

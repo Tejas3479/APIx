@@ -12,7 +12,12 @@ class APIxError(Exception):
 class APIxClient:
     """Synchronous client for the APIx Real-Time Airfare Price Index API."""
 
-    def __init__(self, api_key: str | None = None, bearer_token: str | None = None, base_url: str = "http://localhost:8000"):
+    def __init__(
+        self,
+        api_key: str | None = None,
+        bearer_token: str | None = None,
+        base_url: str = "http://localhost:8000",
+    ):
         self.base_url = base_url.rstrip("/")
         self.headers = {}
         if api_key:
@@ -29,7 +34,9 @@ class APIxClient:
         self._check_response(res)
         return res.json()
 
-    def get_daily_index(self, limit: int = 30, from_date: str | None = None, to_date: str | None = None) -> list[dict[str, Any]]:
+    def get_daily_index(
+        self, limit: int = 30, from_date: str | None = None, to_date: str | None = None
+    ) -> list[dict[str, Any]]:
         """Retrieve national daily APIx price index time series."""
         params: dict[str, Any] = {"limit": limit}
         if from_date:
@@ -42,7 +49,9 @@ class APIxClient:
 
     def get_route_index(self, route_id: str, limit: int = 30) -> list[dict[str, Any]]:
         """Retrieve per-sector daily sub-index time series."""
-        res = self.client.get(f"/api/v1/index/route/{route_id.upper()}", params={"limit": limit})
+        res = self.client.get(
+            f"/api/v1/index/route/{route_id.upper()}", params={"limit": limit}
+        )
         self._check_response(res)
         return res.json()
 
@@ -58,11 +67,17 @@ class APIxClient:
         self._check_response(res)
         return res.json()
 
-    def survey_route(self, route_id: str = "DEL-BOM", advance_days: int = 7, force_live: bool = False) -> list[dict[str, Any]]:
+    def survey_route(
+        self, route_id: str = "DEL-BOM", advance_days: int = 7, force_live: bool = False
+    ) -> list[dict[str, Any]]:
         """Survey real-time airfares for a city-pair and booking window with statutory breakdown."""
         res = self.client.post(
             "/api/v1/scraper/survey-instant",
-            params={"route": route_id.upper(), "advance_days": advance_days, "force_live": force_live},
+            params={
+                "route": route_id.upper(),
+                "advance_days": advance_days,
+                "force_live": force_live,
+            },
         )
         self._check_response(res)
         return res.json()
@@ -92,7 +107,12 @@ class APIxClient:
 class AsyncAPIxClient:
     """Asynchronous client for the APIx Real-Time Airfare Price Index API."""
 
-    def __init__(self, api_key: str | None = None, bearer_token: str | None = None, base_url: str = "http://localhost:8000"):
+    def __init__(
+        self,
+        api_key: str | None = None,
+        bearer_token: str | None = None,
+        base_url: str = "http://localhost:8000",
+    ):
         self.base_url = base_url.rstrip("/")
         self.headers = {}
         if api_key:
@@ -108,7 +128,9 @@ class AsyncAPIxClient:
         self._check_response(res)
         return res.json()
 
-    async def survey_route(self, route_id: str = "DEL-BOM", advance_days: int = 7) -> list[dict[str, Any]]:
+    async def survey_route(
+        self, route_id: str = "DEL-BOM", advance_days: int = 7
+    ) -> list[dict[str, Any]]:
         res = await self.client.post(
             "/api/v1/scraper/survey-instant",
             params={"route": route_id.upper(), "advance_days": advance_days},

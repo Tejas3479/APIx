@@ -35,7 +35,9 @@ async def get_dashboard_stats():
         # Route count
         routes_count = (
             await session.execute(
-                select(func.count()).select_from(RouteConfig).where(RouteConfig.is_active == True)
+                select(func.count())
+                .select_from(RouteConfig)
+                .where(RouteConfig.is_active == True)
             )
         ).scalar() or 8
 
@@ -59,9 +61,7 @@ async def get_dashboard_stats():
         avg_fare = (await session.execute(avg_fare_stmt)).scalar() or 6840.0
 
         # Last scrape time
-        last_job_stmt = (
-            select(ScrapeJob).order_by(desc(ScrapeJob.created_at)).limit(1)
-        )
+        last_job_stmt = select(ScrapeJob).order_by(desc(ScrapeJob.created_at)).limit(1)
         last_job = (await session.execute(last_job_stmt)).scalars().first()
         last_scrape = last_job.created_at if last_job else None
 
@@ -83,7 +83,13 @@ async def get_route_heatmap(days: int = 14):
     async with async_session_maker() as session:
         routes_stmt = select(RouteConfig).where(RouteConfig.is_active == True)
         routes = (await session.execute(routes_stmt)).scalars().all()
-        route_ids = [r.id for r in routes] or ["DEL-BOM", "DEL-BLR", "BOM-BLR", "DEL-CCU", "BLR-HYD"]
+        route_ids = [r.id for r in routes] or [
+            "DEL-BOM",
+            "DEL-BLR",
+            "BOM-BLR",
+            "DEL-CCU",
+            "BLR-HYD",
+        ]
 
         today = datetime.now(timezone.utc).date()
         heatmap_points = []
@@ -145,11 +151,21 @@ async def get_lead_time_elasticity():
         routes = (await session.execute(routes_stmt)).scalars().all()
         if not routes:
             routes = [
-                RouteConfig(id="DEL-BOM", origin_city="New Delhi", destination_city="Mumbai"),
-                RouteConfig(id="DEL-BLR", origin_city="New Delhi", destination_city="Bengaluru"),
-                RouteConfig(id="BOM-BLR", origin_city="Mumbai", destination_city="Bengaluru"),
-                RouteConfig(id="DEL-CCU", origin_city="New Delhi", destination_city="Kolkata"),
-                RouteConfig(id="BLR-HYD", origin_city="Bengaluru", destination_city="Hyderabad"),
+                RouteConfig(
+                    id="DEL-BOM", origin_city="New Delhi", destination_city="Mumbai"
+                ),
+                RouteConfig(
+                    id="DEL-BLR", origin_city="New Delhi", destination_city="Bengaluru"
+                ),
+                RouteConfig(
+                    id="BOM-BLR", origin_city="Mumbai", destination_city="Bengaluru"
+                ),
+                RouteConfig(
+                    id="DEL-CCU", origin_city="New Delhi", destination_city="Kolkata"
+                ),
+                RouteConfig(
+                    id="BLR-HYD", origin_city="Bengaluru", destination_city="Hyderabad"
+                ),
             ]
 
         curves = []

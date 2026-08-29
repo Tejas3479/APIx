@@ -45,23 +45,41 @@ async def validate_basket_weights():
         }
 
 
-@router.post("", response_model=RouteBasketConfig, dependencies=[Depends(verify_api_key)])
+@router.post(
+    "", response_model=RouteBasketConfig, dependencies=[Depends(verify_api_key)]
+)
 async def create_route(req: RouteBasketCreate):
     """Add a new city-pair route to the basket with weight bounds validation."""
     if req.dgca_weight <= 0 or req.dgca_weight > 1.0:
-        raise HTTPException(status_code=400, detail="Route weight must be between 0.001 and 1.0.")
+        raise HTTPException(
+            status_code=400, detail="Route weight must be between 0.001 and 1.0."
+        )
     route_id = f"{req.origin_iata.upper()}-{req.destination_iata.upper()}"
     async with async_session_maker() as session:
         existing = (
-            await session.execute(select(RouteConfig).where(RouteConfig.id == route_id))
-        ).scalars().first()
+            (
+                await session.execute(
+                    select(RouteConfig).where(RouteConfig.id == route_id)
+                )
+            )
+            .scalars()
+            .first()
+        )
         if existing:
-            raise HTTPException(status_code=409, detail=f"Route {route_id} already exists.")
+            raise HTTPException(
+                status_code=409, detail=f"Route {route_id} already exists."
+            )
 
         # Check total active weight bounds
         active_routes = (
-            await session.execute(select(RouteConfig).where(RouteConfig.is_active == True))
-        ).scalars().all()
+            (
+                await session.execute(
+                    select(RouteConfig).where(RouteConfig.is_active == True)
+                )
+            )
+            .scalars()
+            .all()
+        )
         current_sum = sum(r.dgca_weight for r in active_routes)
         if current_sum + req.dgca_weight > 1.5:
             raise HTTPException(
@@ -86,15 +104,27 @@ async def create_route(req: RouteBasketCreate):
         return route
 
 
-@router.put("/{route_id}", response_model=RouteBasketConfig, dependencies=[Depends(verify_api_key)])
+@router.put(
+    "/{route_id}",
+    response_model=RouteBasketConfig,
+    dependencies=[Depends(verify_api_key)],
+)
 async def update_route(route_id: str, req: RouteBasketUpdate):
     """Update route DGCA weight or toggle active tracking status."""
     if req.dgca_weight is not None and (req.dgca_weight <= 0 or req.dgca_weight > 1.0):
-        raise HTTPException(status_code=400, detail="Route weight must be between 0.001 and 1.0.")
+        raise HTTPException(
+            status_code=400, detail="Route weight must be between 0.001 and 1.0."
+        )
     async with async_session_maker() as session:
         route = (
-            await session.execute(select(RouteConfig).where(RouteConfig.id == route_id.upper()))
-        ).scalars().first()
+            (
+                await session.execute(
+                    select(RouteConfig).where(RouteConfig.id == route_id.upper())
+                )
+            )
+            .scalars()
+            .first()
+        )
         if not route:
             raise HTTPException(status_code=404, detail="Route not found.")
 
@@ -116,8 +146,14 @@ async def delete_route(route_id: str):
     """Remove a route from the active basket."""
     async with async_session_maker() as session:
         route = (
-            await session.execute(select(RouteConfig).where(RouteConfig.id == route_id.upper()))
-        ).scalars().first()
+            (
+                await session.execute(
+                    select(RouteConfig).where(RouteConfig.id == route_id.upper())
+                )
+            )
+            .scalars()
+            .first()
+        )
         if not route:
             raise HTTPException(status_code=404, detail="Route not found.")
 

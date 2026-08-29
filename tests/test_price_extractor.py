@@ -56,17 +56,25 @@ def test_extract_fares_from_content():
 
 def test_quality_adjusted_economy_bundle():
     """Quality adjustment must normalize unbundled baggage fees per carrier."""
-    from services.price_extractor import CARRIER_BAG_SURCHARGES, compute_quality_adjusted_fare
+    from services.price_extractor import (
+        CARRIER_BAG_SURCHARGES,
+        compute_quality_adjusted_fare,
+    )
 
     # IndiGo unbundled
-    adj_6e = compute_quality_adjusted_fare(5000.0, carrier_code="6E", includes_bag=False)
+    adj_6e = compute_quality_adjusted_fare(
+        5000.0, carrier_code="6E", includes_bag=False
+    )
     assert adj_6e == 5000.0 + CARRIER_BAG_SURCHARGES["6E"]
 
     # Air India (15kg included standard)
-    adj_ai = compute_quality_adjusted_fare(5000.0, carrier_code="AI", includes_bag=False)
+    adj_ai = compute_quality_adjusted_fare(
+        5000.0, carrier_code="AI", includes_bag=False
+    )
     assert adj_ai == 5000.0
 
     # If fare explicitly includes bag
-    adj_bundled = compute_quality_adjusted_fare(5000.0, carrier_code="6E", includes_bag=True)
+    adj_bundled = compute_quality_adjusted_fare(
+        5000.0, carrier_code="6E", includes_bag=True
+    )
     assert adj_bundled == 5000.0
-
