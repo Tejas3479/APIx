@@ -76,6 +76,52 @@ def test_materiality_gap_static_vs_continuous():
         {"total_fare": 12800.0, "advance_days": 1},
         {"total_fare": 16500.0, "advance_days": 1},
     ]
-    res = AirfareIndexEngine.compute_materiality_gap(quotes)
+    res = AirfareIndexEngine.compute_materiality_gap(quotes, month_str="2026-08")
     assert res["materiality_gap_pct"] > 0.0
     assert res["under_reporting_amount_inr"] > 0.0
+    assert "nso_snapshot_day" in res
+    assert res["nso_snapshot_day"] == 11  # August 2026 2nd Tuesday is Aug 11
+
+
+def test_geks_tornqvist_expenditure_weights():
+    """GEKS-Törnqvist with route weights must produce consistent multilateral indices."""
+    matrix = {
+        "2026-08-01": {"DEL-BOM": 5000.0, "DEL-BLR": 6000.0},
+        "2026-08-02": {"DEL-BOM": 5500.0, "DEL-BLR": 6300.0},
+        "2026-08-03": {"DEL-BOM": 6000.0, "DEL-BLR": 6600.0},
+    }
+    weights = {"DEL-BOM": 0.22, "DEL-BLR": 0.18}
+    geks = AirfareIndexEngine.compute_geks_tornqvist_window(matrix, weights_matrix=weights)
+    assert geks["2026-08-01"] == 100.0
+    assert geks["2026-08-02"] > 100.0
+    assert geks["2026-08-03"] > geks["2026-08-02"]
+
+
+def test_bootstrap_route_confidence_interval():
+    """Bootstrap CI must obey sample floor and produce deterministic 95% intervals."""
+    from datetime import date
+    test_date = date(2026, 8, 15)
+
+    # Sparse sample (< 8 quotes) must return insufficient_sample
+    sparse_fares = [5000.0, 5200.0, 5100.0]
+    ci_sparse = AirfareIndexEngine.bootstrap_route_confidence_interval(
+        fares=sparse_fares,
+        base_fare=5000.0,
+        target_date=test_date,
+        route_id="DEL-BOM",
+    )
+    assert ci_sparse["insufficient_sample"] is True
+    assert ci_sparse["std_error"] is None
+
+    # Adequate sample (>= 8 quotes) must produce valid CI bounds
+    adequate_fares = [4800.0, 5000.0, 5200.0, 5100.0, 5300.0, 4900.0, 5050.0, 5150.0, 5250.0]
+    ci_full = AirfareIndexEngine.bootstrap_route_confidence_interval(
+        fares=adequate_fares,
+        base_fare=5000.0,
+        target_date=test_date,
+        route_id="DEL-BOM",
+    )
+    assert ci_full["insufficient_sample"] is False
+    assert ci_full["std_error"] > 0.0
+    assert ci_full["ci_lower_95"] <= ci_full["ci_upper_95"]
+

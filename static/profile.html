@@ -279,6 +279,7 @@
         </button>
         <button class="btn-theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
           <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </button>
         <a href="/profile" id="officerBadge" class="officer-pill active" style="text-decoration: none;" title="View Analyst Profile & Settings">
           <span class="pulse-live"></span>
@@ -390,8 +391,8 @@
           </div>
           <div style="margin-top: 18px; display: flex; justify-content: flex-end;">
             <button onclick="(() => { 
-  const method = document.querySelector('select').value;
-  const baseDate = document.querySelector('input[type=date]').value;
+  const method = document.getElementById('indexStandard').value;
+  const baseDate = document.getElementById('baseDate').value;
   localStorage.setItem('apix_prefs', JSON.stringify({ method, baseDate }));
   showToast('Methodology preferences saved', 'success');
 })()" class="btn-dash btn-dash-primary">
@@ -436,8 +437,8 @@
       if (tokenInput && storedToken) tokenInput.value = storedToken;
 
       const prefs = JSON.parse(localStorage.getItem('apix_prefs') || '{}');
-      if (prefs.method) document.querySelector('select').value = prefs.method;
-      if (prefs.baseDate) document.querySelector('input[type=date]').value = prefs.baseDate;
+      if (prefs.method && document.getElementById('indexStandard')) document.getElementById('indexStandard').value = prefs.method;
+      if (prefs.baseDate && document.getElementById('baseDate')) document.getElementById('baseDate').value = prefs.baseDate;
 
       const officerStr = localStorage.getItem('apix_officer');
       if (officerStr) {

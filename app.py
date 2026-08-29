@@ -148,8 +148,9 @@ app_kwargs = {
     "title": "APIx — Real-Time Airfare Price Index API",
     "description": (
         "National Statistical Office (NSO) / MoSPI Real-Time Airfare Price Index Platform. "
-        "Aggregates high-frequency multi-carrier domestic fares, decomposes statutory base tariffs "
-        "from airport taxes, and constructs multilateral GEKS-Törnqvist price indices."
+        "Phase 1 prototype: aggregates multi-carrier domestic fares across 8 DGCA-weighted corridors "
+        "and 5 advance horizons (T+1 to T+45), decomposes statutory base tariffs from airport taxes, "
+        "and constructs multilateral GEKS-Törnqvist price indices."
     ),
     "version": "1.0.0",
     "lifespan": lifespan,

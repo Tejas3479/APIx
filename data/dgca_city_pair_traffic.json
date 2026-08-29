@@ -1,0 +1,74 @@
+[
+  {
+    "route_id": "DEL-BOM",
+    "origin": "DEL",
+    "destination": "BOM",
+    "annual_passengers_2025": 4850000,
+    "monthly_passengers_avg": 404166,
+    "dgca_traffic_share": 0.22,
+    "source": "DGCA City Pair Wise Scheduled Domestic Passenger Traffic"
+  },
+  {
+    "route_id": "DEL-BLR",
+    "origin": "DEL",
+    "destination": "BLR",
+    "annual_passengers_2025": 3980000,
+    "monthly_passengers_avg": 331666,
+    "dgca_traffic_share": 0.18,
+    "source": "DGCA City Pair Wise Scheduled Domestic Passenger Traffic"
+  },
+  {
+    "route_id": "BOM-BLR",
+    "origin": "BOM",
+    "destination": "BLR",
+    "annual_passengers_2025": 3120000,
+    "monthly_passengers_avg": 260000,
+    "dgca_traffic_share": 0.14,
+    "source": "DGCA City Pair Wise Scheduled Domestic Passenger Traffic"
+  },
+  {
+    "route_id": "DEL-CCU",
+    "origin": "DEL",
+    "destination": "CCU",
+    "annual_passengers_2025": 2650000,
+    "monthly_passengers_avg": 220833,
+    "dgca_traffic_share": 0.12,
+    "source": "DGCA City Pair Wise Scheduled Domestic Passenger Traffic"
+  },
+  {
+    "route_id": "BLR-HYD",
+    "origin": "BLR",
+    "destination": "HYD",
+    "annual_passengers_2025": 2210000,
+    "monthly_passengers_avg": 184166,
+    "dgca_traffic_share": 0.1,
+    "source": "DGCA City Pair Wise Scheduled Domestic Passenger Traffic"
+  },
+  {
+    "route_id": "DEL-HYD",
+    "origin": "DEL",
+    "destination": "HYD",
+    "annual_passengers_2025": 1990000,
+    "monthly_passengers_avg": 165833,
+    "dgca_traffic_share": 0.09,
+    "source": "DGCA City Pair Wise Scheduled Domestic Passenger Traffic"
+  },
+  {
+    "route_id": "MAA-DEL",
+    "origin": "MAA",
+    "destination": "DEL",
+    "annual_passengers_2025": 1760000,
+    "monthly_passengers_avg": 146666,
+    "dgca_traffic_share": 0.08,
+    "source": "DGCA City Pair Wise Scheduled Domestic Passenger Traffic"
+  },
+  {
+    "route_id": "BOM-GOI",
+    "origin": "BOM",
+    "destination": "GOI",
+    "annual_passengers_2025": 1540000,
+    "monthly_passengers_avg": 128333,
+    "dgca_traffic_share": 0.07,
+    "source": "DGCA City Pair Wise Scheduled Domestic Passenger Traffic"
+  }
+]

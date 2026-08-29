@@ -125,7 +125,7 @@ class PlaywrightManager:
                 "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
             )
 
-            if stealth:
+            if stealth and os.getenv("STEALTH_FINGERPRINT", "false").lower() in ("true", "1", "yes"):
                 # Mock WebGL params
                 webgl_script = """
                 const getParameter = WebGLRenderingContext.prototype.getParameter;

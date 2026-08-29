@@ -34,6 +34,34 @@ DEFAULT_UDF = 250.0
 STATUTORY_ASF = 200.0  # Aviation Security Fee flat rate
 ECONOMY_GST_RATE = 0.05  # 5% GST on (base + fuel)
 
+# Active Indian carrier standard 15kg checked baggage unbundled surcharges (INR)
+CARRIER_BAG_SURCHARGES: dict[str, float] = {
+    "6E": 599.0,  # IndiGo: Unbundled Lite/Saver
+    "QP": 549.0,  # Akasa Air: Unbundled Saver
+    "SG": 574.0,  # SpiceJet: Unbundled Saver
+    "AI": 0.0,    # Air India: 15kg standard check-in included in base economy
+    "IX": 0.0,    # Air India Express: 15kg standard check-in included
+}
+DEFAULT_UNBUNDLED_BAG_FEE = 550.0
+
+
+def compute_quality_adjusted_fare(
+    total_fare: float,
+    carrier_code: str = "6E",
+    includes_bag: bool = False,
+) -> float:
+    """Normalize retail fare to constant-quality 'all-in economy bundle' (15kg bag + standard seat).
+
+    Addresses unbundling bias identified in official price collection: when carriers
+    strip checked baggage to lower headline base fares, unadjusted indices show false deflation.
+    """
+    if total_fare <= 0:
+        return 0.0
+    if includes_bag:
+        return total_fare
+    surcharge = CARRIER_BAG_SURCHARGES.get(carrier_code.upper(), DEFAULT_UNBUNDLED_BAG_FEE)
+    return round(total_fare + surcharge, 2)
+
 
 def _parse_price(text: str) -> float | None:
     """Extract a numeric price from text, handling Indian number formatting."""
@@ -51,11 +79,14 @@ def decompose_fare(
     total_fare: float,
     origin_iata: str = "DEL",
     cabin_class: str = "economy",
+    carrier_code: str = "6E",
+    includes_bag: bool = False,
 ) -> dict[str, float]:
-    """Decompose total retail fare into economic & statutory components.
+    """Decompose total retail fare into economic, statutory, and quality-adjusted components.
 
     Formula:
       Total = (Base + Fuel) * (1 + GST) + UDF + ASF + Convenience
+      Quality-Adjusted = Total + Baggage Surcharge (if unbundled)
     """
     if total_fare <= 0:
         return {
@@ -65,6 +96,7 @@ def decompose_fare(
             "asf": 0.0,
             "gst": 0.0,
             "convenience_fee": 0.0,
+            "quality_adjusted_fare": 0.0,
             "total_fare": 0.0,
         }
 
@@ -99,6 +131,12 @@ def decompose_fare(
     rounding_diff = round(total_fare - calculated_sum, 2)
     base_fare = round(base_fare + rounding_diff, 2)
 
+    quality_adj = compute_quality_adjusted_fare(
+        total_fare=total_fare,
+        carrier_code=carrier_code,
+        includes_bag=includes_bag,
+    )
+
     return {
         "base_fare": round(base_fare, 2),
         "fuel_surcharge": round(fuel_surcharge, 2),
@@ -106,6 +144,7 @@ def decompose_fare(
         "asf": round(asf, 2),
         "gst": round(gst_amount, 2),
         "convenience_fee": round(convenience_fee, 2),
+        "quality_adjusted_fare": quality_adj,
         "total_fare": round(total_fare, 2),
     }
 

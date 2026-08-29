@@ -82,17 +82,18 @@ async def require_current_user(
 ) -> User | None:
     """Require a valid JWT unless AUTH_DISABLED=true.
 
-    In demo/dev mode (AUTH_DISABLED=true) requests are allowed without a
-    token so the UI works offline. Otherwise a valid Bearer JWT is mandatory.
+    If a Bearer token is provided, it is always validated (invalid token -> 401).
+    If no token is provided and AUTH_DISABLED=true, returns None (offline/demo mode).
+    Otherwise raises 401.
     """
+    if creds and creds.credentials:
+        user = await get_current_user(creds.credentials)
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid or expired token")
+        return user
     if os.getenv("AUTH_DISABLED") == "true":
         return None
-    if not creds or not creds.credentials:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    user = await get_current_user(creds.credentials)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    return user
+    raise HTTPException(status_code=401, detail="Not authenticated")
 
 
 @router.post("/register", response_model=UserResponse)
@@ -209,11 +210,18 @@ async def demo_login(req: DemoLoginRequest):
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_me(token: str = Depends(oauth2_scheme)):
-    """Get current user profile. Requires Authorization header."""
-    user = await get_current_user(token)
+async def get_me(user: User | None = Depends(require_current_user)):
+    """Get current authenticated officer profile."""
     if not user:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
+        # Offline/Demo profile fallback when AUTH_DISABLED=true
+        return UserResponse(
+            id="demo-officer",
+            name="MoSPI Statistical Officer (Demo)",
+            email="officer@mospi.gov.in",
+            department="Price Statistics Division",
+            organization="National Statistical Office (NSO)",
+            role="senior_officer",
+        )
 
     return UserResponse(
         id=user.id,

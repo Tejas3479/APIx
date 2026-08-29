@@ -3,9 +3,10 @@
 import logging
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import desc, select
 
+from auth import verify_api_key
 from database import ScrapeJob, async_session_maker
 from models import ScrapeJobResponse, ScrapeRequest
 from services.scrape_scheduler import ScrapeScheduler, get_live_telemetry_logs
@@ -16,7 +17,7 @@ logger = logging.getLogger("apix.routers.scraper")
 router = APIRouter(prefix="/api/v1/scraper", tags=["scraper"])
 
 
-@router.post("/run", response_model=dict[str, Any])
+@router.post("/run", response_model=dict[str, Any], dependencies=[Depends(verify_api_key)])
 async def trigger_scrape(req: ScrapeRequest):
     """Trigger an on-demand airfare survey for designated routes and advance windows."""
     if not req.routes:
@@ -39,7 +40,7 @@ async def trigger_scrape(req: ScrapeRequest):
     }
 
 
-@router.post("/survey-instant", response_model=list[dict[str, Any]])
+@router.post("/survey-instant", response_model=list[dict[str, Any]], dependencies=[Depends(verify_api_key)])
 async def run_single_survey_instant(
     route: str = "DEL-BOM",
     advance_days: int = 7,

@@ -22,8 +22,13 @@ async def setup_env():
 
 
 def test_export_microdata_csv():
-    """CSV microdata export must return valid CSV attachment with headers."""
-    resp = client.get("/api/v1/export/csv")
+    """CSV microdata export must require auth and return valid CSV attachment with headers."""
+    # Unauthenticated -> 401
+    unauth = client.get("/api/v1/export/csv")
+    assert unauth.status_code == 401
+
+    # Authenticated -> 200
+    resp = client.get("/api/v1/export/csv", headers={"x-api-key": "test-api-key"})
     assert resp.status_code == 200
     assert "text/csv" in resp.headers["content-type"]
     assert "attachment; filename=" in resp.headers["content-disposition"]
@@ -33,8 +38,13 @@ def test_export_microdata_csv():
 
 
 def test_export_index_series_csv():
-    """CSV index series export must return valid CSV table."""
-    resp = client.get("/api/v1/export/index-csv")
+    """CSV index series export must require auth and return valid CSV table."""
+    # Unauthenticated -> 401
+    unauth = client.get("/api/v1/export/index-csv")
+    assert unauth.status_code == 401
+
+    # Authenticated -> 200
+    resp = client.get("/api/v1/export/index-csv", headers={"x-api-key": "test-api-key"})
     assert resp.status_code == 200
     assert "text/csv" in resp.headers["content-type"]
     assert "index_date,frequency,apix_index_value" in resp.text

@@ -71,12 +71,12 @@ $$\ln P_T^{k,t} = \sum_{i \in S(t, k)} \frac{s_{i}^k + s_{i}^t}{2} \ln\left(\fra
 
 Where $s_i^t$ is the expenditure/passenger share of flight $i$ in period $t$.
 
-### Step 2: GEKS Transitive Averaging
-The multilateral index for period $t$ relative to base period $0$ is the geometric mean of all indirect bilateral comparisons through intermediate periods $k \in \{1, \dots, T\}$:
+### Step 3: Movement Splicing for Rolling-Window Continuity
+To maintain an unbroken, non-revised daily time series as the rolling window $W = [t-T+1, t]$ advances by one day, APIx applies the **Movement Splice** (Diewert and Fox, 2020):
 
-$$\text{GEKS}^{0:t} = \prod_{k=1}^{T} \left( P_T^{0,k} \times P_T^{k,t} \right)^{1/T} \times 100$$
+$$I_t = I_{t-1}^{\text{published}} \times \frac{\text{GEKS}_t^{[t-T+1, t]}}{\text{GEKS}_{t-1}^{[t-T+1, t]}}$$
 
-**Result:** The GEKS index is strictly transitive, multi-period consistent, and free from chain drift.
+**Result:** The GEKS index is strictly transitive within windows, multi-period consistent across time, and free from chain drift.
 
 ---
 
@@ -105,11 +105,13 @@ $$\text{Contribution}_r^t = w_r \times \left( I_r^t - 100.0 \right)$$
 
 ---
 
-## 5. Statutory Fare Decomposition Model
+## 5. Statutory Fare Decomposition & Constant-Quality Bundle
 
-Unlike standard consumer goods, airfares in India combine dynamic airline commercial revenue buckets (RBDs) with statutory non-airline fiscal charges:
+Unlike standard consumer goods, airfares in India combine dynamic airline commercial revenue buckets (RBDs) with statutory non-airline fiscal charges and unbundled ancillaries:
 
 $$\text{Total Ticket Fare} = P_{\text{Base}} + P_{\text{Fuel (YQ)}} + \text{UDF} + \text{ASF} + \text{GST} + \text{Convenience}$$
+
+$$\text{Quality-Adjusted Fare} = \text{Total Ticket Fare} + S_{\text{Bag (if unbundled)}}$$
 
 ```mermaid
 graph LR
@@ -117,23 +119,34 @@ graph LR
     TF --> STATUTORY["Statutory Non-Airline Fees"]
     
     AIRLINE --> BF["Dynamic Base Tariff<br/>Carrier RBD Bucket"]
-    AIRLINE --> YQ["Fuel Surcharge YQ/YR<br/>ATF Price Linked"]
+    AIRLINE --> YQ["Fuel Surcharge YQ/YR<br/>PPAC ATF Cross-Validated"]
     
-    STATUTORY --> UDF["User Development Fee<br/>Airport Specific: ₹380-₹1200"]
+    STATUTORY --> UDF["User Development Fee<br/>Airport Specific: ₹180-₹380"]
     STATUTORY --> ASF["Aviation Security Fee<br/>Statutory Flat: ₹200"]
     STATUTORY --> GST["GST<br/>5% Economy / 12% Business"]
 ```
 
-APIx isolates dynamic commercial tariff movements from statutory tax adjustments, preventing airport fee revisions from being misattributed to airline price gouging.
+### PPAC Domestic ATF Benchmark Cross-Validation
+Extracted statutory fuel surcharges are cross-validated against official Petroleum Planning & Analysis Cell (PPAC, Ministry of Petroleum & Natural Gas) monthly domestic Aviation Turbine Fuel (ATF) rates across metro locations to econometrically isolate cost-push supply shocks from carrier yield management.
 
 ---
 
 ## 6. Statistical Data Cleaning & Outlier Trimming
 
-Following Eurostat (2020) guidelines for online scanner data:
+Following Eurostat (2020) and ONS UK guidelines for online scanner and web-scraped price indices:
 
 1. **Boundary Validation:** Rejects fare quotes where $P < ₹500$ or $P > ₹200,000$.
 2. **Deduplication:** Computes SHA-256 fingerprint $H(\text{Route} \parallel \text{Date} \parallel \text{Carrier} \parallel \text{FlightNo} \parallel T \parallel \text{ScrapeDate})$.
 3. **Tukey's Fences IQR Trimming:**
    $$\text{Lower Bound} = \max(₹500, Q_1 - 1.5 \times \text{IQR}), \quad \text{Upper Bound} = Q_3 + 1.5 \times \text{IQR}$$
-4. **Missing Route Imputation:** When a route has zero flights on a day, APIx carries forward the previous period's Jevons relative adjusted by the national carrier class trend.
+4. **Bootstrap Uncertainty Bands:** Date-seeded deterministic resampling ($B=500, N \ge 8$) providing 95% Confidence Intervals.
+
+---
+
+## 7. References & International Standards
+
+1. **ILO / IMF / OECD / Eurostat / UN / World Bank (2020):** *Consumer Price Index Manual: Concepts and Methods*, International Monetary Fund, Washington, D.C.
+2. **Ivancic, L., Diewert, W. E., & Fox, K. J. (2011):** Scanner data, time aggregation and the construction of price indexes. *Journal of Econometrics*, 161(1), 24-35.
+3. **Office for National Statistics (ONS, UK, 2016/2021):** *Research into the use of web-scraped data in consumer price indices: The CLIP methodology*. ONS Methodology Working Paper Series.
+4. **Eurostat (2020):** *Practical Guide for Processing Supermarket Scanner Data and Web-Scraped Data in the HICP*. Statistical Office of the European Communities, Luxembourg.
+

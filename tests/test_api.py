@@ -22,14 +22,6 @@ async def setup_env():
     yield
 
 
-@pytest.fixture
-async def async_client():
-    async with httpx.AsyncClient(
-        transport=httpx.ASGITransport(app=app), base_url="http://test"
-    ) as ac:
-        yield ac
-
-
 def test_health():
     response = client.get("/api/health")
     assert response.status_code == 200
@@ -41,7 +33,7 @@ def test_health():
 
 @pytest.mark.asyncio
 async def test_routes_crud(async_client):
-    # 1. Get routes
+    # 1. Get routes (Public read)
     res = await async_client.get("/api/v1/routes")
     assert res.status_code == 200
     routes = res.json()
@@ -49,7 +41,7 @@ async def test_routes_crud(async_client):
     route_ids = [r["id"] for r in routes]
     assert "DEL-BOM" in route_ids
 
-    # 2. Add route
+    # 2. Unauthenticated Add route (Must fail 401)
     new_route = {
         "origin_iata": "PNQ",
         "origin_city": "Pune",
@@ -58,7 +50,15 @@ async def test_routes_crud(async_client):
         "dgca_weight": 0.05,
         "daily_flights": 20,
     }
-    create_res = await async_client.post("/api/v1/routes", json=new_route)
+    unauth_res = await async_client.post("/api/v1/routes", json=new_route)
+    assert unauth_res.status_code == 401
+
+    # 3. Authenticated Add route (Must succeed 200/201)
+    create_res = await async_client.post(
+        "/api/v1/routes",
+        json=new_route,
+        headers={"x-api-key": "test-api-key"},
+    )
     assert create_res.status_code in (200, 201)
     assert create_res.json()["id"] == "PNQ-DEL"
 
@@ -99,8 +99,15 @@ async def test_index_endpoints(async_client):
 
 @pytest.mark.asyncio
 async def test_scraper_endpoints(async_client):
-    # Survey instant
-    res = await async_client.post("/api/v1/scraper/survey-instant?route=DEL-BOM&advance_days=7")
+    # Survey instant unauthenticated -> 401
+    unauth_res = await async_client.post("/api/v1/scraper/survey-instant?route=DEL-BOM&advance_days=7")
+    assert unauth_res.status_code == 401
+
+    # Survey instant authenticated -> 200
+    res = await async_client.post(
+        "/api/v1/scraper/survey-instant?route=DEL-BOM&advance_days=7",
+        headers={"x-api-key": "test-api-key"},
+    )
     assert res.status_code == 200
     quotes = res.json()
     assert isinstance(quotes, list)
@@ -121,7 +128,7 @@ async def test_frontend_pages_served(async_client):
 
 @pytest.mark.asyncio
 async def test_statistical_bulletin_and_ai_diagnose(async_client):
-    # 1. Bulletin
+    # 1. Bulletin (Public read)
     b_res = await async_client.get("/api/v1/index/bulletin?year_month=2026-08")
     assert b_res.status_code == 200
     b_data = b_res.json()
@@ -129,9 +136,10 @@ async def test_statistical_bulletin_and_ai_diagnose(async_client):
     assert "headline_metrics" in b_data
     assert len(b_data["route_basket_weights"]) >= 8
 
-    # 2. AI Diagnose
+    # 2. AI Diagnose (Authenticated)
     d_res = await async_client.post(
-        "/api/v1/index/ai-diagnose?route=DEL-BOM&advance_days=1&current_avg_fare=16500&benchmark_fare=5850"
+        "/api/v1/index/ai-diagnose?route=DEL-BOM&advance_days=1&current_avg_fare=16500&benchmark_fare=5850",
+        headers={"x-api-key": "test-api-key"},
     )
     assert d_res.status_code == 200
     d_data = d_res.json()

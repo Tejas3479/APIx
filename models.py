@@ -12,6 +12,9 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 
 # ALLOWED LLM MODELS ALLOWLIST
 ALLOWED_LLM_MODELS = {
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+    "gemini-1.5-pro",
     "gemini-3.5-flash",
     "gemini-3.5-flash-lite",
     "gemini-3.7-flash",
@@ -96,6 +99,18 @@ class FetchRequest(BaseModel):
         if scheme not in ("http", "https"):
             raise ValueError("Target URL scheme must be http or https")
         return v
+
+    @field_validator("llm_model")
+    @classmethod
+    def validate_llm_model(cls, v: str | None) -> str | None:
+        if v is not None and v.strip():
+            model_clean = v.strip().lower()
+            if model_clean not in ALLOWED_LLM_MODELS:
+                raise ValueError(
+                    f"Model '{v}' is not in the allowed models list: {sorted(ALLOWED_LLM_MODELS)}"
+                )
+            return model_clean
+        return None
 
 
 class FetchResponse(BaseModel):
@@ -294,6 +309,10 @@ class DailyIndexResponse(BaseModel):
     route_coverage: int
     quote_count: int
     missing_routes: list[str] = []
+    std_error: float | None = None
+    ci_lower_95: float | None = None
+    ci_upper_95: float | None = None
+    quality_tier: str = "HIGH"
     is_demo_data: bool = False
     computed_at: datetime
 
@@ -323,6 +342,21 @@ class MaterialityGapResponse(BaseModel):
     materiality_gap_pct: float
     under_reporting_amount_inr: float
     analysis: str
+    nso_snapshot_day: int | None = None
+    nso_snapshot_index: float | None = None
+    continuous_index: float | None = None
+    materiality_gap_pts: float | None = None
+
+
+class AtfCrossValidationResponse(BaseModel):
+    correlation_coefficient: float
+    r_squared: float
+    tracking_verdict: str
+    total_months_evaluated: int
+    latest_atf_inr_per_kl: float
+    latest_extracted_fuel_surcharge_avg: float
+    economic_interpretation: str
+    series_comparison: list[dict[str, Any]]
 
 
 class CarrierMarketShareItem(BaseModel):
@@ -358,7 +392,7 @@ class FareAnomalyReportCreate(BaseModel):
     advance_days: int
     surge_multiplier: float
     diagnosis_text: str
-    ai_model: str = "gemini-2.0-flash"
+    ai_model: str = "gemini-3.7-flash"
 
 
 class FareAnomalyReportResponse(BaseModel):

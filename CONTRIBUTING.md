@@ -29,22 +29,24 @@ uvicorn app:app --reload
 
 ```
 APIx/
-├── app.py              # FastAPI lifespan and server setup
-├── database.py         # SQLAlchemy models (Postgres/SQLite)
-├── models.py           # Pydantic validation schemas
-├── routers/            # API endpoints (/fetch, /auth, /api/v1/benchmark)
-├── services/           # Core fetch engine logic
+├── app.py              # FastAPI lifespan, routing, and middleware setup
+├── database.py         # SQLAlchemy ORM models (SQLite/PostgreSQL)
+├── models.py           # Pydantic data schemas & request/response validation
+├── routers/            # Modular FastAPI endpoints (/index, /scraper, /routes, /export, /auth)
+├── services/           # Econometric index engine, scrapers, and sanitization
 ├── requirements.txt    # Python dependencies
-├── verify.py           # Integrity check script
 ├── static/
-│   ├── base.css         # Shared design foundation (tokens, nav, cards, tables)
-│   ├── index.html       # Dashboard HTML
-│   ├── landing.html     # Landing page
-│   ├── benchmark.html   # Benchmark UI
-│   └── upload_history.html # Procurement record upload
+│   ├── base.css        # Shared institutional design foundation
+│   ├── index.html      # Scraper operations & browser pool telemetry
+│   ├── landing.html    # MoSPI / NSO landing portal
+│   ├── dashboard.html  # National airfare price index executive telemetry
+│   ├── benchmark.html  # Route discovery & statutory tariff decomposition
+│   ├── routes.html     # DGCA route basket studio & traffic weights
+│   └── profile.html    # Statistical analyst profile & API bearer keys
 └── docs/
-    ├── API.md          # Full API reference
-    └── SELF_HOSTING.md # Deployment guide
+    ├── API.md          # Full API endpoints reference
+    ├── BACKTEST_REPORT.md # 30-day directional baseline validation
+    └── SELF_HOSTING.md # Production self-hosting & security guide
 ```
 
 ---

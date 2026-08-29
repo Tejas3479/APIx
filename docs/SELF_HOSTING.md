@@ -137,9 +137,13 @@ sudo systemctl start APIx-api
 | `RATE_LIMIT_PER_MINUTE` | `60` | Max requests per minute per IP / API key (set to `0` to disable) |
 | `MAX_PLAYWRIGHT_INSTANCES` | `3` | Max concurrent headless browser instances |
 | `SESSION_TTL_MINUTES` | `30` | How long an idle browser session lives before cleanup |
-| `MAX_SESSIONS` | `100` | Total max concurrent persistent sessions |
-| `CORS_ORIGINS` | `*` | Comma-separated allowed origins, e.g. `https://myapp.com` |
+| `CORS_ORIGINS` | `http://localhost:8000,http://localhost:3000,http://127.0.0.1:8000` | Comma-separated allowed origins for cross-origin requests |
 | `DISABLE_SSRF_CHECK` | `false` | Allow requests to private IPs (⚠️ dev only) |
+| `CAPTCHA_SOLVING_ENABLED` | `false` | Master switch for automated CAPTCHA resolution infrastructure (2Captcha/CapSolver) |
+| `CAPTCHA_PROVIDER` | *(empty)* | CAPTCHA solving service provider (`2captcha` or `capsolver`) |
+| `CAPTCHA_API_KEY` | *(empty)* | API key credential for the configured CAPTCHA solver service |
+| `STEALTH_FINGERPRINT` | `false` | Enables advanced browser fingerprint spoofing (WebGL, navigator plugins/languages) |
+| `GEMINI_MODEL` | `gemini-3.7-flash` | Google Gemini model ID used for econometric anomaly diagnostics and LLM parsing |
 
 ---
 

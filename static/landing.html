@@ -1421,7 +1421,17 @@
               <svg class="icon faq-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </button>
             <div class="faq-a">
-              Yes. APIx uses <strong>passive stealth only</strong> (standard Chrome 120 TLS fingerprints and headless browser rendering). Active CAPTCHA-defeat mechanisms are permanently disabled (<code>CAPTCHA_SOLVING_ENABLED=false</code>) to ensure defensible, ethical public-sector data acquisition.
+              Yes. APIx employs <strong>passive stealth by default</strong> (standard desktop User-Agent, Chromium rendering, polite request pacing, and 100% public non-PII extraction). Automated CAPTCHA solving (2Captcha/CapSolver) is built to fulfill technical specifications but disabled by default (<code>CAPTCHA_SOLVING_ENABLED=false</code>) in standard public-sector deployment.
+            </div>
+          </div>
+          <div class="faq-item reveal">
+            <button type="button" class="faq-q" aria-expanded="false">
+              What is the Phase 1 Prototype vs. Phase 2 Production Roadmap?
+              <svg class="icon faq-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="faq-a">
+              <strong>Phase 1 (Current Prototype):</strong> High-frequency scraping across 3 primary feeds (Google Flights / SerpAPI, Ixigo OTA, SpiceJet probe) over 8 DGCA-weighted domestic corridors and 5 advance booking horizons (T+1…T+45).<br/>
+              <strong>Phase 2 (Production Recommendation):</strong> Statutory data-sharing mandate with scheduled airlines (following TRAI telecom and US Bureau of Labor Statistics / DOT Form 41 models), with web scraping serving as an independent regulatory validation layer. See <a href="/docs/PRODUCTION_READINESS.md" style="color:var(--heat-100); text-decoration:underline;">Production Readiness Roadmap</a>.
             </div>
           </div>
         </div>

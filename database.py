@@ -48,9 +48,29 @@ async def init_db():
         if "sqlite" in DATABASE_URL:
             await conn.execute(text("PRAGMA foreign_keys = ON;"))
             await conn.execute(text("PRAGMA journal_mode = WAL;"))
-            await conn.execute(text("PRAGMA busy_timeout = 5000;"))
-            await conn.execute(text("PRAGMA synchronous = NORMAL;"))
         await conn.run_sync(SQLModel.metadata.create_all)
+
+        # Auto-migrate newly added schema columns if running on SQLite
+        if "sqlite" in DATABASE_URL:
+            migrations = [
+                ("farequote", "quality_adjusted_fare", "REAL"),
+                ("farequote", "includes_checked_bag", "INTEGER DEFAULT 0"),
+                ("farequote", "source_confidence", "REAL DEFAULT 0.8"),
+                ("dailyindex", "std_error", "REAL"),
+                ("dailyindex", "ci_lower_95", "REAL"),
+                ("dailyindex", "ci_upper_95", "REAL"),
+                ("dailyindex", "quality_tier", "TEXT DEFAULT 'HIGH'"),
+                ("dailyindex", "is_approved", "INTEGER DEFAULT 1"),
+                ("routeindex", "std_error", "REAL"),
+                ("routeindex", "ci_lower_95", "REAL"),
+                ("routeindex", "ci_upper_95", "REAL"),
+            ]
+            for table_name, col_name, col_type in migrations:
+                try:
+                    await conn.execute(text(f"ALTER TABLE {table_name} ADD COLUMN {col_name} {col_type};"))
+                except Exception:
+                    pass
+
 
 
 async def get_session() -> AsyncSession:
@@ -131,6 +151,9 @@ class FareQuote(SQLModel, table=True):  # type: ignore[call-arg]
     gst: float = Field(default=0.0, ge=0.0)  # 5% economy / 12% business
     convenience_fee: float = Field(default=0.0, ge=0.0)  # OTA/airline platform fee
     total_fare: float = Field(ge=0.0, index=True)  # Full ticket price paid by passenger
+    quality_adjusted_fare: float | None = Field(default=None)  # Constant-quality economy bundle (with bag)
+    includes_checked_bag: bool = Field(default=False)
+    source_confidence: float = Field(default=0.8, ge=0.0, le=1.0)
     fare_class: str | None = Field(default=None, max_length=5)  # RBD bucket: U, T, L, V, Q
     cabin_class: str = Field(default="economy", max_length=30)  # economy, premium_economy, business
     stops: int = Field(default=0, ge=0)  # 0 = nonstop
@@ -150,10 +173,15 @@ class DailyIndex(SQLModel, table=True):  # type: ignore[call-arg]
     frequency: str = Field(default="daily", max_length=20)  # "daily", "weekly", "monthly"
     index_value: float = Field(ge=0.0, index=True)  # APIx index number (Base = 100.0)
     base_period_value: float = Field(default=100.0)  # Reference base (100.0)
-    methodology: str = Field(default="jevons", max_length=50)  # "jevons", "geks_tornqvist"
+    methodology: str = Field(default="jevons", max_length=50)  # "jevons", "geks_tornqvist_movement_splice"
     route_coverage: int = Field(default=0, ge=0)  # Number of routes with live data
     quote_count: int = Field(default=0, ge=0)  # Total quotes aggregated
     missing_routes: list[str] = Field(default=[], sa_column=Column(JSON))
+    std_error: float | None = Field(default=None)  # Bootstrap standard error
+    ci_lower_95: float | None = Field(default=None)  # 95% Confidence Interval lower bound
+    ci_upper_95: float | None = Field(default=None)  # 95% Confidence Interval upper bound
+    quality_tier: str = Field(default="HIGH", max_length=20)  # "HIGH", "MODERATE", "IMPUTED"
+    is_approved: bool = Field(default=True)  # Institutional publication approval state
     is_demo_data: bool = Field(default=False, index=True)
     computed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), index=True)
 
@@ -170,6 +198,9 @@ class RouteIndex(SQLModel, table=True):  # type: ignore[call-arg]
     min_fare: float = Field(ge=0.0)
     max_fare: float = Field(ge=0.0)
     quote_count: int = Field(default=0, ge=0)
+    std_error: float | None = Field(default=None)  # Bootstrap standard error (N >= 8)
+    ci_lower_95: float | None = Field(default=None)
+    ci_upper_95: float | None = Field(default=None)
     carrier_breakdown: dict[str, Any] = Field(default={}, sa_column=Column(JSON))
     advance_window_breakdown: dict[str, Any] = Field(default={}, sa_column=Column(JSON))
     is_demo_data: bool = Field(default=False, index=True)
@@ -198,7 +229,7 @@ class FareAnomalyReport(SQLModel, table=True):  # type: ignore[call-arg]
     advance_days: int = Field(index=True)
     surge_multiplier: float = Field(default=1.0)
     diagnosis_text: str
-    ai_model: str = Field(default="gemini-3.5-flash", max_length=50)
+    ai_model: str = Field(default="gemini-3.7-flash", max_length=50)
     flagged_by: str = Field(default="system", max_length=100)
     is_verified: bool = Field(default=False)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

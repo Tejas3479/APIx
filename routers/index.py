@@ -1,13 +1,16 @@
 """Index Engine Router for APIx — daily/weekly/monthly index series and econometric diagnostics."""
 
 import logging
+import os
 from datetime import date, datetime, timedelta, timezone
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from sqlalchemy import desc, select
 
-from database import DailyIndex, FareQuote, RouteIndex, async_session_maker
-from models import AiDiagnoseRequest, DailyIndexResponse, MaterialityGapResponse
+from auth import verify_api_key
+from database import DailyIndex, FareAnomalyReport, FareQuote, RouteIndex, async_session_maker
+from models import AiDiagnoseRequest, AtfCrossValidationResponse, DailyIndexResponse, MaterialityGapResponse
+from services.atf_validator import AtfValidator
 from services.index_engine import AirfareIndexEngine
 
 logger = logging.getLogger("apix.routers.index")
@@ -150,7 +153,7 @@ async def get_materiality_gap():
         return result
 
 
-@router.post("/compute")
+@router.post("/compute", dependencies=[Depends(verify_api_key)])
 async def force_compute_index(
     target_date: date | None = None,
 ):
@@ -185,7 +188,7 @@ async def get_statistical_bulletin(year_month: str = "2026-08"):
     }
 
 
-@router.post("/ai-diagnose")
+@router.post("/ai-diagnose", dependencies=[Depends(verify_api_key)])
 async def diagnose_fare_anomaly(
     route: str = "DEL-BOM",
     advance_days: int = 7,
@@ -233,7 +236,7 @@ async def diagnose_fare_anomaly(
                 advance_days=advance_days,
                 surge_multiplier=round(current_avg_fare / benchmark_fare if benchmark_fare > 0 else 1.0, 2),
                 diagnosis_text=ai_result.get("root_cause_explanation", ""),
-                ai_model="gemini-2.0-flash",
+                ai_model=os.getenv("GEMINI_MODEL", "gemini-3.7-flash"),
                 flagged_by="econometric_survey",
                 is_verified=True,
             )
@@ -250,3 +253,11 @@ async def diagnose_fare_anomaly(
             **ai_result
         }
     }
+
+
+@router.get("/atf-cross-validation", response_model=AtfCrossValidationResponse)
+async def get_atf_cross_validation():
+    """Cross-validate statutory fuel surcharges against official PPAC domestic ATF benchmark rates."""
+    result = await AtfValidator.cross_validate_fuel_surcharges()
+    return result
+

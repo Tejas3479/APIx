@@ -25,7 +25,6 @@ CARRIER_BRAND_COLORS = {
     "IX": "#ea580c",  # Air India Express Orange
     "QP": "#f97316",  # Akasa Sunset Orange
     "SG": "#eab308",  # SpiceJet Mustard
-    "UK": "#7c3aed",  # Vistara Violet
 }
 
 

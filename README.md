@@ -19,7 +19,9 @@
 
 **Problem Statement:** India's CPI 2024=100 base revision requires modernizing airfare price collection from manual mid-month snapshots to automated, continuous digital scraping — eliminating the **+18% to +25% statistical distortion** caused by airline yield management algorithms.
 
-**Our Solution:** APIx automates multi-carrier fare collection across 8 high-density domestic routes and 5 advance-booking windows (T+1, T+7, T+15, T+30, T+45), computing chained **Jevons / GEKS-Törnqvist multilateral price indices** that meet international econometric standards.
+**Phase 1 Prototype Scope:** This hackathon submission ingests live fare data across 3 sources: Google Flights (via SerpAPI, aggregating IndiGo, Air India, Akasa, and SpiceJet simultaneously), Ixigo OTA (Playwright headless Chromium), and SpiceJet direct portal (Playwright probe). Carrier quotes for all major domestic airlines are captured continuously across 8 high-density domestic routes and 5 advance-booking windows (T+1, T+7, T+15, T+30, T+45).
+
+**Phase 2 Production Roadmap:** Proposes a statutory DGCA / MoSPI data-sharing mandate (mirroring TRAI telecom reporting, GSTN tax data, and the US Bureau of Labor Statistics / DOT Form 41 paradigm), transitioning web scraping to an independent regulatory cross-validation audit layer. See [`docs/PRODUCTION_READINESS.md`](docs/PRODUCTION_READINESS.md).
 
 ---
 
@@ -34,15 +36,13 @@ Sampling once a month on a single mid-month date fails to capture intra-month dy
 
 APIx solves this by implementing **continuous, multi-carrier digital scraping** across **5 advance booking horizons (T+1, T+7, T+15, T+30, T+45)** and computing a chained **GEKS-Törnqvist / Jevons multilateral index**.
 
----
-
-### International Precedents for Automated Web Scraping in CPI
-Global statistical agencies have already transitioned to automated web scraping and scanner data for volatile components like airfare:
-- **Istat (Italy):** Automated scraping for transport and accommodation.
-- **INE (Portugal) & IBGE (Brazil):** Web scraping pipelines for airfare indices.
-- **Eurostat:** Scanner data and web scraping integration guidelines.
-- **MIT Billion Prices Project:** Demonstrated the validity of high-frequency digital price collection over traditional manual sampling.
-- **US BLS (Bureau of Labor Statistics):** Established statutory data feeds for passenger revenue. See our [Production Readiness Note](docs/PRODUCTION_READINESS.md) for India's path to Phase 2.
+### Methodological Foundation & Precedents
+APIx adapts established econometric standards from international statistical agencies and academic literature:
+- **Eurostat HICP Guidance (2020 & 2022/2023):** Scanner data and multilateral GEKS-Törnqvist index construction for high-frequency pricing.
+- **Istat (Italy) Airfare Scraping Pilot (*Polidoro et al., 2015, Statistical Journal of the IAOS*):** Established the methodological blueprint for scraping multi-window airline tariffs to compile consumer price indices.
+- **INE (Portugal) & IBGE (Brazil):** Operational precedents for automated airline web scraping in official national CPI.
+- **MIT Billion Prices Project (*Cavallo & Rigobon, 2016, Journal of Economic Perspectives*):** Validated that high-frequency online price scraping provides robust, real-time inflation nowcasting.
+- **PSD Specification Note:** The brief's reference to *"PSD given routes and weights"* is interpreted as MoSPI's **Price Statistics Division**, implementing international elementary-aggregate index theory (Jevons geometric mean and GEKS multilateral chaining) anchored to DGCA passenger traffic shares.
 
 ## ✨ Key Capabilities
 
@@ -242,7 +242,7 @@ docker compose up --build
 | **ORM** | SQLModel · SQLAlchemy 2.0 |
 | **Scraping** | Playwright (Chromium) · curl-cffi · SerpAPI |
 | **Caching** | Redis (with fakeredis fallback) |
-| **AI/ML** | Google Gemini 2.0 Flash |
+| **AI/ML** | Google Gemini 3.7 Flash |
 | **Math** | NumPy · SciPy (Jevons + GEKS-Törnqvist) |
 | **Auth** | PyJWT · Argon2 (pwdlib) |
 | **Frontend** | Vanilla HTML/CSS/JS · Chart.js |
@@ -252,9 +252,10 @@ docker compose up --build
 
 ## ⚖️ Ethical Scraping Policy
 APIx adheres strictly to ethical statistical data acquisition standards:
-1. **Passive Stealth Only**: Standard headless browser configuration, TLS finger-printing matching modern Chrome, and standard viewport headers.
-2. **Zero CAPTCHA Defeat**: Active challenge bypassing is explicitly disabled (`CAPTCHA_SOLVING_ENABLED=false`).
-3. **Rate Limiting & Politeness**: Requests to carrier portals observe polite intervals to avoid server load.
+1. **Passive Stealth by Default**: Standard headless Chromium configuration with desktop User-Agent and standard full-HD viewport. Advanced fingerprint spoofing (WebGL, navigator overrides) is available for edge cases but disabled by default (`STEALTH_FINGERPRINT=false`).
+2. **CAPTCHA Architecture & Governance**: Automated CAPTCHA solving infrastructure (2Captcha/CapSolver) is implemented per problem statement specifications, but disabled by default (`CAPTCHA_SOLVING_ENABLED=false`) in the Phase 1 public-sector deployment to ensure legally defensible data acquisition. If a challenge screen is encountered, requests gracefully failover across the multi-source registry.
+3. **Rate Limiting & Politeness**: Requests to carrier portals observe polite intervals (minimum 400ms jitter) and off-peak scheduling to prevent server load.
+4. **Data Privacy**: Strictly zero passenger PII collection in full compliance with the *Digital Personal Data Protection Act, 2023 (DPDP Act)*.
 
 ---
 
@@ -262,26 +263,32 @@ APIx adheres strictly to ethical statistical data acquisition standards:
 
 ```
 APIx/
-├── app.py                     # FastAPI application entry point
-├── auth.py                    # JWT + API key verification
-├── database.py                # SQLModel tables + async engine
-├── models.py                  # Pydantic request/response schemas
-├── routers/                   # API route handlers
-│   ├── auth_routes.py         # Authentication endpoints
-│   ├── dashboard_api.py       # Dashboard KPI endpoints
-│   ├── fetch.py               # Web fetch endpoint
-│   ├── health.py              # Health check
-│   ├── index.py               # Index computation endpoints
-│   ├── routes.py              # Route basket CRUD
-│   └── scraper.py             # Scrape job triggers
-├── services/                  # Business logic layer
-│   ├── index_engine.py        # Jevons + GEKS-Törnqvist math
-│   ├── search_orchestrator.py # Fare survey coordination
-│   ├── price_extractor.py     # Statutory fare decomposition
-│   ├── bulletin_generator.py  # NSO bulletin generation
-│   ├── gemini_grounding.py    # AI anomaly analysis
-│   ├── fetch_engine.py        # Core fetch engine
-│   └── ...                    # Browser, session, SSRF, etc.
+├── app.py                     # FastAPI application entry point, lifespan, middleware
+├── auth.py                    # JWT + API key verification guards
+├── database.py                # SQLModel tables + async engine (SQLite/Postgres)
+├── models.py                  # Pydantic request/response schemas & model validators
+├── routers/                   # Modular API route handlers
+│   ├── auth_routes.py         # Authentication & officer session endpoints
+│   ├── dashboard_api.py       # Executive dashboard analytics & heatmap API
+│   ├── export.py              # Audit-ready CSV microdata & index exports
+│   ├── fetch.py               # Low-level web fetch & extraction endpoint
+│   ├── health.py              # Health check & system telemetry probe
+│   ├── index.py               # GEKS-Törnqvist & Jevons index engine endpoints
+│   ├── routes.py              # DGCA route basket configuration CRUD
+│   └── scraper.py             # Multi-source scrape job dispatch & live logs
+├── services/                  # Business logic & econometric layer
+│   ├── browser_manager.py     # Playwright Chromium context pool & stealth settings
+│   ├── bulletin_generator.py  # Official MoSPI/NSO monthly statistical bulletin
+│   ├── data_cleaner.py        # Tukey IQR outlier trimming & Eurostat imputation
+│   ├── fetch_engine.py        # Resilient HTTP/Playwright execution engine
+│   ├── gemini_grounding.py    # Google Gemini 3.7 Flash econometric diagnosis
+│   ├── index_engine.py        # GEKS-Törnqvist & Jevons mathematical computation
+│   ├── price_extractor.py     # Statutory fare decomposition (Base, Fuel, UDF, ASF, GST)
+│   ├── scrape_scheduler.py    # Multi-window scrape matrix & async cron loops
+│   ├── search_orchestrator.py # Multi-source survey coordination (Google Flights/Ixigo/SpiceJet)
+│   ├── serpapi_service.py     # Google Flights aggregator integration
+│   ├── source_registry.py     # Carrier source registry & scraping priorities
+│   └── ssrf.py                # Asynchronous DNS SSRF & private IP protection
 ├── static/                    # Frontend pages
 │   ├── landing.html           # Marketing landing page
 │   ├── dashboard.html         # Analytics dashboard

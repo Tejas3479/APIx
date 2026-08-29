@@ -5,10 +5,11 @@ import io
 import logging
 from datetime import datetime, timezone
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import Response
 from sqlalchemy import desc, select
 
+from auth import verify_api_key
 from database import DailyIndex, FareQuote, async_session_maker
 
 logger = logging.getLogger("apix.routers.export")
@@ -16,7 +17,7 @@ logger = logging.getLogger("apix.routers.export")
 router = APIRouter(prefix="/api/v1/export", tags=["export"])
 
 
-@router.get("/csv")
+@router.get("/csv", dependencies=[Depends(verify_api_key)])
 async def export_microdata_csv(limit: int = 5000):
     """Export cleaned airfare quotes microdata as an audit-ready CSV for NSO statisticians."""
     async with async_session_maker() as session:
@@ -92,7 +93,7 @@ async def export_microdata_csv(limit: int = 5000):
     )
 
 
-@router.get("/index-csv")
+@router.get("/index-csv", dependencies=[Depends(verify_api_key)])
 async def export_index_series_csv(limit: int = 365):
     """Export national APIx time series as a CSV table for RBI monetary policy modeling."""
     async with async_session_maker() as session:

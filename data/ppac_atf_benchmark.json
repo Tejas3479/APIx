@@ -1,0 +1,112 @@
+[
+  {
+    "effective_date": "2025-01-01",
+    "delhi_inr_per_kl": 90538.72,
+    "mumbai_inr_per_kl": 84642.91,
+    "kolkata_inr_per_kl": 93957.1,
+    "chennai_inr_per_kl": 94452.48,
+    "national_avg_inr_per_kl": 90897.8,
+    "mom_change_pct": -4.16,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - Jan 2025"
+  },
+  {
+    "effective_date": "2025-02-01",
+    "delhi_inr_per_kl": 93480.22,
+    "mumbai_inr_per_kl": 87432.15,
+    "kolkata_inr_per_kl": 96982.4,
+    "chennai_inr_per_kl": 97510.3,
+    "national_avg_inr_per_kl": 93851.27,
+    "mom_change_pct": 3.25,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - Feb 2025"
+  },
+  {
+    "effective_date": "2025-03-01",
+    "delhi_inr_per_kl": 95276.4,
+    "mumbai_inr_per_kl": 89124.6,
+    "kolkata_inr_per_kl": 98845.2,
+    "chennai_inr_per_kl": 99380.1,
+    "national_avg_inr_per_kl": 95656.58,
+    "mom_change_pct": 1.92,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - Mar 2025"
+  },
+  {
+    "effective_date": "2025-04-01",
+    "delhi_inr_per_kl": 92140.5,
+    "mumbai_inr_per_kl": 86190.2,
+    "kolkata_inr_per_kl": 95590.8,
+    "chennai_inr_per_kl": 96110.4,
+    "national_avg_inr_per_kl": 92507.98,
+    "mom_change_pct": -3.29,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - Apr 2025"
+  },
+  {
+    "effective_date": "2025-05-01",
+    "delhi_inr_per_kl": 89560.1,
+    "mumbai_inr_per_kl": 83780.4,
+    "kolkata_inr_per_kl": 92910.6,
+    "chennai_inr_per_kl": 93420.2,
+    "national_avg_inr_per_kl": 89917.83,
+    "mom_change_pct": -2.8,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - May 2025"
+  },
+  {
+    "effective_date": "2025-06-01",
+    "delhi_inr_per_kl": 88120.3,
+    "mumbai_inr_per_kl": 82430.1,
+    "kolkata_inr_per_kl": 91420.5,
+    "chennai_inr_per_kl": 91920.8,
+    "national_avg_inr_per_kl": 88472.93,
+    "mom_change_pct": -1.61,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - Jun 2025"
+  },
+  {
+    "effective_date": "2025-07-01",
+    "delhi_inr_per_kl": 91280.4,
+    "mumbai_inr_per_kl": 85380.6,
+    "kolkata_inr_per_kl": 94700.2,
+    "chennai_inr_per_kl": 95220.1,
+    "national_avg_inr_per_kl": 91645.33,
+    "mom_change_pct": 3.59,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - Jul 2025"
+  },
+  {
+    "effective_date": "2025-08-01",
+    "delhi_inr_per_kl": 93740.8,
+    "mumbai_inr_per_kl": 87690.2,
+    "kolkata_inr_per_kl": 97260.4,
+    "chennai_inr_per_kl": 97790.5,
+    "national_avg_inr_per_kl": 94120.48,
+    "mom_change_pct": 2.7,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - Aug 2025"
+  },
+  {
+    "effective_date": "2026-06-01",
+    "delhi_inr_per_kl": 94120.0,
+    "mumbai_inr_per_kl": 88040.0,
+    "kolkata_inr_per_kl": 97650.0,
+    "chennai_inr_per_kl": 98180.0,
+    "national_avg_inr_per_kl": 94497.5,
+    "mom_change_pct": 1.45,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - Jun 2026"
+  },
+  {
+    "effective_date": "2026-07-01",
+    "delhi_inr_per_kl": 96850.0,
+    "mumbai_inr_per_kl": 90590.0,
+    "kolkata_inr_per_kl": 100480.0,
+    "chennai_inr_per_kl": 101030.0,
+    "national_avg_inr_per_kl": 97237.5,
+    "mom_change_pct": 2.9,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - Jul 2026"
+  },
+  {
+    "effective_date": "2026-08-01",
+    "delhi_inr_per_kl": 99420.0,
+    "mumbai_inr_per_kl": 92990.0,
+    "kolkata_inr_per_kl": 103140.0,
+    "chennai_inr_per_kl": 103710.0,
+    "national_avg_inr_per_kl": 99815.0,
+    "mom_change_pct": 2.65,
+    "source": "PPAC / IOCL Aviation Fuel Price Circular - Aug 2026"
+  }
+]
