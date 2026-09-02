@@ -887,7 +887,7 @@
         </button>
         <a href="/profile" id="officerBadge" class="officer-pill" style="text-decoration: none;" title="View Analyst Profile & Settings">
           <span class="pulse-live"></span>
-          <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">Dr. S. K. Mukherjee (NSO)</span>
+          <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">Dr. S. K. Mukherjee</span>
         </a>
       </div>
     </div>
@@ -1511,7 +1511,7 @@
       // Hydrate officer name from session
       const officer = JSON.parse(localStorage.getItem('apix_officer') || '{}');
       const badgeNameEl = document.querySelector('#officerBadge span:last-child');
-      if (badgeNameEl && officer.name) badgeNameEl.textContent = officer.name + (officer.dept ? ` (${officer.dept})` : '');
+      if (badgeNameEl) badgeNameEl.textContent = officer.name || 'Dr. S. K. Mukherjee';
 
       await ensureAuth();
       await loadDashboardStats();

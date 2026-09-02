@@ -201,10 +201,9 @@ function hydrateOfficerBadge() {
   if (!badgeNameEl) return;
   const officer = getCachedOfficer();
   if (officer && officer.name) {
-    const deptTag = (officer.dept && (officer.dept.includes('NSO') || officer.dept.includes('National Statistical'))) ? 'NSO' : (officer.dept ? officer.dept.slice(0, 10) : 'NSO');
-    badgeNameEl.textContent = `${officer.name} (${deptTag})`;
+    badgeNameEl.textContent = officer.name;
   } else {
-    badgeNameEl.textContent = 'Dr. S. K. Mukherjee (NSO)';
+    badgeNameEl.textContent = 'Dr. S. K. Mukherjee';
   }
 }
 
