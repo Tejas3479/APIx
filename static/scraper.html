@@ -184,7 +184,7 @@
     }
     .pipeline-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 12px;
       margin-top: 14px;
     }
@@ -259,7 +259,47 @@
       border-top-right-radius: 14px;
     }
 
-    /* Carrier Badge Chips */
+    /* Carrier Badge Chips & Status Pills */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px !important;
+      font-family: 'Outfit', sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      vertical-align: middle;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .badge-accent {
+      background: rgba(250, 93, 25, 0.12);
+      color: var(--heat-100);
+      border: 1px solid rgba(250, 93, 25, 0.3);
+      border-radius: 999px !important;
+    }
+    .badge-success {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 999px !important;
+    }
+    .badge-danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 999px !important;
+    }
+    .badge-warn {
+      background: rgba(245, 158, 11, 0.12);
+      color: #d97706;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 999px !important;
+    }
     .badge-status {
       display: inline-flex;
       align-items: center;
@@ -267,14 +307,14 @@
       font-family: 'Outfit', sans-serif;
       font-weight: 700;
       font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 5px;
+      padding: 3px 9px;
+      border-radius: 999px !important;
       letter-spacing: 0.02em;
     }
-    .badge-carrier-6e { background: #4f46e5 !important; color: #ffffff !important; border: 1px solid #4338ca !important; }
-    .badge-carrier-ai { background: #dc2626 !important; color: #ffffff !important; border: 1px solid #b91c1c !important; }
-    .badge-carrier-qp { background: #f97316 !important; color: #ffffff !important; border: 1px solid #ea580c !important; }
-    .badge-carrier-sg { background: #eab308 !important; color: #000000 !important; border: 1px solid #ca8a04 !important; font-weight: 800 !important; }
+    .badge-carrier-6e { background: #4f46e5 !important; color: #ffffff !important; border: 1px solid #4338ca !important; border-radius: 999px !important; }
+    .badge-carrier-ai { background: #dc2626 !important; color: #ffffff !important; border: 1px solid #b91c1c !important; border-radius: 999px !important; }
+    .badge-carrier-qp { background: #f97316 !important; color: #ffffff !important; border: 1px solid #ea580c !important; border-radius: 999px !important; }
+    .badge-carrier-sg { background: #eab308 !important; color: #000000 !important; border: 1px solid #ca8a04 !important; font-weight: 800 !important; border-radius: 999px !important; }
 
     /* Telemetry Feeds Grid */
     .telemetry-grid-pro {
@@ -470,10 +510,10 @@
       border: 1px solid #30363d;
       color: #c9d1d9;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -662,7 +702,7 @@
     </div>
   </header>
 
-  <main class="page-container page-enter" style="max-width: 1320px; margin: 0 auto; padding: 28px 24px;">
+  <main class="page-container page-enter">
     
     <!-- Hero Header -->
     <div class="scraper-hero">
@@ -776,9 +816,9 @@
           Direct &amp; GDS aggregate feed collecting all 8 domestic corridors across T+1 to T+45 booking windows.
         </p>
         <div class="feed-stats-row-pro">
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">680 ms</div></div>
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.9%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">680 ms</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.9%</div></div>
         </div>
       </div>
 
@@ -795,9 +835,9 @@
           Full-service carrier dynamic tariff parser with automatic baggage and statutory UDF/ASF decomposition.
         </p>
         <div class="feed-stats-row-pro">
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">790 ms</div></div>
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.7%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">790 ms</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.7%</div></div>
         </div>
       </div>
 
@@ -814,9 +854,9 @@
           Next-gen LCC inventory probe with real-time base fare and convenience fee isolation.
         </p>
         <div class="feed-stats-row-pro">
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">710 ms</div></div>
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.8%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">710 ms</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.8%</div></div>
         </div>
       </div>
 
@@ -833,9 +873,9 @@
           Dynamic economy fare scraper with fuel surcharge (YQ) extraction and baggage surcharge normalization.
         </p>
         <div class="feed-stats-row-pro">
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">820 ms</div></div>
-          <div><div style="font-size: 10px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.5%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">820 ms</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.5%</div></div>
         </div>
       </div>
 

@@ -113,8 +113,13 @@ function getCachedOfficer() {
 /* Price count-up animation for fare displays. */
 function animatePriceCount(el, targetPrice, duration = 800) {
   if (!el) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = formatINR(targetPrice);
+    return;
+  }
+  const currentText = (el.textContent || '').replace(/[^\d]/g, '');
+  const startPrice = currentText && !isNaN(parseInt(currentText, 10)) ? parseInt(currentText, 10) : 0;
   const startTime = performance.now();
-  const startPrice = 0;
 
   function animate(now) {
     const progress = Math.min((now - startTime) / duration, 1);
@@ -126,11 +131,16 @@ function animatePriceCount(el, targetPrice, duration = 800) {
   requestAnimationFrame(animate);
 }
 
-/* Decimal count-up animation for APIx index points (e.g. 103.7). */
-function animateIndex(el, targetIndex, decimals = 1, duration = 800) {
+/* Decimal count-up animation for APIx index points (e.g. 103.7) with fast 320ms easing. */
+function animateIndex(el, targetIndex, decimals = 1, duration = 320) {
   if (!el) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = Number(targetIndex).toFixed(decimals);
+    return;
+  }
+  const currentText = (el.textContent || '').replace(/[^\d.]/g, '');
+  const startVal = currentText && !isNaN(parseFloat(currentText)) ? parseFloat(currentText) : 100.0;
   const startTime = performance.now();
-  const startVal = 100.0;
 
   function animate(now) {
     const progress = Math.min((now - startTime) / duration, 1);
@@ -211,11 +221,16 @@ document.addEventListener('DOMContentLoaded', () => {
   hydrateOfficerBadge();
 });
 
-/* Integer count-up animation for integer metrics. */
-function animateInteger(el, targetInt, duration = 800) {
+/* Integer count-up animation for integer metrics (<320ms snappy easing). */
+function animateInteger(el, targetInt, duration = 320) {
   if (!el) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.textContent = Number(targetInt).toLocaleString('en-IN');
+    return;
+  }
+  const currentText = (el.textContent || '').replace(/[^\d]/g, '');
+  const startVal = currentText && !isNaN(parseInt(currentText, 10)) ? parseInt(currentText, 10) : 0;
   const startTime = performance.now();
-  const startVal = 0;
 
   function animate(now) {
     const progress = Math.min((now - startTime) / duration, 1);

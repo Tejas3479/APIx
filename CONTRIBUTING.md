@@ -37,7 +37,7 @@ APIx/
 ├── requirements.txt    # Python dependencies
 ├── static/
 │   ├── base.css        # Shared institutional design foundation
-│   ├── index.html      # Scraper operations & browser pool telemetry
+│   ├── scraper.html    # Scraper operations & browser pool telemetry
 │   ├── landing.html    # MoSPI / NSO landing portal
 │   ├── dashboard.html  # National airfare price index executive telemetry
 │   ├── benchmark.html  # Route discovery & statutory tariff decomposition

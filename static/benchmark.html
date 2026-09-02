@@ -157,19 +157,22 @@
     }
     .select-pro {
       width: 100%;
-      padding: 11px 14px;
-      border-radius: 8px;
+      height: 42px;
+      padding: 10px 14px;
+      border-radius: 10px;
       border: 1px solid var(--border-loud);
       background: var(--surface-raised);
       font-family: 'Inter', sans-serif;
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--navy-900);
       outline: none;
-      transition: border-color 0.15s ease;
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
     .select-pro:focus {
       border-color: var(--heat-100);
+      box-shadow: 0 0 0 3px rgba(250, 93, 25, 0.12);
     }
 
     /* Swap Button */
@@ -339,7 +342,41 @@
       transform: translateY(-1px);
     }
 
-    /* Carrier Badge Chips */
+    /* Carrier Badge Chips & Status Pills */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px !important;
+      font-family: 'Outfit', sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      vertical-align: middle;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .badge-accent {
+      background: rgba(250, 93, 25, 0.12);
+      color: var(--heat-100);
+      border: 1px solid rgba(250, 93, 25, 0.3);
+      border-radius: 999px !important;
+    }
+    .badge-success {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 999px !important;
+    }
+    .badge-danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 999px !important;
+    }
     .badge-status {
       display: inline-flex;
       align-items: center;
@@ -347,8 +384,8 @@
       font-family: 'Outfit', sans-serif;
       font-weight: 700;
       font-size: 11.5px;
-      padding: 3px 8px;
-      border-radius: 5px;
+      padding: 3px 10px;
+      border-radius: 999px !important;
       letter-spacing: 0.02em;
     }
     .carrier-badge-chip {
@@ -358,15 +395,15 @@
       font-family: 'Outfit', sans-serif;
       font-weight: 800;
       font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 4px;
+      padding: 3px 9px;
+      border-radius: 999px !important;
       color: #fff !important;
     }
-    .badge-carrier-6e { background: #4f46e5 !important; color: #ffffff !important; border-color: #4338ca !important; }
-    .badge-carrier-ai { background: #dc2626 !important; color: #ffffff !important; border-color: #b91c1c !important; }
-    .badge-carrier-qp { background: #f97316 !important; color: #ffffff !important; border-color: #ea580c !important; }
-    .badge-carrier-sg { background: #eab308 !important; color: #000000 !important; border-color: #ca8a04 !important; font-weight: 800 !important; }
-    .badge-carrier-ix { background: #ef4444 !important; color: #ffffff !important; border-color: #dc2626 !important; }
+    .badge-carrier-6e { background: #4f46e5 !important; color: #ffffff !important; border-color: #4338ca !important; border-radius: 999px !important; }
+    .badge-carrier-ai { background: #dc2626 !important; color: #ffffff !important; border-color: #b91c1c !important; border-radius: 999px !important; }
+    .badge-carrier-qp { background: #f97316 !important; color: #ffffff !important; border-color: #ea580c !important; border-radius: 999px !important; }
+    .badge-carrier-sg { background: #eab308 !important; color: #000000 !important; border-color: #ca8a04 !important; font-weight: 800 !important; border-radius: 999px !important; }
+    .badge-carrier-ix { background: #ef4444 !important; color: #ffffff !important; border-color: #dc2626 !important; border-radius: 999px !important; }
 
     /* Quotes Table */
     .quote-row-pro {
@@ -744,7 +781,7 @@
     </div>
   </header>
 
-  <main class="page-container page-enter" style="max-width: 1320px; margin: 0 auto; padding: 28px 24px;">
+  <main class="page-container page-enter">
     
     <!-- Institutional Print-Only Header -->
     <div class="print-only-header">
@@ -1008,7 +1045,7 @@
               <div id="lblFeeVal" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #64748b; margin-top: 2px;">₹350</div>
               <div style="font-size: 10.5px; color: var(--text-muted);">Platform Booking Fee</div>
             </div>
-            <div class="decomp-box-pro" style="border: 1px solid rgba(79, 70, 229, 0.3); background: rgba(79, 70, 229, 0.04);">
+            <div class="decomp-box-pro">
               <div style="font-size: 11px; color: #4f46e5; text-transform: uppercase; font-weight: 700;">15kg Bag Normalization</div>
               <div id="lblBagVal" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #4f46e5; margin-top: 2px;">+₹599</div>
               <div id="lblBagDesc" style="font-size: 10.5px; color: var(--text-muted);">Constant-Quality Bundle</div>
@@ -1073,7 +1110,7 @@
                 <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹3,850</div>
                 <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹5,200</div>
                 <div style="display: flex; gap: 6px;">
-                  <button onclick="openQuoteModal(0)" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 8px;" title="Decompose Tariff Stack">Decompose ↗</button>
+                  <button onclick="openQuoteModal(0)" class="btn-dash btn-dash-secondary" style="font-size:12px; padding:7px 12px; height:34px;" title="Decompose Tariff Stack">Decompose ↗</button>
                 </div>
               </div>
               <div class="quote-row-pro">
@@ -1086,7 +1123,7 @@
                 <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹4,120</div>
                 <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹5,580</div>
                 <div style="display: flex; gap: 6px;">
-                  <button onclick="openQuoteModal(1)" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 8px;" title="Decompose Tariff Stack">Decompose ↗</button>
+                  <button onclick="openQuoteModal(1)" class="btn-dash btn-dash-secondary" style="font-size:12px; padding:7px 12px; height:34px;" title="Decompose Tariff Stack">Decompose ↗</button>
                 </div>
               </div>
               <div class="quote-row-pro">
@@ -1099,7 +1136,7 @@
                 <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹4,850</div>
                 <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹6,840</div>
                 <div style="display: flex; gap: 6px;">
-                  <button onclick="openQuoteModal(2)" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 8px;" title="Decompose Tariff Stack">Decompose ↗</button>
+                  <button onclick="openQuoteModal(2)" class="btn-dash btn-dash-secondary" style="font-size:12px; padding:7px 12px; height:34px;" title="Decompose Tariff Stack">Decompose ↗</button>
                 </div>
               </div>
               <div class="quote-row-pro">
@@ -1112,7 +1149,7 @@
                 <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹6,150</div>
                 <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹8,450</div>
                 <div style="display: flex; gap: 6px;">
-                  <button onclick="openQuoteModal(3)" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 8px;" title="Decompose Tariff Stack">Decompose ↗</button>
+                  <button onclick="openQuoteModal(3)" class="btn-dash btn-dash-secondary" style="font-size:12px; padding:7px 12px; height:34px;" title="Decompose Tariff Stack">Decompose ↗</button>
                 </div>
               </div>
             </div>
@@ -1357,7 +1394,7 @@
             <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹${q.base_fare.toLocaleString('en-IN')}</div>
             <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹${q.total_fare.toLocaleString('en-IN')}</div>
             <div style="display: flex; gap: 6px;">
-              <button onclick="openQuoteModal(${idx})" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 8px;" title="Decompose Tariff Stack">Decompose ↗</button>
+              <button onclick="openQuoteModal(${idx})" class="btn-dash btn-dash-secondary" style="font-size:12px; padding:7px 12px; height:34px;" title="Decompose Tariff Stack">Decompose ↗</button>
             </div>
           </div>
         `;

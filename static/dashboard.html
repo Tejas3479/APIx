@@ -168,19 +168,7 @@
       overflow: hidden;
     }
     .hero-pill::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 60%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-      transform: skewX(-20deg);
-      animation: pill-shimmer 6s ease-in-out infinite;
-    }
-    @keyframes pill-shimmer {
-      0%, 75% { left: -100%; }
-      100% { left: 220%; }
+      display: none;
     }
     .apix-pulse-ring {
       position: relative;
@@ -213,7 +201,7 @@
 
     .dash-title {
       font-family: 'Outfit', sans-serif;
-      font-size: clamp(26px, 3.2vw, 36px);
+      font-size: clamp(24px, 2.8vw, 30px);
       font-weight: 800;
       letter-spacing: -0.03em;
       color: var(--navy-900);
@@ -221,18 +209,11 @@
       line-height: 1.15;
     }
     .dash-title .gradient-text {
-      background: linear-gradient(120deg, #fa5d19 0%, #f59e0b 50%, #fa5d19 100%);
-      background-size: 200% auto;
+      background: linear-gradient(120deg, #fa5d19 0%, #ea580c 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      animation: shine-gradient 5s ease-in-out infinite;
       display: inline-block;
-    }
-    @keyframes shine-gradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
     }
     .dash-desc {
       font-size: 14.5px;
@@ -368,11 +349,6 @@
       color: #fff !important;
       border: 1px solid rgba(124, 58, 237, 0.4);
       box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
-      animation: ai-glow-pulse 3.6s infinite ease-in-out;
-    }
-    @keyframes ai-glow-pulse {
-      0%, 100% { box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35); }
-      50% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.6); }
     }
     .btn-dash-ai:hover {
       box-shadow: 0 6px 22px rgba(124, 58, 237, 0.55);
@@ -392,17 +368,18 @@
     .stat-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 20px;
+      margin-bottom: 32px;
     }
     .stat-card-pro {
       background: var(--card-bg);
       border: 1px solid var(--border-loud);
       border-radius: 14px;
-      padding: 20px 22px;
+      padding: 24px;
       box-shadow: var(--shadow-sm);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
+      min-height: 160px;
       z-index: 1;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
@@ -447,7 +424,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
     }
     .stat-label-pro {
       font-family: 'JetBrains Mono', monospace;
@@ -472,18 +449,64 @@
     }
     .stat-val-pro {
       font-family: 'Outfit', sans-serif;
-      font-size: 34px;
+      font-size: 28px;
       font-weight: 800;
       color: var(--navy-900);
       letter-spacing: -0.03em;
       line-height: 1;
     }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px !important;
+      font-family: 'Outfit', sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      vertical-align: middle;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .badge-accent {
+      background: rgba(250, 93, 25, 0.12);
+      color: var(--heat-100);
+      border: 1px solid rgba(250, 93, 25, 0.3);
+      border-radius: 999px !important;
+    }
+    .badge-success {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 999px !important;
+    }
+    .badge-danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 999px !important;
+    }
+    .badge-warning {
+      background: rgba(245, 158, 11, 0.12);
+      color: #d97706;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 999px !important;
+    }
+    .badge-info {
+      background: rgba(79, 70, 229, 0.12);
+      color: #4f46e5;
+      border: 1px solid rgba(79, 70, 229, 0.3);
+      border-radius: 999px !important;
+    }
     .stat-badge {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 3px 8px;
-      border-radius: 6px;
+      padding: 3px 10px;
+      border-radius: 999px !important;
       font-family: 'Outfit', sans-serif;
       font-size: 11.5px;
       font-weight: 700;
@@ -493,12 +516,12 @@
     .stat-badge.indigo { background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25); }
     .stat-badge.red { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.25); }
 
-    /* Interactive Sparkline */
+    /* Interactive Sparklines with Instant Micro-Tooltips */
     .stat-sparkline {
       display: flex;
       align-items: flex-end;
       gap: 4px;
-      height: 26px;
+      height: 28px;
       margin: 12px 0 8px;
       padding: 2px 0;
       position: relative;
@@ -506,19 +529,116 @@
     .stat-sparkline .bar {
       flex: 1;
       background: var(--bar-bg, rgba(250, 93, 25, 0.25));
-      border-radius: 3px;
+      border-radius: 3px 3px 0 0;
       cursor: pointer;
       position: relative;
-      transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease, transform 0.18s ease;
+      transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
     }
     .stat-sparkline .bar:hover {
       background: var(--card-accent, var(--heat-100)) !important;
-      transform: scaleY(1.08);
-      z-index: 2;
+      transform: scaleY(1.12);
+      transform-origin: bottom;
+      z-index: 20;
+      box-shadow: 0 0 8px var(--card-accent, var(--heat-100));
     }
     .stat-sparkline .bar.highlight {
       background: var(--card-accent, var(--heat-100));
     }
+
+    /* Instant CSS Micro-Tooltip */
+    .stat-sparkline .bar::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 7px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background: rgba(15, 23, 42, 0.96);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.15);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s;
+      z-index: 1000;
+    }
+    .stat-sparkline .bar::before {
+      content: '';
+      position: absolute;
+      bottom: calc(100% + 1px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      border: 4px solid transparent;
+      border-top-color: rgba(15, 23, 42, 0.96);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.1s ease, transform 0.1s ease, visibility 0.1s;
+      z-index: 1000;
+    }
+    .stat-sparkline .bar:hover::after,
+    .stat-sparkline .bar:hover::before {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Data Refresh Pulse Ping */
+    .pulse-updating {
+      animation: statDataPing 0.4s ease-out;
+    }
+    @keyframes statDataPing {
+      0% { opacity: 0.6; transform: scale(0.98); }
+      50% { opacity: 1; transform: scale(1.02); filter: brightness(1.15); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Shortcuts Modal Styles */
+    .shortcuts-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin: 14px 0 18px;
+    }
+    .shortcut-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border-subtle);
+      transition: background 0.15s ease;
+    }
+    .shortcut-row:hover {
+      background: var(--surface);
+    }
+    .shortcut-desc {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--navy-800);
+    }
+    .shortcut-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      padding: 3px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--navy-900);
+      background: var(--surface);
+      border: 1px solid var(--border-loud);
+      border-radius: 5px;
+      box-shadow: 0 2px 0 var(--border-loud);
+    }
+
     .stat-meta-pro {
       font-size: 11px;
       color: var(--text-muted);
@@ -534,18 +654,18 @@
     .dashboard-grid {
       display: grid;
       grid-template-columns: 1.85fr 1.15fr;
-      gap: 20px;
-      margin-bottom: 24px;
+      gap: 24px;
+      margin-bottom: 32px;
     }
     @media (max-width: 1060px) {
       .dashboard-grid { grid-template-columns: 1fr; }
     }
     .card-pro {
       background: var(--card-bg);
-      border-radius: 16px;
+      border-radius: var(--card-radius, 14px);
       border: 1px solid var(--border-loud);
-      box-shadow: var(--shadow-sm);
-      padding: 24px 26px;
+      box-shadow: var(--card-shadow, var(--shadow-sm));
+      padding: var(--card-padding, 24px);
       position: relative;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -614,14 +734,14 @@
 
     /* Sector Selector */
     .route-select-pro {
-      padding: 7px 14px;
+      padding: 7px 16px;
       font-family: 'Outfit', sans-serif;
       font-size: 12px;
       font-weight: 700;
       color: var(--navy-800);
       background: var(--surface-raised);
       border: 1px solid var(--border-loud);
-      border-radius: 8px;
+      border-radius: 999px;
       cursor: pointer;
       outline: none;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -638,13 +758,14 @@
     }
     .heatmap-row-pro {
       transition: background 0.15s ease;
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 3px 0;
     }
     .heatmap-row-pro:hover {
       background: var(--alpha-4);
     }
     .heatmap-cell-pro {
+      border-radius: 8px !important;
       transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease, filter 0.18s ease !important;
     }
     .heatmap-cell-pro:hover {
@@ -660,8 +781,8 @@
       align-items: center;
       gap: 12px;
       margin-bottom: 12px;
-      padding: 5px 8px;
-      border-radius: 8px;
+      padding: 6px 10px;
+      border-radius: 10px;
       transition: background 0.15s ease;
     }
     .carrier-row-pro:hover {
@@ -671,9 +792,9 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 26px;
+      width: 28px;
       height: 20px;
-      border-radius: 4px;
+      border-radius: 999px;
       color: #fff;
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
@@ -695,14 +816,14 @@
       flex: 1;
       height: 14px;
       background: var(--alpha-4);
-      border-radius: 7px;
+      border-radius: 999px;
       overflow: hidden;
       position: relative;
       border: 1px solid var(--border-subtle);
     }
     .carrier-fill-pro {
       height: 100%;
-      border-radius: 7px;
+      border-radius: 999px;
       transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
     }
@@ -728,13 +849,13 @@
     /* Diverging Inflation Bar Chart */
     .inflation-row-pro {
       display: grid;
-      grid-template-columns: 180px 1fr 100px;
+      grid-template-columns: 220px 1fr 90px;
       align-items: center;
-      gap: 14px;
-      padding: 9px 8px;
+      gap: 16px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--border-subtle);
       transition: background 0.15s ease;
-      border-radius: 6px;
+      border-radius: 10px;
     }
     .inflation-row-pro:hover {
       background: var(--alpha-4);
@@ -743,7 +864,7 @@
       position: relative;
       height: 16px;
       background: var(--alpha-4);
-      border-radius: 8px;
+      border-radius: 999px;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -763,7 +884,7 @@
       left: 50%;
       height: 100%;
       background: linear-gradient(90deg, #f97316 0%, #dc2626 100%);
-      border-radius: 0 8px 8px 0;
+      border-radius: 0 999px 999px 0;
       transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .inflation-bar-fill-neg {
@@ -771,7 +892,7 @@
       right: 50%;
       height: 100%;
       background: linear-gradient(270deg, #10b981 0%, #059669 100%);
-      border-radius: 8px 0 0 8px;
+      border-radius: 999px 0 0 999px;
       transition: width 0.85s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -881,6 +1002,9 @@
       </nav>
 
       <div class="nav-right">
+        <button class="btn-theme-toggle" onclick="openShortcutsModal()" aria-label="View Keyboard Shortcuts" title="Economist Hotkeys (Press ? or /)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><line x1="6" y1="8" x2="6" y2="8"/><line x1="10" y1="8" x2="10" y2="8"/><line x1="14" y1="8" x2="14" y2="8"/><line x1="18" y1="8" x2="18" y2="8"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="10" y1="12" x2="10" y2="12"/><line x1="14" y1="12" x2="14" y2="12"/><line x1="18" y1="12" x2="18" y2="12"/><line x1="7" y1="16" x2="17" y2="16"/></svg>
+        </button>
         <button class="btn-theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
           <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -893,7 +1017,7 @@
     </div>
   </header>
 
-  <main class="page-container page-enter" style="max-width: 1320px; margin: 0 auto; padding: 28px 24px;">
+  <main class="page-container page-enter">
     
     <!-- Executive Hero Header -->
     <div class="dash-hero">
@@ -942,14 +1066,19 @@
 
       <!-- Action Button Cluster -->
       <div class="action-btn-cluster">
-        <a href="/api/v1/export/csv" download class="btn-dash btn-dash-secondary" title="Download sanitized fare microdata CSV for econometric modeling">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>Export Microdata</span>
-        </a>
-        <button onclick="openBulletinModal()" class="btn-dash btn-dash-secondary" title="View official MoSPI monthly bulletin preview">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          <span>Official Bulletin</span>
-        </button>
+        <div style="display: inline-flex; align-items: center; gap: 4px; background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 10px; padding: 2px 4px;">
+          <a href="/api/v1/export/csv" download class="btn-dash btn-dash-secondary" style="border: none; box-shadow: none; height: 36px; padding: 0 12px;" title="Download sanitized fare microdata CSV for econometric modeling">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Export Microdata</span>
+          </a>
+          <button onclick="openBulletinModal()" class="btn-dash btn-dash-secondary" style="border: none; box-shadow: none; height: 36px; padding: 0 12px;" title="View official MoSPI monthly bulletin preview">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Official Bulletin</span>
+          </button>
+          <button id="btnRecompute" onclick="handleRecomputeClick(this)" class="btn-dash btn-dash-secondary btn-dash-recompute" style="border: none; box-shadow: none;" title="Recompute Jevons & GEKS indices">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          </button>
+        </div>
         <button onclick="openAiDiagnosticModal()" class="btn-dash btn-dash-ai" title="Trigger Gemini AI econometric inflation diagnosis">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <span>AI Macro Diagnostic</span>
@@ -957,9 +1086,6 @@
         <button onclick="openScrapeModal()" class="btn-dash btn-dash-primary" title="Trigger on-demand multi-carrier flight survey">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           <span>Live Scrape</span>
-        </button>
-        <button id="btnRecompute" onclick="handleRecomputeClick(this)" class="btn-dash btn-dash-secondary btn-dash-recompute" title="Recompute Jevons & GEKS indices">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
       </div>
     </div>
@@ -987,13 +1113,13 @@
         </div>
         <div>
           <div class="stat-sparkline" title="7-day National Index Trajectory">
-            <div class="bar" style="height: 38%;" title="Day -6: 100.2 pts"></div>
-            <div class="bar" style="height: 52%;" title="Day -5: 101.0 pts"></div>
-            <div class="bar" style="height: 64%;" title="Day -4: 101.8 pts"></div>
-            <div class="bar" style="height: 78%;" title="Day -3: 102.6 pts"></div>
-            <div class="bar" style="height: 92%;" title="Day -2: 103.4 pts"></div>
-            <div class="bar" style="height: 84%;" title="Day -1: 102.9 pts"></div>
-            <div class="bar highlight" style="height: 100%;" title="Today: 103.7 pts"></div>
+            <div class="bar" style="height: 38%;" data-tip="Day -6: 100.2 pts"></div>
+            <div class="bar" style="height: 52%;" data-tip="Day -5: 101.0 pts"></div>
+            <div class="bar" style="height: 64%;" data-tip="Day -4: 101.8 pts"></div>
+            <div class="bar" style="height: 78%;" data-tip="Day -3: 102.6 pts"></div>
+            <div class="bar" style="height: 92%;" data-tip="Day -2: 103.4 pts"></div>
+            <div class="bar" style="height: 84%;" data-tip="Day -1: 102.9 pts"></div>
+            <div class="bar highlight" style="height: 100%;" data-tip="Today: 103.7 pts (+1.2%)"></div>
           </div>
           <div class="stat-meta-pro">
             <span>Base: Aug 1, 2026 = 100.0</span>
@@ -1022,13 +1148,13 @@
         </div>
         <div>
           <div class="stat-sparkline" title="Corridor Sampling Stability">
-            <div class="bar" style="height: 70%;" title="DEL-BOM: Calibrated"></div>
-            <div class="bar" style="height: 85%;" title="DEL-BLR: Calibrated"></div>
-            <div class="bar" style="height: 60%;" title="BOM-BLR: Calibrated"></div>
-            <div class="bar" style="height: 95%;" title="DEL-CCU: Calibrated"></div>
-            <div class="bar" style="height: 80%;" title="BLR-HYD: Calibrated"></div>
-            <div class="bar" style="height: 90%;" title="BOM-GOI: Calibrated"></div>
-            <div class="bar highlight" style="height: 100%;" title="All 8 Corridors Live"></div>
+            <div class="bar" style="height: 70%;" data-tip="DEL-BOM: Calibrated"></div>
+            <div class="bar" style="height: 85%;" data-tip="DEL-BLR: Calibrated"></div>
+            <div class="bar" style="height: 60%;" data-tip="BOM-BLR: Calibrated"></div>
+            <div class="bar" style="height: 95%;" data-tip="DEL-CCU: Calibrated"></div>
+            <div class="bar" style="height: 80%;" data-tip="BLR-HYD: Calibrated"></div>
+            <div class="bar" style="height: 90%;" data-tip="BOM-GOI: Calibrated"></div>
+            <div class="bar highlight" style="height: 100%;" data-tip="All 8 Corridors Live"></div>
           </div>
           <div class="stat-meta-pro">
             <span>DEL, BOM, BLR, CCU, HYD...</span>
@@ -1057,13 +1183,13 @@
         </div>
         <div>
           <div class="stat-sparkline" title="Telemetry Ingestion Velocity">
-            <div class="bar" style="height: 45%;" title="00:00 Cycle: 680 quotes"></div>
-            <div class="bar" style="height: 55%;" title="04:00 Cycle: 720 quotes"></div>
-            <div class="bar" style="height: 70%;" title="08:00 Cycle: 850 quotes"></div>
-            <div class="bar" style="height: 65%;" title="12:00 Cycle: 790 quotes"></div>
-            <div class="bar" style="height: 80%;" title="16:00 Cycle: 920 quotes"></div>
-            <div class="bar" style="height: 90%;" title="20:00 Cycle: 960 quotes"></div>
-            <div class="bar highlight" style="height: 100%;" title="Latest: 4,800 quotes verified"></div>
+            <div class="bar" style="height: 45%;" data-tip="00:00 Cycle: 680 quotes"></div>
+            <div class="bar" style="height: 55%;" data-tip="04:00 Cycle: 720 quotes"></div>
+            <div class="bar" style="height: 70%;" data-tip="08:00 Cycle: 850 quotes"></div>
+            <div class="bar" style="height: 65%;" data-tip="12:00 Cycle: 790 quotes"></div>
+            <div class="bar" style="height: 80%;" data-tip="16:00 Cycle: 920 quotes"></div>
+            <div class="bar" style="height: 90%;" data-tip="20:00 Cycle: 960 quotes"></div>
+            <div class="bar highlight" style="height: 100%;" data-tip="Latest: 4,800 quotes verified"></div>
           </div>
           <div class="stat-meta-pro">
             <span>5 Horizons (T+1 … T+45)</span>
@@ -1092,13 +1218,13 @@
         </div>
         <div>
           <div class="stat-sparkline" title="Lead-Time Elasticity Curve Profile">
-            <div class="bar highlight" style="height: 100%;" title="T+1 Emergency: ₹16,840"></div>
-            <div class="bar" style="height: 75%;" title="T+7 Business: ₹11,200"></div>
-            <div class="bar" style="height: 50%;" title="T+15 Standard: ₹7,840"></div>
-            <div class="bar" style="height: 35%;" title="T+30 Advance: ₹5,120"></div>
-            <div class="bar" style="height: 25%;" title="T+45 Early Bird: ₹4,380"></div>
-            <div class="bar" style="height: 22%;" title="T+60 Off-Peak: ₹3,920"></div>
-            <div class="bar" style="height: 20%;" title="T+90 Base Floor: ₹3,650"></div>
+            <div class="bar highlight" style="height: 100%;" data-tip="T+1 Emergency: ₹16,840"></div>
+            <div class="bar" style="height: 75%;" data-tip="T+7 Business: ₹11,200"></div>
+            <div class="bar" style="height: 50%;" data-tip="T+15 Standard: ₹7,840"></div>
+            <div class="bar" style="height: 35%;" data-tip="T+30 Advance: ₹5,120"></div>
+            <div class="bar" style="height: 25%;" data-tip="T+45 Early Bird: ₹4,380"></div>
+            <div class="bar" style="height: 22%;" data-tip="T+60 Off-Peak: ₹3,920"></div>
+            <div class="bar" style="height: 20%;" data-tip="T+90 Base Floor: ₹3,650"></div>
           </div>
           <div class="stat-meta-pro">
             <span>T+1 (₹16.8k) vs T+30 (₹3.9k)</span>
@@ -1165,8 +1291,8 @@
     </div>
 
     <!-- Dedicated Full-Width Section: Aviation Price Velocity & Heatmap Matrix -->
-    <div class="card-pro" style="margin-bottom: 24px;">
-      <div class="card-header-pro" style="flex-wrap: wrap; gap: 14px; align-items: flex-start;">
+    <div class="card-pro" style="margin-bottom: 32px;">
+      <div class="card-header-pro" style="flex-wrap: wrap; gap: 14px; align-items: center;">
         <div>
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
             <h2 class="card-title-pro" style="margin: 0;">
@@ -1181,19 +1307,26 @@
           <div class="card-subtitle-pro">Continuous price intensity, weekend elasticity surges, and intraday dispersion across 8 major Indian civil aviation corridors.</div>
         </div>
 
-        <!-- Controls: Filter Tabs & Metric Mode -->
-        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <div class="heatmap-filter-group" role="tablist" aria-label="Corridor category filters">
-            <button class="heatmap-tab active" id="tab-all" role="tab" aria-selected="true" onclick="setHeatmapFilter('ALL', this)">All Corridors (8)</button>
-            <button class="heatmap-tab" id="tab-metro" role="tab" aria-selected="false" onclick="setHeatmapFilter('METRO', this)">Metro Trunks (4)</button>
-            <button class="heatmap-tab" id="tab-surge" role="tab" aria-selected="false" onclick="setHeatmapFilter('SURGE', this)">High Volatility (3)</button>
-          </div>
+        <!-- Corridor Category Filter Tabs -->
+        <div class="heatmap-filter-group" role="tablist" aria-label="Corridor category filters">
+          <button class="heatmap-tab active" id="tab-all" role="tab" aria-selected="true" onclick="setHeatmapFilter('ALL', this)">All Corridors (8)</button>
+          <button class="heatmap-tab" id="tab-metro" role="tab" aria-selected="false" onclick="setHeatmapFilter('METRO', this)">Metro Trunks (4)</button>
+          <button class="heatmap-tab" id="tab-surge" role="tab" aria-selected="false" onclick="setHeatmapFilter('SURGE', this)">High Volatility (3)</button>
+        </div>
+      </div>
 
-          <select id="heatmap-metric-mode" class="route-select-pro" onchange="changeHeatmapMetric(this.value)" aria-label="Heatmap metric display mode">
+      <!-- Controls Row: Metric Mode Selection -->
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-top: 4px; flex-wrap: wrap;">
+        <div style="display: inline-flex; align-items: center; gap: 8px;">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Display Metric:</span>
+          <select id="heatmap-metric-mode" class="route-select-pro" onchange="changeHeatmapMetric(this.value)" aria-label="Heatmap metric display mode" style="height: 36px; padding: 6px 12px; font-size: 13px;">
             <option value="fare">🏷️ Absolute Price (₹)</option>
             <option value="delta">📈 % vs Base (2024=100)</option>
             <option value="spread">⚡ Spread (Max - Min)</option>
           </select>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); font-family: 'Inter', sans-serif;">
+          Click any date cell below for quote decomposition & microdata drilldown.
         </div>
       </div>
 
@@ -1239,10 +1372,28 @@
     <!-- Analytics Grid: Materiality Gap & Econometric Axiomatic Inspector -->
     <div class="dashboard-grid">
       
-      <!-- Statistical Materiality Gap & Carrier Share -->
-      <div class="card-pro" style="display: flex; flex-direction: column; justify-content: space-between;">
-        <div>
-          <div class="card-header-pro">
+      <!-- Left Column: Split into 2 Focused Cards (Carrier Share & Materiality Gap) -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- Card 1: Carrier Market Share & Average Fare -->
+        <div class="card-pro">
+          <div class="card-header-pro" style="margin-bottom: 16px;">
+            <div>
+              <h2 class="card-title-pro">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--heat-100)" stroke-width="2.2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
+                <span>Carrier Market Share & Average Fare</span>
+              </h2>
+              <div class="card-subtitle-pro">DGCA traffic-weighted fleet distribution & baseline tariff levels</div>
+            </div>
+            <span class="badge" style="background: rgba(250, 93, 25, 0.1); color: var(--heat-100); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;">DGCA Weights</span>
+          </div>
+          <div id="carrier-bars-container">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Card 2: Statistical Materiality Gap -->
+        <div class="card-pro">
+          <div class="card-header-pro" style="margin-bottom: 14px;">
             <div>
               <h2 class="card-title-pro">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--heat-100)" stroke-width="2.2"><path d="M12 3v18"/><path d="M3 7l9-4 9 4"/><path d="M3 17l9 4 9-4"/></svg>
@@ -1255,22 +1406,12 @@
           
           <div class="materiality-box-pro">
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Inflation Measurement Distortion</div>
-            <div style="font-size: 30px; font-weight: 800; color: var(--heat-100); font-family: 'Outfit', sans-serif; margin: 4px 0; letter-spacing: -0.02em;">
-              +20.6% <span style="font-size: 14px; font-weight: 600; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">(₹1,340 / ticket)</span>
+            <div style="font-size: 28px; font-weight: 800; color: var(--heat-100); font-family: 'Outfit', sans-serif; margin: 4px 0; letter-spacing: -0.02em;">
+              +20.6% <span style="font-size: 13.5px; font-weight: 600; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">(₹1,340 / ticket)</span>
             </div>
-            <p style="font-size: 12.5px; color: var(--navy-800); margin: 6px 0 0 0; line-height: 1.5;">
+            <p style="font-size: 13px; color: var(--navy-800); margin: 6px 0 0 0; line-height: 1.55;">
               Monthly snapshot records <strong>₹6,500</strong> by sampling once mid-month. The actual continuous weighted index is <strong>₹7,840</strong> — significantly under-reporting real transportation costs.
             </p>
-          </div>
-        </div>
-
-        <div style="margin-top: 18px; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
-          <div style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy-900); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <span>Carrier Market Share & Average Fare</span>
-            <span style="font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">DGCA Traffic Weight</span>
-          </div>
-          <div id="carrier-bars-container">
-            <!-- Populated by JS -->
           </div>
         </div>
       </div>
@@ -1303,7 +1444,7 @@
     </div>
 
     <!-- Dedicated Section: PPAC Metro ATF Exogenous Benchmark Cross-Validation -->
-    <div class="card-pro" style="margin-bottom: 24px;">
+    <div class="card-pro" style="margin-bottom: 32px;">
       <div class="card-header-pro" style="flex-wrap: wrap; gap: 14px; align-items: flex-start;">
         <div>
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
@@ -1359,7 +1500,7 @@
     </div>
 
     <!-- Full-Width: Sector Inflation Contribution Ranking -->
-    <div class="card-pro" style="margin-bottom: 24px;">
+    <div class="card-pro" style="margin-bottom: 32px;">
       <div class="card-header-pro">
         <div>
           <h2 class="card-title-pro">
@@ -1486,6 +1627,65 @@
     </div>
   </div>
 
+  <!-- Modal: Economist Keyboard Shortcuts Guide -->
+  <div id="shortcuts-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="shortcuts-modal-title">
+    <div class="modal-content-pro" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 18px;">⌨️</span>
+          <h3 id="shortcuts-modal-title" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; margin: 0; color: var(--navy-900);">Economist Hotkeys</h3>
+        </div>
+        <button onclick="closeShortcutsModal()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 14px 0;">Single-key shortcuts for rapid data exploration and frequency switching.</p>
+      
+      <div class="shortcuts-grid">
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Switch to Daily (1D) Series</span>
+          <kbd class="shortcut-key">D</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Switch to Weekly (7D) Multilateral</span>
+          <kbd class="shortcut-key">W</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Switch to Monthly CPI Series</span>
+          <kbd class="shortcut-key">M</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Toggle Economy Bundle Regime</span>
+          <kbd class="shortcut-key">B</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Recompute Jevons & GEKS Indices</span>
+          <kbd class="shortcut-key">R</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Trigger On-Demand Live Scrape</span>
+          <kbd class="shortcut-key">S</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Open Official Bulletin Preview</span>
+          <kbd class="shortcut-key">O</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Toggle Theme (Light / Dark)</span>
+          <kbd class="shortcut-key">T</kbd>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Close Active Modal / Drawer</span>
+          <kbd class="shortcut-key">ESC</kbd>
+        </div>
+      </div>
+      
+      <div style="margin-top: 16px; text-align: center;">
+        <button onclick="closeShortcutsModal()" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 13px; font-weight: 700;">
+          Close Guide
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="/app.js"></script>
   <script src="/ui.js"></script>
   <script>
@@ -1567,6 +1767,7 @@
       currentBundleMode = mode;
       const indexEl = document.getElementById('kpi-today-index');
       const fareEl = document.getElementById('kpi-avg-fare');
+      pingKpiElements();
       
       if (mode === 'adjusted') {
         const adjustedIndex = +(baseKpiIndex * 1.055).toFixed(1);
@@ -2293,30 +2494,30 @@
             <span style="font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Real-Time Snapshot</span>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 10px; border: 1px solid var(--border-subtle);">
               <div style="display: flex; align-items: center; gap: 7px;">
-                <span class="carrier-badge-chip" style="background: #4338ca; width: 24px; height: 18px; border-radius: 3px; font-size: 9.5px;">6E</span>
+                <span class="carrier-badge-chip" style="background: #4338ca; width: 28px; height: 18px; border-radius: 999px; font-size: 9.5px;">6E</span>
                 <span style="font-weight: 700; font-size: 12.5px; color: var(--navy-900);">IndiGo</span>
               </div>
               <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13.5px; color: var(--navy-900);">₹${Math.round(avgFare * 0.96).toLocaleString('en-IN')}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 10px; border: 1px solid var(--border-subtle);">
               <div style="display: flex; align-items: center; gap: 7px;">
-                <span class="carrier-badge-chip" style="background: #b91c1c; width: 24px; height: 18px; border-radius: 3px; font-size: 9.5px;">AI</span>
+                <span class="carrier-badge-chip" style="background: #b91c1c; width: 28px; height: 18px; border-radius: 999px; font-size: 9.5px;">AI</span>
                 <span style="font-weight: 700; font-size: 12.5px; color: var(--navy-900);">Air India</span>
               </div>
               <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13.5px; color: var(--navy-900);">₹${Math.round(avgFare * 1.06).toLocaleString('en-IN')}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 10px; border: 1px solid var(--border-subtle);">
               <div style="display: flex; align-items: center; gap: 7px;">
-                <span class="carrier-badge-chip" style="background: #ea580c; width: 24px; height: 18px; border-radius: 3px; font-size: 9.5px;">QP</span>
+                <span class="carrier-badge-chip" style="background: #ea580c; width: 28px; height: 18px; border-radius: 999px; font-size: 9.5px;">QP</span>
                 <span style="font-weight: 700; font-size: 12.5px; color: var(--navy-900);">Akasa Air</span>
               </div>
               <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13.5px; color: var(--navy-900);">₹${Math.round(avgFare * 0.92).toLocaleString('en-IN')}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 10px; border: 1px solid var(--border-subtle);">
               <div style="display: flex; align-items: center; gap: 7px;">
-                <span class="carrier-badge-chip" style="background: #d97706; width: 24px; height: 18px; border-radius: 3px; font-size: 9.5px;">SG</span>
+                <span class="carrier-badge-chip" style="background: #d97706; width: 28px; height: 18px; border-radius: 999px; font-size: 9.5px;">SG</span>
                 <span style="font-weight: 700; font-size: 12.5px; color: var(--navy-900);">SpiceJet</span>
               </div>
               <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13.5px; color: var(--navy-900);">₹${Math.round(avgFare * 0.98).toLocaleString('en-IN')}</span>
@@ -2343,6 +2544,32 @@
           </div>
         </div>
       `;
+
+      // Cross-Filter synchronization: update yield curve and axiomatic formula selectors
+      const elRoute = document.getElementById('elasticity-route-select');
+      if (elRoute) {
+        for (let opt of elRoute.options) {
+          if (opt.value === routeId) {
+            if (elRoute.value !== routeId) {
+              elRoute.value = routeId;
+              updateElasticityChart(routeId);
+            }
+            break;
+          }
+        }
+      }
+      const methRoute = document.getElementById('methodology-route-select');
+      if (methRoute) {
+        for (let opt of methRoute.options) {
+          if (opt.value === routeId) {
+            if (methRoute.value !== routeId) {
+              methRoute.value = routeId;
+              loadMethodologyComparison(routeId);
+            }
+            break;
+          }
+        }
+      }
 
       modal.style.display = 'flex';
       modal.onclick = (e) => { if (e.target === modal) closeHeatmapDrilldown(); };
@@ -2654,6 +2881,7 @@
         const res = await fetch('/api/v1/index/compute', { method: 'POST', headers: authHeaders() });
         const data = await res.json();
         showToast(`National APIx Recomputed: ${data.result.national_index} pts`, 'success');
+        pingKpiElements();
         await loadDashboardStats();
         await loadTimeSeriesChart(currentFrequency);
         await loadMethodologyComparison('DEL-BOM');
@@ -2663,9 +2891,78 @@
       }
     }
 
-    // Global Modal Dismissal: ESC key & Backdrop Click
+    /* Pulse highlight on KPI metric values during data updates */
+    function pingKpiElements() {
+      const ids = ['kpi-today-index', 'kpi-active-routes', 'kpi-total-quotes', 'kpi-avg-fare'];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.remove('pulse-updating');
+          void el.offsetWidth; // trigger reflow
+          el.classList.add('pulse-updating');
+          setTimeout(() => el.classList.remove('pulse-updating'), 450);
+        }
+      });
+    }
+
+    function openShortcutsModal() {
+      const modal = document.getElementById('shortcuts-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+    function closeShortcutsModal() {
+      const modal = document.getElementById('shortcuts-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    /* ── Economist Keyboard Shortcuts Controller ── */
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+      // Don't trigger hotkeys if focused on input/select/textarea
+      const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      const key = e.key.toUpperCase();
+
+      if (key === 'D') {
+        e.preventDefault();
+        switchFrequency('daily');
+        showToast('Switched to Daily (1D) Series [Hotkey: D]', 'info');
+      } else if (key === 'W') {
+        e.preventDefault();
+        switchFrequency('weekly');
+        showToast('Switched to Weekly (7D) Multilateral Series [Hotkey: W]', 'info');
+      } else if (key === 'M') {
+        e.preventDefault();
+        switchFrequency('monthly');
+        showToast('Switched to Official Monthly Publication Series [Hotkey: M]', 'info');
+      } else if (key === 'B') {
+        e.preventDefault();
+        const nextMode = currentBundleMode === 'raw' ? 'adjusted' : 'raw';
+        setBundleRegime(nextMode);
+      } else if (key === 'R') {
+        e.preventDefault();
+        const btn = document.getElementById('btnRecompute');
+        handleRecomputeClick(btn);
+      } else if (key === 'S') {
+        e.preventDefault();
+        openScrapeModal();
+      } else if (key === 'O') {
+        e.preventDefault();
+        openBulletinModal();
+      } else if (key === 'T') {
+        e.preventDefault();
+        const themeBtn = document.getElementById('themeToggle');
+        if (themeBtn) themeBtn.click();
+      } else if (key === '?' || e.key === '/') {
+        e.preventDefault();
+        const modal = document.getElementById('shortcuts-modal');
+        if (modal && modal.style.display === 'flex') {
+          closeShortcutsModal();
+        } else {
+          openShortcutsModal();
+        }
+      } else if (e.key === 'Escape') {
+        closeShortcutsModal();
         closeScrapeModal();
         closeBulletinModal();
         closeAiModal();
@@ -2673,7 +2970,7 @@
       }
     });
 
-    ['scrape-modal', 'bulletin-modal', 'ai-modal', 'heatmap-drilldown-modal'].forEach(id => {
+    ['scrape-modal', 'bulletin-modal', 'ai-modal', 'heatmap-drilldown-modal', 'shortcuts-modal'].forEach(id => {
       const modal = document.getElementById(id);
       if (modal) {
         modal.addEventListener('click', (e) => {

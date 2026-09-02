@@ -176,6 +176,7 @@ python -m uvicorn app:app --host 0.0.0.0 --port 8000
 | 🔍 Route Fare Survey | `http://localhost:8000/benchmark` |
 | ⚙️ Route Basket Config | `http://localhost:8000/routes` |
 | 🖥️ Scraper Telemetry | `http://localhost:8000/scraper` |
+| 👤 Officer Profile & Settings | `http://localhost:8000/profile` |
 | 📚 Interactive API Docs | `http://localhost:8000/docs` |
 
 > **Demo Mode:** APIx ships with `DEMO_MODE=true` and a pre-seeded dataset of ~4,800 realistic fare quotes across 30 days. All dashboards and indices work immediately — no API keys required.
@@ -294,7 +295,9 @@ APIx/
 │   ├── dashboard.html         # Analytics dashboard
 │   ├── benchmark.html         # Route fare survey
 │   ├── routes.html            # Route basket config
-│   └── base.css               # Design system
+│   ├── scraper.html           # Scraper operations & cluster telemetry
+│   ├── profile.html           # Statistical analyst profile & API keys
+│   └── base.css               # Design system foundation
 ├── data/                      # Seed data files
 │   ├── fare_demo_cache.json   # Pre-seeded 30-day fare quotes
 │   ├── route_basket.json      # 8-route DGCA basket

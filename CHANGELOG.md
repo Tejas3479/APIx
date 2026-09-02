@@ -7,7 +7,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+- **UX & Spatial Layout Overhaul** — standardized design tokens across `base.css` (`--space-*`, `--card-*`, `--btn-*`), unified page content width to 1280px with responsive padding, rescaled KPI metrics to 28px, decluttered hero and heatmap headers, separated Carrier Market Share and Statistical Materiality Gap into distinct focused cards, widened route columns in sector inflation breakdown, and improved cross-page input/button touch targets.
+
 ### Removed
+- **Orphaned `static/index.html`** — deleted redundant legacy clone of `scraper.html` and updated all documentation references.
 - **Multi-page crawl pipeline** — removed `routers/crawl.py`, `services/crawl_manager.py`, `worker.py` (ARQ background worker), the `CrawlJob`/`BatchJob`/`Destination`/`ScheduledCrawl` tables, `arq`/`croniter`/`pinecone-client`/`weaviate-client`/`supabase` dependencies, the Docker `worker` service, and the dead front-end bundles. The single-URL anti-bot fetch engine (`/fetch`) that powers background batch scraping is retained. Migration `9bdeb31f1488` drops the crawl tables.
 - **Legacy branding** — remaining legacy references scrubbed from UI and docs.
 
