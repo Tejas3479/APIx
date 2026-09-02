@@ -1029,6 +1029,11 @@
 
       if (!quotes || quotes.length === 0) {
         document.getElementById('quotesTableBody').innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted);font-family:\'Inter\',sans-serif;">No live flights found for this route and horizon.</div>';
+        document.getElementById('resJevonsPrice').textContent = '—';
+        if (document.getElementById('kpiJevonsPrice')) document.getElementById('kpiJevonsPrice').textContent = '—';
+        if (document.getElementById('kpiLowestPrice')) document.getElementById('kpiLowestPrice').textContent = '—';
+        if (document.getElementById('kpiLowestCarrier')) document.getElementById('kpiLowestCarrier').textContent = '—';
+        if (document.getElementById('kpiPriceSpread')) document.getElementById('kpiPriceSpread').textContent = '—';
         return;
       }
 
@@ -1192,7 +1197,7 @@
 
     async function loadMaterialityCounterfactual(routeId) {
       try {
-        const res = await fetch('/api/v1/index/materiality?month=2026-08');
+        const res = await fetch('/api/v1/index/materiality?month=2026-08&route_id=' + encodeURIComponent(routeId));
         if (!res.ok) return;
         const data = await res.json();
         

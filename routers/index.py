@@ -151,10 +151,16 @@ async def get_route_subindex(
 
 
 @router.get("/materiality", response_model=MaterialityGapResponse)
-async def get_materiality_gap():
+async def get_materiality_gap(
+    month: str = "2026-08",
+    route_id: str | None = None,
+):
     """Retrieve statistical materiality gap between single monthly snapshot and continuous APIx."""
     async with async_session_maker() as session:
-        stmt = select(FareQuote).limit(500)
+        stmt = select(FareQuote)
+        if route_id:
+            stmt = stmt.where(FareQuote.route_id == route_id.upper().strip())
+        stmt = stmt.limit(500)
         quotes = (await session.execute(stmt)).scalars().all()
 
         quotes_dicts = [
@@ -166,7 +172,9 @@ async def get_materiality_gap():
             for q in quotes
         ]
 
-        result = AirfareIndexEngine.compute_materiality_gap(quotes_dicts)
+        result = AirfareIndexEngine.compute_materiality_gap(
+            quotes_dicts, month_str=month
+        )
         return result
 
 
