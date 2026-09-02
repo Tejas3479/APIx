@@ -1696,15 +1696,15 @@
     <!-- Metrics -->
     <section class="metrics-grid" aria-label="Platform metrics">
       <div class="metric-box fade-up fade-up-delay-1">
-        <div class="metric-num" data-count="8">0</div>
+        <div class="metric-num" id="metric-routes" data-count="8">8</div>
         <div class="metric-label">High-Density Domestic Sectors</div>
       </div>
       <div class="metric-box fade-up fade-up-delay-2">
-        <div class="metric-num" data-count="4800">0</div>
+        <div class="metric-num" id="metric-quotes" data-count="4800">4,800</div>
         <div class="metric-label">Continuous Fare Quotes</div>
       </div>
       <div class="metric-box fade-up fade-up-delay-3">
-        <div class="metric-num" data-count="5">0</div>
+        <div class="metric-num" id="metric-windows" data-count="5">5</div>
         <div class="metric-label">Advance Booking Windows (T+1 to T+45)</div>
       </div>
       <div class="metric-box fade-up fade-up-delay-4">
@@ -2631,26 +2631,56 @@
     renderMinistries();
     renderTestimonials();
 
-    /* ── Metric count-up ── */
+    /* ── Metric count-up & Live DB Stats ── */
+    function animateMetricElement(el) {
+      const target = parseInt(el.getAttribute('data-count'), 10);
+      if (isNaN(target)) return;
+      const duration = 1000;
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * eased).toLocaleString();
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
     const metricObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         const el = entry.target;
-        const target = parseInt(el.getAttribute('data-count'), 10);
-        if (!isNaN(target)) {
-          const duration = 900;
-          const start = performance.now();
-          function tick(now) {
-            const p = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - p, 3);
-            el.textContent = Math.round(target * eased).toLocaleString();
-            if (p < 1) requestAnimationFrame(tick);
-          }
-          requestAnimationFrame(tick);
-        }
+        animateMetricElement(el);
         metricObserver.unobserve(el);
       });
-    }, { threshold: 0.4 });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.metric-num[data-count]').forEach((el) => {
+      metricObserver.observe(el);
+    });
+
+    // Asynchronously fetch live stats from backend
+    (async function fetchLivePlatformStats() {
+      try {
+        const res = await fetch('/api/health');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.apix_metrics) {
+          const routesEl = document.getElementById('metric-routes');
+          const quotesEl = document.getElementById('metric-quotes');
+          if (routesEl && data.apix_metrics.routes_configured) {
+            routesEl.setAttribute('data-count', data.apix_metrics.routes_configured);
+            routesEl.textContent = data.apix_metrics.routes_configured.toLocaleString();
+          }
+          if (quotesEl && data.apix_metrics.total_fare_quotes) {
+            quotesEl.setAttribute('data-count', data.apix_metrics.total_fare_quotes);
+            quotesEl.textContent = data.apix_metrics.total_fare_quotes.toLocaleString();
+          }
+        }
+      } catch (e) {
+        // Safe fallback already in DOM (8, 4800, 5)
+      }
+    })();
     /* ── Header Nav Active ScrollSpy ── */
     const navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links .nav-link'));
     const spySections = [
