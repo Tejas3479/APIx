@@ -71,6 +71,13 @@ $$\ln P_T^{k,t} = \sum_{i \in S(t, k)} \frac{s_{i}^k + s_{i}^t}{2} \ln\left(\fra
 
 Where $s_i^t$ is the expenditure/passenger share of flight $i$ in period $t$.
 
+### Step 2: Multilateral GEKS Transitivisation
+To eliminate base-period dependency and achieve circular transitivity across all periods, the GEKS index computes the geometric mean of all indirect bilateral comparison paths through every intermediate period $k \in \{1, \dots, T\}$:
+
+$$\ln P_{\text{GEKS}}^{0,t} = \frac{1}{T} \sum_{k=1}^{T} \left( \ln P_T^{0,k} - \ln P_T^{t,k} \right) = \frac{1}{T} \sum_{k=1}^{T} \ln\left( P_T^{0,k} \cdot P_T^{k,t} \right)$$
+
+$$I_{\text{GEKS}}^{0:t} = \exp\left( \ln P_{\text{GEKS}}^{0,t} \right) \times 100$$
+
 ### Step 3: Movement Splicing for Rolling-Window Continuity
 To maintain an unbroken, non-revised daily time series as the rolling window $W = [t-T+1, t]$ advances by one day, APIx applies the **Movement Splice** (Diewert and Fox, 2020):
 
