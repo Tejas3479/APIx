@@ -483,12 +483,12 @@
     }
 
     /* ==========================================================================
-       PRINT STYLESHEET (Statutory Report Document Formatting)
+       PRINT STYLESHEET (Statutory Report Document Formatting - Strict 1-Page Fit)
        ========================================================================== */
     @media print {
       @page {
         size: A4 portrait;
-        margin: 10mm 12mm;
+        margin: 6mm 8mm;
       }
 
       *, *::before, *::after {
@@ -500,14 +500,16 @@
         transition: none !important;
       }
 
-      body {
+      html, body {
         background: #ffffff !important;
         color: #0f172a !important;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-        font-size: 9.5pt !important;
-        line-height: 1.35 !important;
+        font-size: 8.5pt !important;
+        line-height: 1.25 !important;
         padding: 0 !important;
         margin: 0 !important;
+        height: auto !important;
+        overflow: visible !important;
       }
 
       /* Strictly hide all web chrome, navigation, forms, tutorials, buttons, and banners */
@@ -531,9 +533,9 @@
 
       .print-only-header {
         display: block !important;
-        margin-bottom: 10px !important;
-        border-bottom: 2px solid #0f172a !important;
-        padding-bottom: 6px !important;
+        margin-bottom: 6px !important;
+        border-bottom: 1.5px solid #0f172a !important;
+        padding-bottom: 4px !important;
       }
 
       .page-container {
@@ -544,38 +546,67 @@
 
       #surveyResults {
         display: block !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
       }
 
       .card-pro {
         border: 1px solid #cbd5e1 !important;
-        border-radius: 6px !important;
-        padding: 8px 12px !important;
+        border-radius: 4px !important;
+        padding: 6px 10px !important;
         background: #ffffff !important;
-        page-break-inside: avoid;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
         box-shadow: none !important;
+      }
+
+      /* Headline Verdict Compact */
+      #resRouteTitle {
+        font-size: 16pt !important;
+        color: #0f172a !important;
+      }
+      #resJevonsPrice {
+        font-size: 20pt !important;
+        color: #0f172a !important;
+      }
+      #resSurveyMeta {
+        font-size: 7.5pt !important;
       }
 
       /* KPI Cards */
       .decomp-grid-pro {
         display: grid !important;
         grid-template-columns: repeat(4, 1fr) !important;
-        gap: 6px !important;
-        margin-bottom: 10px !important;
+        gap: 4px !important;
+        margin-bottom: 6px !important;
       }
 
       .decomp-box-pro {
         border: 1px solid #cbd5e1 !important;
-        border-radius: 4px !important;
-        padding: 5px 7px !important;
+        border-radius: 3px !important;
+        padding: 3px 5px !important;
         background: #f8fafc !important;
-        page-break-inside: avoid;
+        page-break-inside: avoid !important;
+      }
+
+      .decomp-box-pro div:first-child {
+        font-size: 6.5pt !important;
+      }
+
+      .decomp-box-pro div:nth-child(2) {
+        font-size: 11pt !important;
+        margin-top: 1px !important;
+      }
+
+      .decomp-box-pro div:last-child {
+        font-size: 6pt !important;
       }
 
       /* Decomposition Stack Bar */
       .decomp-bar-pro {
-        height: 8px !important;
+        height: 6px !important;
         border: 1px solid #94a3b8 !important;
-        margin: 5px 0 !important;
+        margin: 3px 0 !important;
       }
       .decomp-seg.base { background: #0f172a !important; }
       .decomp-seg.fuel { background: #d97706 !important; }
@@ -584,18 +615,22 @@
       .decomp-seg.gst { background: #7c3aed !important; }
       .decomp-seg.fee { background: #64748b !important; }
 
-      /* Quotes Table in Print */
-      #quotesTableBody .quote-row-pro:nth-child(n+6) {
+      /* Quotes Table in Print (Top 4 rows) */
+      #quotesTableBody .quote-row-pro:nth-child(n+5) {
         display: none !important;
       }
 
       .quote-row-pro {
         border-bottom: 1px solid #e2e8f0 !important;
-        padding: 4px 6px !important;
+        padding: 3px 6px !important;
+        font-size: 7.5pt !important;
+        grid-template-columns: 70px 1.4fr 1fr 85px 85px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .quote-row-pro strong {
         font-size: 8pt !important;
-        grid-template-columns: 75px 1.4fr 1fr 90px 90px !important;
-        page-break-inside: avoid;
-        break-inside: avoid;
       }
 
       .quote-row-pro > div:last-child,
@@ -606,17 +641,17 @@
       /* 2nd-Tuesday Distortion Box in Print */
       #matCounterfactualBox {
         display: block !important;
-        margin-top: 10px !important;
-        padding: 8px 10px !important;
+        margin-top: 6px !important;
+        padding: 5px 8px !important;
         border: 1px solid #cbd5e1 !important;
-        border-radius: 6px !important;
+        border-radius: 4px !important;
         background: #f8fafc !important;
-        page-break-inside: avoid;
-        break-inside: avoid;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
       }
 
       #matCounterfactualBox h4 {
-        font-size: 9.5pt !important;
+        font-size: 8.5pt !important;
         color: #0f172a !important;
         margin: 0 !important;
       }
@@ -624,15 +659,20 @@
       #matCounterfactualBox div[style*="grid-template-columns"] {
         display: grid !important;
         grid-template-columns: 1fr 1fr 1.3fr !important;
-        gap: 6px !important;
-        margin-top: 6px !important;
+        gap: 4px !important;
+        margin-top: 3px !important;
       }
 
       #matCounterfactualBox div[style*="grid-template-columns"] > div {
-        padding: 6px 8px !important;
+        padding: 4px 6px !important;
         border: 1px solid #cbd5e1 !important;
-        border-radius: 4px !important;
+        border-radius: 3px !important;
         background: #ffffff !important;
+      }
+
+      #matSnapFare, #matContFare {
+        font-size: 11pt !important;
+        margin: 1px 0 !important;
       }
     }
   </style>
