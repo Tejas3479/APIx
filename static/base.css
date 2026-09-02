@@ -305,6 +305,18 @@
   background: rgba(255, 255, 255, 0.15);
   transform: scale(1.05);
 }
+.btn-theme-toggle .icon-sun {
+  display: none;
+}
+.btn-theme-toggle .icon-moon {
+  display: inline-block;
+}
+html.dark .btn-theme-toggle .icon-sun {
+  display: inline-block !important;
+}
+html.dark .btn-theme-toggle .icon-moon {
+  display: none !important;
+}
 .officer-pill {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;

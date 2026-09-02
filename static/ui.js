@@ -18,8 +18,8 @@
       const sun = btn.querySelector('.icon-sun');
       const moon = btn.querySelector('.icon-moon');
       if (sun && moon) {
-        sun.style.display = dark ? 'block' : 'none';
-        moon.style.display = dark ? 'none' : 'block';
+        sun.style.display = dark ? 'inline-block' : 'none';
+        moon.style.display = dark ? 'none' : 'inline-block';
       }
     });
   }
@@ -32,27 +32,8 @@
     } catch (e) {}
   }
 
-  // Initialize theme from localStorage or system preference
-  let isDark = false;
-  try {
-    const saved = localStorage.getItem('theme');
-    isDark = saved ? saved === 'dark' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  } catch (e) {
-    isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
-  applyTheme(isDark);
-
   document.addEventListener('DOMContentLoaded', () => {
     updateThemeUI(document.documentElement.classList.contains('dark'));
-  });
-
-  document.addEventListener('click', (e) => {
-    const toggle = e.target.closest('#themeToggle, .btn-theme-toggle');
-    if (toggle) {
-      e.preventDefault();
-      const currentDark = document.documentElement.classList.contains('dark');
-      applyTheme(!currentDark);
-    }
   });
 
   /* ── Scroll reveal ── */

@@ -1,8 +1,70 @@
 /* APIx shared application helpers.
  *
  * Loaded on every page before each page's inline script. Keeps the common
- * utilities (formatting, escaping, auth headers, animations) in one place.
+ * utilities (formatting, escaping, auth headers, animations, dark/light theme) in one place.
  */
+
+/* ── Universal Theme Controller (Dark / Light Mode) ── */
+function updateThemeToggleUI(isDark) {
+  document.querySelectorAll('#themeToggle, .btn-theme-toggle').forEach((btn) => {
+    const sun = btn.querySelector('.icon-sun');
+    const moon = btn.querySelector('.icon-moon');
+    if (sun) sun.style.display = isDark ? 'inline-block' : 'none';
+    if (moon) moon.style.display = isDark ? 'none' : 'inline-block';
+  });
+}
+
+function setTheme(dark) {
+  if (dark) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  updateThemeToggleUI(dark);
+  try {
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  } catch (e) {}
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.classList.contains('dark');
+  setTheme(!isDark);
+}
+
+// Global click delegation for all theme toggle buttons
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('#themeToggle, .btn-theme-toggle');
+  if (btn) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleTheme();
+  }
+});
+
+// Initialize on script load and on DOMContentLoaded
+(function initTheme() {
+  let isDark = true;
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      isDark = (saved === 'dark');
+    } else if (window.matchMedia) {
+      isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+  } catch (e) {}
+  
+  if (isDark) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => updateThemeToggleUI(isDark));
+  } else {
+    updateThemeToggleUI(isDark);
+  }
+})();
 
 /* Format a number as Indian Rupees (₹1,23,456.00). */
 function formatINR(val, includeDecimals = false) {
