@@ -301,7 +301,7 @@ async def diagnose_fare_anomaly(
             "cpi_materiality_verdict": materiality,
             "statistical_recommendation": policy_rec,
             "ai_source": "offline_econometric_engine",
-            "ai_model": "MoSPI Aviation Econometric Rule Engine v2.4",
+            "ai_model": "MoSPI Aviation Econometric Rule Engine (Base 2024=100)",
         }
 
     # Save to database log
