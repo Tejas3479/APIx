@@ -182,14 +182,35 @@
       0%, 75% { left: -100%; }
       100% { left: 220%; }
     }
-    .hero-pill .dot {
-      width: 7px;
-      height: 7px;
+    .apix-pulse-ring {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 10px;
+      height: 10px;
+    }
+    .apix-pulse-ring .ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 10px #10b981;
-      animation: apix-blink 1.6s steps(1) infinite;
+      opacity: 0.75;
+      animation: pulse-ring-anim 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
     }
+    .apix-pulse-ring .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+    @keyframes pulse-ring-anim {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+
     .dash-title {
       font-family: 'Outfit', sans-serif;
       font-size: clamp(26px, 3.2vw, 36px);
@@ -220,6 +241,71 @@
       max-width: 680px;
     }
 
+    /* ── Economy Bundle Segmented Switch ── */
+    .bundle-switch-container {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border-loud);
+      padding: 4px 6px;
+      border-radius: 999px;
+      box-shadow: var(--shadow-sm);
+    }
+    .bundle-switch-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      padding-left: 8px;
+      letter-spacing: 0.05em;
+    }
+    .bundle-segmented-control {
+      display: inline-flex;
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border-faint);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 3px;
+    }
+    .bundle-switch-opt {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy-700);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      z-index: 1;
+    }
+    .bundle-switch-opt:hover {
+      color: var(--navy-900);
+    }
+    .bundle-switch-opt.active {
+      color: #fff !important;
+      font-weight: 700;
+      background: var(--heat-100);
+      box-shadow: 0 2px 8px rgba(250, 93, 25, 0.35);
+    }
+    .bundle-switch-opt.active.adjusted-active {
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
+    }
+    .bundle-switch-opt input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
     /* Action Buttons Cluster */
     .action-btn-cluster {
       display: flex;
@@ -228,48 +314,44 @@
       align-items: center;
     }
     .btn-dash {
-      padding: 9px 16px;
+      padding: 9px 15px;
       font-family: 'Outfit', sans-serif;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
-      border-radius: 8px;
+      border-radius: 9px;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       cursor: pointer;
       text-decoration: none;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid transparent;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-dash:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-fc);
     }
     .btn-dash:active {
       transform: scale(0.97);
     }
     .btn-dash-primary {
-      background: var(--heat-100);
-      color: #fff;
-      border: 1px solid var(--heat-100);
-      box-shadow: 0 2px 10px rgba(250, 93, 25, 0.28);
-      position: relative;
-      overflow: hidden;
-    }
-    .btn-dash-primary::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -150%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
-      transform: skewX(-25deg);
-      animation: btn-shine-sweep 4.5s ease-in-out infinite;
-    }
-    @keyframes btn-shine-sweep {
-      0%, 75% { left: -150%; }
-      100% { left: 250%; }
+      background: linear-gradient(135deg, var(--heat-100) 0%, #ea580c 100%);
+      color: #fff !important;
+      border-color: rgba(250, 93, 25, 0.4);
+      box-shadow: 0 4px 14px rgba(250, 93, 25, 0.35);
     }
     .btn-dash-primary:hover {
-      background: var(--primary-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(250, 93, 25, 0.35);
+      box-shadow: 0 6px 20px rgba(250, 93, 25, 0.5);
+    }
+    .btn-dash-primary svg {
+      animation: lightning-pulse 2.2s infinite ease-in-out;
+    }
+    @keyframes lightning-pulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+      50% { transform: scale(1.18); filter: drop-shadow(0 0 6px #fff); }
     }
     .btn-dash-secondary {
       background: var(--card-bg);
@@ -277,55 +359,60 @@
       border: 1px solid var(--border-loud);
     }
     .btn-dash-secondary:hover {
-      background: var(--alpha-4);
-      transform: translateY(-2px);
+      background: var(--surface-raised);
       border-color: var(--navy-700);
+      color: var(--navy-900);
     }
     .btn-dash-ai {
       background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-      color: #fff;
-      border: none;
-      box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3);
-      position: relative;
-      animation: ai-glow-pulse 3.2s infinite;
+      color: #fff !important;
+      border: 1px solid rgba(124, 58, 237, 0.4);
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+      animation: ai-glow-pulse 3.6s infinite ease-in-out;
     }
     @keyframes ai-glow-pulse {
-      0%, 100% { box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3); }
-      50% { box-shadow: 0 0 18px rgba(124, 58, 237, 0.6); }
+      0%, 100% { box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35); }
+      50% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.6); }
     }
     .btn-dash-ai:hover {
-      opacity: 0.95;
-      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(124, 58, 237, 0.55);
+    }
+    .btn-dash-recompute {
+      padding: 9px 12px;
+    }
+    .btn-dash-recompute.spinning svg {
+      animation: spin-once 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes spin-once {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
-    /* Metric Cards Grid */
+    /* ── Metric Cards Grid (Phase 2 Pro Visuals) ── */
     .stat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 16px;
       margin-bottom: 24px;
     }
     .stat-card-pro {
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: var(--card-bg);
       border: 1px solid var(--border-loud);
       border-radius: 14px;
       padding: 20px 22px;
       box-shadow: var(--shadow-sm);
       position: relative;
-      overflow: visible;
+      overflow: hidden;
       z-index: 1;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
-    }
-    html.dark .stat-card-pro {
-      background: rgba(23, 23, 23, 0.82);
-      border-color: rgba(255, 255, 255, 0.10);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
     .stat-card-pro:hover {
       transform: translateY(-3px);
-      box-shadow: 0 12px 28px -6px rgba(250, 93, 25, 0.18), 0 0 0 1px rgba(250, 93, 25, 0.25);
-      z-index: 50;
+      box-shadow: var(--shadow-fc);
+      border-color: var(--card-accent, var(--heat-100));
     }
     .stat-card-pro::before {
       content: '';
@@ -333,75 +420,137 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--heat-100), rgba(245, 158, 11, 0.8), transparent);
-      border-top-left-radius: 14px;
-      border-top-right-radius: 14px;
+      height: 3.5px;
+      background: var(--card-accent, var(--heat-100));
+      opacity: 0.9;
+    }
+    .stat-card-pro::after {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--card-accent, var(--heat-100));
+      opacity: 0.04;
+      pointer-events: none;
+      filter: blur(20px);
+    }
+
+    .card-kpi-1 { --card-accent: #fa5d19; --bar-bg: rgba(250, 93, 25, 0.22); }
+    .card-kpi-2 { --card-accent: #10b981; --bar-bg: rgba(16, 185, 129, 0.22); }
+    .card-kpi-3 { --card-accent: #4f46e5; --bar-bg: rgba(79, 70, 229, 0.22); }
+    .card-kpi-4 { --card-accent: #ef4444; --bar-bg: rgba(239, 68, 68, 0.22); }
+
+    .stat-header-pro {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
     }
     .stat-label-pro {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-label-icon {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    .stat-val-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 4px;
     }
     .stat-val-pro {
       font-family: 'Outfit', sans-serif;
-      font-size: 32px;
+      font-size: 34px;
       font-weight: 800;
       color: var(--navy-900);
       letter-spacing: -0.03em;
       line-height: 1;
     }
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .stat-badge.orange { background: rgba(250, 93, 25, 0.12); color: #fa5d19; border: 1px solid rgba(250, 93, 25, 0.25); }
+    .stat-badge.green { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .stat-badge.indigo { background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25); }
+    .stat-badge.red { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.25); }
+
+    /* Interactive Sparkline */
     .stat-sparkline {
       display: flex;
       align-items: flex-end;
-      gap: 3px;
-      height: 22px;
-      margin: 10px 0 6px;
+      gap: 4px;
+      height: 26px;
+      margin: 12px 0 8px;
+      padding: 2px 0;
+      position: relative;
     }
     .stat-sparkline .bar {
       flex: 1;
-      background: var(--heat-24);
-      border-radius: 2px;
-      transition: height 0.4s ease, background 0.2s ease;
+      background: var(--bar-bg, rgba(250, 93, 25, 0.25));
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+      transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease, transform 0.18s ease;
     }
     .stat-sparkline .bar:hover {
-      background: var(--heat-100);
+      background: var(--card-accent, var(--heat-100)) !important;
+      transform: scaleY(1.08);
+      z-index: 2;
+    }
+    .stat-sparkline .bar.highlight {
+      background: var(--card-accent, var(--heat-100));
+    }
+    .stat-meta-pro {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 2px;
     }
 
     /* Grids & Cards */
     .dashboard-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: 1.85fr 1.15fr;
       gap: 20px;
       margin-bottom: 24px;
     }
-    @media (max-width: 1024px) {
+    @media (max-width: 1060px) {
       .dashboard-grid { grid-template-columns: 1fr; }
     }
     .card-pro {
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: var(--card-bg);
       border-radius: 16px;
       border: 1px solid var(--border-loud);
       box-shadow: var(--shadow-sm);
       padding: 24px 26px;
       position: relative;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
-    }
-    html.dark .card-pro {
-      background: rgba(23, 23, 23, 0.82);
-      border-color: rgba(255, 255, 255, 0.10);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .card-pro:hover {
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-    }
-    html.dark .card-pro:hover {
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42);
+      box-shadow: var(--shadow-fc);
     }
     .card-header-pro {
       display: flex;
@@ -409,51 +558,58 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 12px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
     .card-title-pro {
       font-family: 'Outfit', sans-serif;
-      font-size: 17px;
+      font-size: 17.5px;
       font-weight: 800;
       color: var(--navy-900);
       letter-spacing: -0.01em;
       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .card-subtitle-pro {
       font-size: 12.5px;
       color: var(--text-muted);
-      margin-top: 3px;
+      margin-top: 4px;
+      line-height: 1.4;
     }
 
-    /* Frequency Tabs */
+    /* Modern Segmented Frequency Switcher */
     .freq-tabs-pro {
       display: inline-flex;
-      background: var(--alpha-4);
+      background: var(--surface-raised);
       padding: 3px;
-      border-radius: 8px;
-      gap: 4px;
-      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      gap: 2px;
+      border: 1px solid var(--border-loud);
+      box-shadow: var(--shadow-sm);
     }
     .freq-btn-pro {
       border: none;
       background: transparent;
       color: var(--text-muted);
-      padding: 6px 13px;
+      padding: 6px 14px;
       font-size: 11.5px;
       font-weight: 700;
       font-family: 'Outfit', sans-serif;
-      border-radius: 6px;
+      border-radius: 999px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .freq-btn-pro:hover {
       color: var(--navy-900);
     }
     .freq-btn-pro.active {
-      background: var(--card-bg);
-      color: var(--heat-100);
-      box-shadow: 0 1px 6px rgba(0,0,0,0.12);
-      transform: scale(1.02);
+      background: var(--heat-100);
+      color: #fff !important;
+      box-shadow: 0 2px 8px rgba(250, 93, 25, 0.35);
     }
 
     /* Sector Selector */
@@ -743,13 +899,22 @@
     <!-- Executive Hero Header -->
     <div class="dash-hero">
       <div>
-        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
           <div class="hero-pill" style="margin-bottom: 0;">
-            <span class="dot"></span>
+            <div class="apix-pulse-ring">
+              <span class="ring"></span>
+              <span class="dot"></span>
+            </div>
             <span>Continuous High-Frequency Collection Active</span>
           </div>
-          <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700; font-size: 11px;">Quality Tier: HIGH (100% Coverage)</span>
-          <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.3); font-weight: 700; font-size: 11px;">GEKS-Törnqvist (Movement Spliced)</span>
+          <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700; font-size: 11px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline; vertical-align:middle; margin-right:3px;"><polyline points="20 6 9 17 4 12"/></svg>
+            Quality Tier: HIGH (100% Coverage)
+          </span>
+          <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.3); font-weight: 700; font-size: 11px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline; vertical-align:middle; margin-right:3px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            GEKS-Törnqvist (Movement Spliced)
+          </span>
         </div>
         <h1 class="dash-title">
           National Real-Time Airfare <span class="gradient-text">Price Index</span>
@@ -758,37 +923,44 @@
           Continuous multi-carrier digital fare sampling across 8 DGCA high-density domestic corridors (T+1 … T+45 booking horizons).
         </p>
 
-        <!-- Constant-Quality Economy Bundle Toggle -->
-        <div style="margin-top: 14px; display: inline-flex; align-items: center; gap: 10px; background: var(--surface-raised); border: 1px solid var(--border-loud); padding: 6px 14px; border-radius: 999px;">
-          <span style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Economy Bundle:</span>
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--navy-900);">
-            <input type="radio" name="bundleMode" value="raw" checked onchange="toggleBundleMode(this.value)" style="accent-color: var(--heat-100);">
-            <span>Raw Commercial Fare</span>
-          </label>
-          <span style="color: var(--border-loud);">|</span>
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--navy-900);" title="Normalizes unbundled baggage fees (15kg bag + standard seat) per carrier">
-            <input type="radio" name="bundleMode" value="adjusted" onchange="toggleBundleMode(this.value)" style="accent-color: var(--heat-100);">
-            <span style="color: #4f46e5;">Constant-Quality (15kg Bag Included)</span>
-          </label>
+        <!-- Constant-Quality Economy Bundle Segmented Toggle -->
+        <div class="bundle-switch-container">
+          <span class="bundle-switch-label">Tariff Regime:</span>
+          <div class="bundle-segmented-control" role="radiogroup" aria-label="Economy Bundle Tariff Regime">
+            <label class="bundle-switch-opt active" id="opt-raw-bundle" onclick="setBundleRegime('raw')">
+              <input type="radio" name="bundleMode" value="raw" checked>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              <span>Raw Commercial Fare</span>
+            </label>
+            <label class="bundle-switch-opt" id="opt-adj-bundle" onclick="setBundleRegime('adjusted')" title="Normalizes unbundled baggage fees (15kg bag + standard seat) per carrier">
+              <input type="radio" name="bundleMode" value="adjusted">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              <span>Constant-Quality (15kg Bag Included)</span>
+            </label>
+          </div>
         </div>
       </div>
 
       <!-- Action Button Cluster -->
       <div class="action-btn-cluster">
-        <a href="/api/v1/export/csv" download class="btn-dash btn-dash-secondary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export Microdata (CSV)
+        <a href="/api/v1/export/csv" download class="btn-dash btn-dash-secondary" title="Download sanitized fare microdata CSV for econometric modeling">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Export Microdata</span>
         </a>
-        <button onclick="openBulletinModal()" class="btn-dash btn-dash-secondary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Official Bulletin
+        <button onclick="openBulletinModal()" class="btn-dash btn-dash-secondary" title="View official MoSPI monthly bulletin preview">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Official Bulletin</span>
         </button>
-        <button onclick="openAiDiagnosticModal()" class="btn-dash btn-dash-ai">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> AI Macro Diagnostic
+        <button onclick="openAiDiagnosticModal()" class="btn-dash btn-dash-ai" title="Trigger Gemini AI econometric inflation diagnosis">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>AI Macro Diagnostic</span>
         </button>
-        <button onclick="openScrapeModal()" class="btn-dash btn-dash-primary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Live Scrape
+        <button onclick="openScrapeModal()" class="btn-dash btn-dash-primary" title="Trigger on-demand multi-carrier flight survey">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Live Scrape</span>
         </button>
-        <button onclick="recomputeIndex()" class="btn-dash btn-dash-secondary" title="Recompute Jevons Index">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        <button id="btnRecompute" onclick="handleRecomputeClick(this)" class="btn-dash btn-dash-secondary btn-dash-recompute" title="Recompute Jevons & GEKS indices">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </button>
       </div>
     </div>
@@ -796,78 +968,145 @@
     <!-- Metric Cards Row (4 Pro Stat Cards) -->
     <div class="stat-grid">
       
-      <div class="stat-card-pro">
-        <div class="stat-label-pro"><span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="National airfare index compiled using Jevons geometric mean and DGCA passenger traffic weights.">Today's National APIx</span></div>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <div class="stat-val-pro" id="kpi-today-index" style="color: var(--heat-100);">103.7</div>
-          <span class="badge badge-success" style="font-size: 11.5px; font-weight: 700;">+1.2% 24h</span>
+      <!-- KPI 1: Today's National APIx -->
+      <div class="stat-card-pro card-kpi-1">
+        <div>
+          <div class="stat-header-pro">
+            <span class="stat-label-pro">
+              <span class="stat-label-icon">📊</span>
+              <span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="National airfare index compiled using Jevons geometric mean and DGCA passenger traffic weights.">National APIx Index</span>
+            </span>
+            <span class="stat-badge orange">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
+              +1.2% 24h
+            </span>
+          </div>
+          <div class="stat-val-row">
+            <div class="stat-val-pro" id="kpi-today-index" style="color: var(--heat-100);">103.7</div>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--text-muted);">pts</span>
+          </div>
         </div>
-        <div class="stat-sparkline">
-          <div class="bar" style="height: 38%;"></div>
-          <div class="bar" style="height: 52%;"></div>
-          <div class="bar" style="height: 64%;"></div>
-          <div class="bar" style="height: 78%;"></div>
-          <div class="bar" style="height: 92%;"></div>
-          <div class="bar" style="height: 84%;"></div>
-          <div class="bar" style="height: 100%;"></div>
+        <div>
+          <div class="stat-sparkline" title="7-day National Index Trajectory">
+            <div class="bar" style="height: 38%;" title="Day -6: 100.2 pts"></div>
+            <div class="bar" style="height: 52%;" title="Day -5: 101.0 pts"></div>
+            <div class="bar" style="height: 64%;" title="Day -4: 101.8 pts"></div>
+            <div class="bar" style="height: 78%;" title="Day -3: 102.6 pts"></div>
+            <div class="bar" style="height: 92%;" title="Day -2: 103.4 pts"></div>
+            <div class="bar" style="height: 84%;" title="Day -1: 102.9 pts"></div>
+            <div class="bar highlight" style="height: 100%;" title="Today: 103.7 pts"></div>
+          </div>
+          <div class="stat-meta-pro">
+            <span>Base: Aug 1, 2026 = 100.0</span>
+            <span style="color: var(--heat-100); font-weight: 700;">+3.7% MoM</span>
+          </div>
         </div>
-        <div style="font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Base: Aug 1, 2026 = 100.0</div>
       </div>
 
-      <div class="stat-card-pro">
-        <div class="stat-label-pro"><span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="Top 8 domestic sectors representing over 68% of scheduled passenger traffic.">Domestic Corridor Basket</span></div>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <div class="stat-val-pro" id="kpi-active-routes">8</div>
-          <span class="badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); font-size: 11px; font-weight: 700;">100% Calibrated</span>
+      <!-- KPI 2: Domestic Corridor Basket -->
+      <div class="stat-card-pro card-kpi-2">
+        <div>
+          <div class="stat-header-pro">
+            <span class="stat-label-pro">
+              <span class="stat-label-icon">🛫</span>
+              <span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="Top 8 domestic sectors representing over 68% of scheduled passenger traffic.">Domestic Basket</span>
+            </span>
+            <span class="stat-badge green">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              100% Active
+            </span>
+          </div>
+          <div class="stat-val-row">
+            <div class="stat-val-pro" id="kpi-active-routes" style="color: #10b981;">8</div>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--text-muted);">Sectors</span>
+          </div>
         </div>
-        <div class="stat-sparkline">
-          <div class="bar" style="height: 70%; background: rgba(16, 185, 129, 0.35);"></div>
-          <div class="bar" style="height: 85%; background: rgba(16, 185, 129, 0.35);"></div>
-          <div class="bar" style="height: 60%; background: rgba(16, 185, 129, 0.35);"></div>
-          <div class="bar" style="height: 95%; background: rgba(16, 185, 129, 0.35);"></div>
-          <div class="bar" style="height: 80%; background: rgba(16, 185, 129, 0.35);"></div>
-          <div class="bar" style="height: 90%; background: rgba(16, 185, 129, 0.35);"></div>
-          <div class="bar" style="height: 100%; background: #10b981;"></div>
+        <div>
+          <div class="stat-sparkline" title="Corridor Sampling Stability">
+            <div class="bar" style="height: 70%;" title="DEL-BOM: Calibrated"></div>
+            <div class="bar" style="height: 85%;" title="DEL-BLR: Calibrated"></div>
+            <div class="bar" style="height: 60%;" title="BOM-BLR: Calibrated"></div>
+            <div class="bar" style="height: 95%;" title="DEL-CCU: Calibrated"></div>
+            <div class="bar" style="height: 80%;" title="BLR-HYD: Calibrated"></div>
+            <div class="bar" style="height: 90%;" title="BOM-GOI: Calibrated"></div>
+            <div class="bar highlight" style="height: 100%;" title="All 8 Corridors Live"></div>
+          </div>
+          <div class="stat-meta-pro">
+            <span>DEL, BOM, BLR, CCU, HYD...</span>
+            <span style="color: #10b981; font-weight: 700;">68.4% Pax</span>
+          </div>
         </div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">DEL, BOM, BLR, CCU, HYD, MAA, GOI</div>
       </div>
 
-      <div class="stat-card-pro">
-        <div class="stat-label-pro"><span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="Verified flight fare quotes scraped across 5 advance purchase horizons.">Total Fare Quotes</span></div>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <div class="stat-val-pro" id="kpi-total-quotes">4,800</div>
-          <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25); font-size: 11px; font-weight: 700;">+160 / cycle</span>
+      <!-- KPI 3: Total Fare Quotes -->
+      <div class="stat-card-pro card-kpi-3">
+        <div>
+          <div class="stat-header-pro">
+            <span class="stat-label-pro">
+              <span class="stat-label-icon">📡</span>
+              <span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="Verified flight fare quotes scraped across 5 advance purchase horizons daily.">Total Fare Quotes</span>
+            </span>
+            <span class="stat-badge indigo">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              +160 / cycle
+            </span>
+          </div>
+          <div class="stat-val-row">
+            <div class="stat-val-pro" id="kpi-total-quotes" style="color: #4f46e5;">4,800</div>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--text-muted);">/ 24h</span>
+          </div>
         </div>
-        <div class="stat-sparkline">
-          <div class="bar" style="height: 45%; background: rgba(79, 70, 229, 0.3);"></div>
-          <div class="bar" style="height: 55%; background: rgba(79, 70, 229, 0.3);"></div>
-          <div class="bar" style="height: 70%; background: rgba(79, 70, 229, 0.3);"></div>
-          <div class="bar" style="height: 65%; background: rgba(79, 70, 229, 0.3);"></div>
-          <div class="bar" style="height: 80%; background: rgba(79, 70, 229, 0.3);"></div>
-          <div class="bar" style="height: 90%; background: rgba(79, 70, 229, 0.3);"></div>
-          <div class="bar" style="height: 100%; background: #4f46e5;"></div>
+        <div>
+          <div class="stat-sparkline" title="Telemetry Ingestion Velocity">
+            <div class="bar" style="height: 45%;" title="00:00 Cycle: 680 quotes"></div>
+            <div class="bar" style="height: 55%;" title="04:00 Cycle: 720 quotes"></div>
+            <div class="bar" style="height: 70%;" title="08:00 Cycle: 850 quotes"></div>
+            <div class="bar" style="height: 65%;" title="12:00 Cycle: 790 quotes"></div>
+            <div class="bar" style="height: 80%;" title="16:00 Cycle: 920 quotes"></div>
+            <div class="bar" style="height: 90%;" title="20:00 Cycle: 960 quotes"></div>
+            <div class="bar highlight" style="height: 100%;" title="Latest: 4,800 quotes verified"></div>
+          </div>
+          <div class="stat-meta-pro">
+            <span>5 Horizons (T+1 … T+45)</span>
+            <span style="color: #4f46e5; font-weight: 700;">Zero Loss</span>
+          </div>
         </div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">5 booking horizons (T+1 … T+45)</div>
       </div>
 
-      <div class="stat-card-pro">
-        <div class="stat-label-pro"><span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="Weighted mean economy airfare across surveyed sectors and carriers.">Avg Economy Airfare</span></div>
-        <div style="display: flex; align-items: baseline; gap: 8px;">
-          <div class="stat-val-pro" id="kpi-avg-fare">₹7,840</div>
-          <span class="badge badge-danger" style="font-size: 11px; font-weight: 700;">3.85x Surge</span>
+      <!-- KPI 4: Avg Economy Airfare -->
+      <div class="stat-card-pro card-kpi-4">
+        <div>
+          <div class="stat-header-pro">
+            <span class="stat-label-pro">
+              <span class="stat-label-icon">🏷️</span>
+              <span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="Weighted mean economy airfare across surveyed sectors and carriers.">Avg Economy Fare</span>
+            </span>
+            <span class="stat-badge red">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              3.85x Surge
+            </span>
+          </div>
+          <div class="stat-val-row">
+            <div class="stat-val-pro" id="kpi-avg-fare" style="color: #ef4444;">₹7,840</div>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: var(--text-muted);">weighted</span>
+          </div>
         </div>
-        <div class="stat-sparkline">
-          <div class="bar" style="height: 100%; background: #ef4444;"></div>
-          <div class="bar" style="height: 75%; background: rgba(239, 68, 68, 0.5);"></div>
-          <div class="bar" style="height: 50%; background: rgba(239, 68, 68, 0.4);"></div>
-          <div class="bar" style="height: 35%; background: rgba(239, 68, 68, 0.3);"></div>
-          <div class="bar" style="height: 25%; background: rgba(239, 68, 68, 0.3);"></div>
-          <div class="bar" style="height: 22%; background: rgba(239, 68, 68, 0.25);"></div>
-          <div class="bar" style="height: 20%; background: rgba(239, 68, 68, 0.2);"></div>
+        <div>
+          <div class="stat-sparkline" title="Lead-Time Elasticity Curve Profile">
+            <div class="bar highlight" style="height: 100%;" title="T+1 Emergency: ₹16,840"></div>
+            <div class="bar" style="height: 75%;" title="T+7 Business: ₹11,200"></div>
+            <div class="bar" style="height: 50%;" title="T+15 Standard: ₹7,840"></div>
+            <div class="bar" style="height: 35%;" title="T+30 Advance: ₹5,120"></div>
+            <div class="bar" style="height: 25%;" title="T+45 Early Bird: ₹4,380"></div>
+            <div class="bar" style="height: 22%;" title="T+60 Off-Peak: ₹3,920"></div>
+            <div class="bar" style="height: 20%;" title="T+90 Base Floor: ₹3,650"></div>
+          </div>
+          <div class="stat-meta-pro">
+            <span>T+1 (₹16.8k) vs T+30 (₹3.9k)</span>
+            <span style="color: #ef4444; font-weight: 700;">+385%</span>
+          </div>
         </div>
-        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">T+1 (₹16.8k) vs T+30 (₹3.9k)</div>
       </div>
-
     </div>
 
     <!-- Primary Charts Row (Time Series + Elasticity) -->
@@ -877,16 +1116,25 @@
       <div class="card-pro">
         <div class="card-header-pro">
           <div>
-            <h2 class="card-title-pro" id="timeSeriesChartTitle">APIx National Index Series</h2>
-            <div class="card-subtitle-pro" id="timeSeriesChartSubtitle">Jevons Geometric Mean Chained Daily Series (Last 15 Days)</div>
+            <h2 class="card-title-pro" id="timeSeriesChartTitle">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--heat-100)" stroke-width="2.2"><path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-6 6"/></svg>
+              <span>APIx National Index Series</span>
+            </h2>
+            <div class="card-subtitle-pro" id="timeSeriesChartSubtitle">Jevons Geometric Mean Chained Daily Series with 95% Bootstrap CI (Last 15 Days)</div>
           </div>
-          <div class="freq-tabs-pro">
-            <button id="tab-daily" class="freq-btn-pro active" onclick="switchFrequency('daily')">Daily</button>
-            <button id="tab-weekly" class="freq-btn-pro" onclick="switchFrequency('weekly')">Weekly (7D)</button>
-            <button id="tab-monthly" class="freq-btn-pro" onclick="switchFrequency('monthly')">Monthly CPI</button>
+          <div class="freq-tabs-pro" role="tablist" aria-label="Index frequency aggregation">
+            <button id="tab-daily" class="freq-btn-pro active" role="tab" aria-selected="true" onclick="switchFrequency('daily')">
+              <span>Daily (1D)</span>
+            </button>
+            <button id="tab-weekly" class="freq-btn-pro" role="tab" aria-selected="false" onclick="switchFrequency('weekly')">
+              <span>Weekly (7D)</span>
+            </button>
+            <button id="tab-monthly" class="freq-btn-pro" role="tab" aria-selected="false" onclick="switchFrequency('monthly')">
+              <span>Monthly CPI</span>
+            </button>
           </div>
         </div>
-        <div style="height: 300px; position: relative;">
+        <div style="height: 310px; position: relative;">
           <canvas id="indexTimeSeriesChart">Multi-frequency airfare index time series chart</canvas>
         </div>
       </div>
@@ -895,10 +1143,13 @@
       <div class="card-pro">
         <div class="card-header-pro">
           <div>
-            <h2 class="card-title-pro">Lead-Time Yield Elasticity</h2>
-            <div class="card-subtitle-pro">Dynamic Fare by Booking Horizon (T+1 … T+45)</div>
+            <h2 class="card-title-pro">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2.2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              <span>Lead-Time Yield Elasticity</span>
+            </h2>
+            <div class="card-subtitle-pro">Dynamic Fare Escalation (T+1 … T+45 Days)</div>
           </div>
-          <select id="elasticity-route-select" class="route-select-pro" onchange="updateElasticityChart(this.value)">
+          <select id="elasticity-route-select" class="route-select-pro" onchange="updateElasticityChart(this.value)" aria-label="Select corridor for yield elasticity curve">
             <option value="DEL-BOM">DEL-BOM (Delhi ⇄ Mumbai)</option>
             <option value="DEL-BLR">DEL-BLR (Delhi ⇄ Bangalore)</option>
             <option value="BOM-BLR">BOM-BLR (Mumbai ⇄ Bangalore)</option>
@@ -907,7 +1158,7 @@
             <option value="ALL">Top 3 Corridors Overlay</option>
           </select>
         </div>
-        <div style="height: 300px; position: relative;">
+        <div style="height: 310px; position: relative;">
           <canvas id="elasticityChart">Lead-time yield elasticity curve chart</canvas>
         </div>
       </div>
@@ -919,21 +1170,27 @@
       <div class="card-header-pro" style="flex-wrap: wrap; gap: 14px; align-items: flex-start;">
         <div>
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-            <h2 class="card-title-pro" style="margin: 0;">Corridor Fare Velocity & Heatmap Matrix</h2>
-            <span class="badge" style="background: rgba(250, 93, 25, 0.12); color: var(--heat-100); border: 1px solid rgba(250, 93, 25, 0.3); font-weight: 700;">14-Day High Frequency</span>
+            <h2 class="card-title-pro" style="margin: 0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--heat-100)" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>Corridor Fare Velocity & Heatmap Matrix</span>
+            </h2>
+            <span class="badge" style="background: rgba(250, 93, 25, 0.12); color: var(--heat-100); border: 1px solid rgba(250, 93, 25, 0.3); font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+              <span class="live-dot" style="width: 6px; height: 6px;"></span>
+              14-Day High Frequency
+            </span>
           </div>
           <div class="card-subtitle-pro">Continuous price intensity, weekend elasticity surges, and intraday dispersion across 8 major Indian civil aviation corridors.</div>
         </div>
 
         <!-- Controls: Filter Tabs & Metric Mode -->
         <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <div class="heatmap-filter-group">
-            <button class="heatmap-tab active" id="tab-all" onclick="setHeatmapFilter('ALL', this)">All Corridors (8)</button>
-            <button class="heatmap-tab" id="tab-metro" onclick="setHeatmapFilter('METRO', this)">Metro Trunks (4)</button>
-            <button class="heatmap-tab" id="tab-surge" onclick="setHeatmapFilter('SURGE', this)">High Volatility (3)</button>
+          <div class="heatmap-filter-group" role="tablist" aria-label="Corridor category filters">
+            <button class="heatmap-tab active" id="tab-all" role="tab" aria-selected="true" onclick="setHeatmapFilter('ALL', this)">All Corridors (8)</button>
+            <button class="heatmap-tab" id="tab-metro" role="tab" aria-selected="false" onclick="setHeatmapFilter('METRO', this)">Metro Trunks (4)</button>
+            <button class="heatmap-tab" id="tab-surge" role="tab" aria-selected="false" onclick="setHeatmapFilter('SURGE', this)">High Volatility (3)</button>
           </div>
 
-          <select id="heatmap-metric-mode" class="route-select-pro" onchange="changeHeatmapMetric(this.value)">
+          <select id="heatmap-metric-mode" class="route-select-pro" onchange="changeHeatmapMetric(this.value)" aria-label="Heatmap metric display mode">
             <option value="fare">🏷️ Absolute Price (₹)</option>
             <option value="delta">📈 % vs Base (2024=100)</option>
             <option value="spread">⚡ Spread (Max - Min)</option>
@@ -944,27 +1201,28 @@
       <!-- Quick KPI Insights Strip -->
       <div class="heatmap-kpi-strip">
         <div class="heatmap-kpi-item">
-          <span class="kpi-label">Highest Surge Sector</span>
+          <span class="kpi-label">⚡ Highest Surge Sector</span>
           <span class="kpi-value" style="color: #dc2626;" id="kpi-top-surge">MAA-DEL (₹10.2k Peak)</span>
         </div>
         <div class="heatmap-kpi-item">
-          <span class="kpi-label">National Median Corridor Fare</span>
+          <span class="kpi-label">⚖️ National Median Corridor Fare</span>
           <span class="kpi-value" id="kpi-median-fare">₹6,840</span>
         </div>
         <div class="heatmap-kpi-item">
-          <span class="kpi-label">Lowest Tariff Corridor</span>
+          <span class="kpi-label">🏷️ Lowest Tariff Corridor</span>
           <span class="kpi-value" style="color: #059669;" id="kpi-lowest-corridor">BLR-HYD (₹5,420)</span>
         </div>
         <div class="heatmap-kpi-item">
-          <span class="kpi-label">Weekend Surcharge Premium</span>
+          <span class="kpi-label">📈 Weekend Surcharge Premium</span>
           <span class="kpi-value" style="color: var(--heat-100);">+28.4% Avg Peak</span>
         </div>
       </div>
 
       <!-- Heatmap Trajectory Legend Bar -->
       <div style="display: flex; justify-content: space-between; align-items: center; margin: 16px 0 10px 0; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 8px;">
-        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
-          Chronological 14-Day Trajectory (Click any cell for sector quote breakdown)
+        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
+          <span>Chronological 14-Day Trajectory</span>
+          <span style="font-weight: 500; text-transform: none; color: var(--text-muted);">(Click any cell for sector quote breakdown)</span>
         </div>
         <div style="display: flex; gap: 8px; font-size: 11px; align-items: center; flex-wrap: wrap;">
           <span class="badge heatmap-low" style="padding: 3px 8px;" title="Fares below ₹5,000">🟢 Low (&lt;₹5k)</span>
@@ -987,7 +1245,10 @@
         <div>
           <div class="card-header-pro">
             <div>
-              <h2 class="card-title-pro">Statistical Materiality Gap</h2>
+              <h2 class="card-title-pro">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--heat-100)" stroke-width="2.2"><path d="M12 3v18"/><path d="M3 7l9-4 9 4"/><path d="M3 17l9 4 9-4"/></svg>
+                <span>Statistical Materiality Gap</span>
+              </h2>
               <div class="card-subtitle-pro">Single Monthly Snapshot vs. Continuous Index</div>
             </div>
             <span class="badge badge-danger" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">MoSPI Proof</span>
@@ -995,17 +1256,20 @@
           
           <div class="materiality-box-pro">
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Inflation Measurement Distortion</div>
-            <div style="font-size: 28px; font-weight: 800; color: var(--heat-100); font-family: 'Outfit', sans-serif; margin: 4px 0;">
-              +20.6% <span style="font-size: 14px; font-weight: 500; color: var(--text-main); font-family: 'Inter', sans-serif;">(₹1,340 / ticket)</span>
+            <div style="font-size: 30px; font-weight: 800; color: var(--heat-100); font-family: 'Outfit', sans-serif; margin: 4px 0; letter-spacing: -0.02em;">
+              +20.6% <span style="font-size: 14px; font-weight: 600; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">(₹1,340 / ticket)</span>
             </div>
-            <p style="font-size: 12.5px; color: var(--text-main); margin: 6px 0 0 0; line-height: 1.45;">
+            <p style="font-size: 12.5px; color: var(--navy-800); margin: 6px 0 0 0; line-height: 1.5;">
               Monthly snapshot records <strong>₹6,500</strong> by sampling once mid-month. The actual continuous weighted index is <strong>₹7,840</strong> — significantly under-reporting real transportation costs.
             </p>
           </div>
         </div>
 
         <div style="margin-top: 18px; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
-          <div style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy-900); margin-bottom: 10px;">Carrier Market Share & Average Fare</div>
+          <div style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy-900); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span>Carrier Market Share & Average Fare</span>
+            <span style="font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">DGCA Traffic Weight</span>
+          </div>
           <div id="carrier-bars-container">
             <!-- Populated by JS -->
           </div>
@@ -1016,10 +1280,13 @@
       <div class="card-pro">
         <div class="card-header-pro">
           <div>
-            <h2 class="card-title-pro">Econometric Axiomatic Inspector</h2>
+            <h2 class="card-title-pro">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              <span>Econometric Axiomatic Inspector</span>
+            </h2>
             <div class="card-subtitle-pro">Empirical bias comparison across elementary aggregate formulas (ILO CPI Ch. 10)</div>
           </div>
-          <select id="methodology-route-select" class="route-select-pro" onchange="loadMethodologyComparison(this.value)">
+          <select id="methodology-route-select" class="route-select-pro" onchange="loadMethodologyComparison(this.value)" aria-label="Select corridor for axiomatic formula comparison">
             <option value="DEL-BOM">DEL-BOM (Delhi ⇄ Mumbai)</option>
             <option value="DEL-BLR">DEL-BLR (Delhi ⇄ Bangalore)</option>
             <option value="BOM-BLR">BOM-BLR (Mumbai ⇄ Bangalore)</option>
@@ -1034,13 +1301,17 @@
           <!-- Populated by JS -->
         </div>
       </div>
+    </div>
 
     <!-- Dedicated Section: PPAC Metro ATF Exogenous Benchmark Cross-Validation -->
     <div class="card-pro" style="margin-bottom: 24px;">
       <div class="card-header-pro" style="flex-wrap: wrap; gap: 14px; align-items: flex-start;">
         <div>
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-            <h2 class="card-title-pro" style="margin: 0;">PPAC Domestic ATF Exogenous Benchmark Cross-Validation</h2>
+            <h2 class="card-title-pro" style="margin: 0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+              <span>PPAC Domestic ATF Exogenous Benchmark Cross-Validation</span>
+            </h2>
             <span class="badge" id="atf-verdict-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700;">STRONG CONVERGENCE (r = +0.94)</span>
           </div>
           <div class="card-subtitle-pro">Independent verification against Ministry of Petroleum & Natural Gas (PPAC/IOCL) domestic aviation turbine fuel circulars.</div>
@@ -1073,12 +1344,12 @@
 
       <!-- ATF Chart Grid -->
       <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; align-items: center;">
-        <div style="height: 280px; position: relative;">
+        <div style="height: 290px; position: relative;">
           <canvas id="atfCrossValidationChart">PPAC ATF vs Airline Fuel Surcharge Correlation Chart</canvas>
         </div>
-        <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 12px; padding: 18px;">
-          <div style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy-900); margin-bottom: 8px;">Econometric Cross-Validation Narrative</div>
-          <p style="font-size: 12.5px; color: var(--navy-800); line-height: 1.55; margin: 0 0 10px 0;">
+        <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 12px; padding: 20px;">
+          <div style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 700; color: var(--navy-900); margin-bottom: 8px;">Econometric Cross-Validation Narrative</div>
+          <p style="font-size: 12.5px; color: var(--navy-800); line-height: 1.6; margin: 0 0 12px 0;">
             Aviation Turbine Fuel (ATF) represents <strong>38%–42%</strong> of scheduled carrier operating expenditures. Monthly IOCL metro price revisions (published 1st of every month) provide an unpolluted exogenous baseline to validate extracted fuel surcharge pass-through without confounding yield management dynamics.
           </p>
           <div style="font-size: 11.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
@@ -1092,7 +1363,10 @@
     <div class="card-pro" style="margin-bottom: 24px;">
       <div class="card-header-pro">
         <div>
-          <h2 class="card-title-pro">Sector Inflation Contribution Breakdown</h2>
+          <h2 class="card-title-pro">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--heat-100)" stroke-width="2.2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+            <span>Sector Inflation Contribution Breakdown</span>
+          </h2>
           <div class="card-subtitle-pro">Route-level percentage point impact on headline airfare CPI (ΔI<sub>r</sub> × w<sub>r</sub>)</div>
         </div>
         <span class="badge badge-accent" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">RBI Anchor</span>
@@ -1267,6 +1541,29 @@
       }
     }
 
+    function setBundleRegime(mode) {
+      const optRaw = document.getElementById('opt-raw-bundle');
+      const optAdj = document.getElementById('opt-adj-bundle');
+      if (optRaw && optAdj) {
+        if (mode === 'raw') {
+          optRaw.classList.add('active');
+          optAdj.classList.remove('active', 'adjusted-active');
+        } else {
+          optRaw.classList.remove('active');
+          optAdj.classList.add('active', 'adjusted-active');
+        }
+      }
+      toggleBundleMode(mode);
+    }
+
+    async function handleRecomputeClick(btn) {
+      if (btn) {
+        btn.classList.add('spinning');
+        setTimeout(() => btn.classList.remove('spinning'), 700);
+      }
+      await recomputeIndex();
+    }
+
     function toggleBundleMode(mode) {
       currentBundleMode = mode;
       const indexEl = document.getElementById('kpi-today-index');
@@ -1335,11 +1632,15 @@
           values = data.map(p => p.index_value);
         }
 
+        const isDark = document.documentElement.classList.contains('dark');
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(0, 0, 0, 0.05)';
+        const tickColor = isDark ? '#94a3b8' : '#64748b';
+
         const ctx = document.getElementById('indexTimeSeriesChart').getContext('2d');
         if (timeSeriesChart) timeSeriesChart.destroy();
 
-        const gradient = ctx.createLinearGradient(0, 0, 0, 280);
-        gradient.addColorStop(0, 'rgba(250, 93, 25, 0.28)');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 290);
+        gradient.addColorStop(0, 'rgba(250, 93, 25, 0.30)');
         gradient.addColorStop(1, 'rgba(250, 93, 25, 0.00)');
 
         const datasets = [];
@@ -1353,7 +1654,7 @@
               backgroundColor: 'rgba(250, 93, 25, 0.12)',
               pointRadius: 0,
               fill: '+1',
-              tension: 0.35
+              tension: 0.38
             },
             {
               label: '95% Bootstrap CI Lower',
@@ -1362,7 +1663,7 @@
               backgroundColor: 'transparent',
               pointRadius: 0,
               fill: false,
-              tension: 0.35
+              tension: 0.38
             }
           );
         }
@@ -1374,15 +1675,18 @@
             borderColor: '#fa5d19',
             backgroundColor: freq === 'monthly' ? 'rgba(250, 93, 25, 0.85)' : gradient,
             fill: freq === 'daily' ? false : (freq !== 'monthly'),
-            tension: 0.35,
+            tension: 0.38,
             borderWidth: 2.8,
             pointRadius: 4.5,
-            pointBackgroundColor: '#fa5d19'
+            pointHoverRadius: 7,
+            pointBackgroundColor: '#fa5d19',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
           },
           {
-            label: 'Base Period (100.0)',
+            label: 'Base 2026=100.0',
             data: Array((labels.length || 15)).fill(100.0),
-            borderColor: 'rgba(140, 140, 140, 0.45)',
+            borderColor: isDark ? 'rgba(160, 160, 160, 0.4)' : 'rgba(120, 120, 120, 0.45)',
             borderDash: [5, 5],
             fill: false,
             pointRadius: 0,
@@ -1399,14 +1703,31 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: {
+              duration: 750,
+              easing: 'easeOutQuart'
+            },
+            interaction: {
+              mode: 'index',
+              intersect: false
+            },
             plugins: {
-              legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Outfit', size: 12, weight: '600' } } },
+              legend: {
+                position: 'top',
+                labels: {
+                  boxWidth: 12,
+                  color: tickColor,
+                  font: { family: 'Outfit', size: 12, weight: '600' }
+                }
+              },
               tooltip: {
-                backgroundColor: 'rgba(24, 24, 27, 0.95)',
+                backgroundColor: 'rgba(15, 23, 42, 0.94)',
                 titleFont: { family: 'Outfit', size: 13, weight: 'bold' },
                 bodyFont: { family: 'JetBrains Mono', size: 12 },
                 padding: 12,
-                cornerRadius: 8,
+                cornerRadius: 10,
+                borderColor: 'rgba(255, 255, 255, 0.12)',
+                borderWidth: 1,
                 callbacks: {
                   label: (ctx) => ` ${ctx.dataset.label}: ${Number(ctx.parsed.y).toFixed(1)} pts`
                 }
@@ -1416,12 +1737,19 @@
               y: {
                 min: 94,
                 max: 110,
-                grid: { color: 'rgba(0,0,0,0.04)' },
-                ticks: { font: { family: 'JetBrains Mono', size: 11 } }
+                grid: { color: gridColor },
+                ticks: {
+                  color: tickColor,
+                  font: { family: 'JetBrains Mono', size: 11 },
+                  callback: (val) => val + ' pts'
+                }
               },
               x: {
                 grid: { display: false },
-                ticks: { font: { family: 'JetBrains Mono', size: 11 } }
+                ticks: {
+                  color: tickColor,
+                  font: { family: 'JetBrains Mono', size: 11 }
+                }
               }
             }
           }
@@ -1464,6 +1792,10 @@
         const ctx = canvas.getContext('2d');
         if (atfChart) atfChart.destroy();
 
+        const isDark = document.documentElement.classList.contains('dark');
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(0, 0, 0, 0.05)';
+        const tickColor = isDark ? '#94a3b8' : '#64748b';
+
         atfChart = new Chart(ctx, {
           type: 'line',
           data: {
@@ -1473,62 +1805,85 @@
                 label: 'Metro ATF Benchmark (₹/kL)',
                 data: atfPrices,
                 borderColor: '#4f46e5',
-                backgroundColor: 'rgba(79, 70, 229, 0.08)',
+                backgroundColor: 'rgba(79, 70, 229, 0.12)',
                 yAxisID: 'yAtf',
-                borderWidth: 2.5,
-                tension: 0.3,
-                pointRadius: 4
+                borderWidth: 2.6,
+                tension: 0.35,
+                pointRadius: 4.5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: '#4f46e5',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 1.5
               },
               {
                 label: 'Carrier Fuel Surcharge (₹)',
                 data: fuelSurcharges,
                 borderColor: '#fa5d19',
-                backgroundColor: 'rgba(250, 93, 25, 0.08)',
+                backgroundColor: 'rgba(250, 93, 25, 0.10)',
                 yAxisID: 'ySurcharge',
-                borderWidth: 2.5,
-                tension: 0.3,
-                pointRadius: 4
+                borderWidth: 2.6,
+                tension: 0.35,
+                pointRadius: 4.5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: '#fa5d19',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 1.5
               }
             ]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: {
+              duration: 750,
+              easing: 'easeOutQuart'
+            },
             interaction: { mode: 'index', intersect: false },
             plugins: {
-              legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Outfit', size: 11, weight: '600' } } },
+              legend: {
+                position: 'top',
+                labels: {
+                  boxWidth: 12,
+                  color: tickColor,
+                  font: { family: 'Outfit', size: 11.5, weight: '600' }
+                }
+              },
               tooltip: {
-                backgroundColor: 'rgba(24, 24, 27, 0.95)',
-                titleFont: { family: 'Outfit', size: 12, weight: 'bold' },
-                bodyFont: { family: 'JetBrains Mono', size: 11 },
-                padding: 10,
-                cornerRadius: 8
+                backgroundColor: 'rgba(15, 23, 42, 0.94)',
+                titleFont: { family: 'Outfit', size: 12.5, weight: 'bold' },
+                bodyFont: { family: 'JetBrains Mono', size: 11.5 },
+                padding: 12,
+                cornerRadius: 10,
+                borderColor: 'rgba(255, 255, 255, 0.12)',
+                borderWidth: 1
               }
             },
             scales: {
               yAtf: {
                 type: 'linear',
                 position: 'left',
-                grid: { color: 'rgba(0,0,0,0.04)' },
+                grid: { color: gridColor },
                 ticks: {
+                  color: tickColor,
                   callback: (v) => '₹' + Math.round(v / 1000) + 'k',
-                  font: { family: 'JetBrains Mono', size: 10 }
+                  font: { family: 'JetBrains Mono', size: 10.5 }
                 },
-                title: { display: true, text: 'ATF ₹/kL', font: { size: 10, family: 'Inter' } }
+                title: { display: true, text: 'ATF ₹/kL', color: tickColor, font: { size: 10.5, family: 'Outfit', weight: '600' } }
               },
               ySurcharge: {
                 type: 'linear',
                 position: 'right',
                 grid: { display: false },
                 ticks: {
+                  color: tickColor,
                   callback: (v) => '₹' + v,
-                  font: { family: 'JetBrains Mono', size: 10 }
+                  font: { family: 'JetBrains Mono', size: 10.5 }
                 },
-                title: { display: true, text: 'Surcharge ₹', font: { size: 10, family: 'Inter' } }
+                title: { display: true, text: 'Surcharge ₹', color: tickColor, font: { size: 10.5, family: 'Outfit', weight: '600' } }
               },
               x: {
                 grid: { display: false },
-                ticks: { font: { family: 'Inter', size: 10 } }
+                ticks: { color: tickColor, font: { family: 'Outfit', size: 11, weight: '600' } }
               }
             }
           }
@@ -1555,6 +1910,10 @@
       const labels = ['T+1 (1 Day)', 'T+7 (1 Wk)', 'T+15 (2 Wk)', 'T+30 (1 Mo)', 'T+45 (1.5 Mo)'];
       let datasets = [];
 
+      const isDark = document.documentElement.classList.contains('dark');
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(0, 0, 0, 0.05)';
+      const tickColor = isDark ? '#94a3b8' : '#64748b';
+
       if (selectedRoute === 'ALL') {
         const topRoutes = elasticityDataCache.slice(0, 3);
         const colors = ['#4f46e5', '#fa5d19', '#10b981'];
@@ -1562,24 +1921,36 @@
           label: r.route_id,
           data: [r.window_averages['1'], r.window_averages['7'], r.window_averages['15'], r.window_averages['30'], r.window_averages['45']],
           borderColor: colors[i % colors.length],
-          tension: 0.35,
-          borderWidth: 2.4,
-          pointRadius: 4
+          backgroundColor: 'transparent',
+          tension: 0.38,
+          borderWidth: 2.5,
+          pointRadius: 4.5,
+          pointHoverRadius: 7,
+          pointBackgroundColor: colors[i % colors.length],
+          pointBorderColor: '#fff',
+          pointBorderWidth: 1.5
         }));
       } else {
         const match = elasticityDataCache.find(r => r.route_id === selectedRoute) || elasticityDataCache[0];
         const dataVals = match ? [match.window_averages['1'], match.window_averages['7'], match.window_averages['15'], match.window_averages['30'], match.window_averages['45']] : [16800, 7800, 5200, 3900, 3600];
 
+        const gradient = ctx.createLinearGradient(0, 0, 0, 290);
+        gradient.addColorStop(0, 'rgba(79, 70, 229, 0.25)');
+        gradient.addColorStop(1, 'rgba(79, 70, 229, 0.00)');
+
         datasets = [{
           label: match ? match.route_id : selectedRoute,
           data: dataVals,
-          borderColor: '#fa5d19',
-          backgroundColor: 'rgba(250, 93, 25, 0.08)',
+          borderColor: '#4f46e5',
+          backgroundColor: gradient,
           fill: true,
-          tension: 0.35,
+          tension: 0.38,
           borderWidth: 2.8,
           pointRadius: 5,
-          pointBackgroundColor: '#fa5d19'
+          pointHoverRadius: 8,
+          pointBackgroundColor: '#4f46e5',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2
         }];
       }
 
@@ -1589,14 +1960,31 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: {
+            duration: 700,
+            easing: 'easeOutQuart'
+          },
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
           plugins: {
-            legend: { position: 'top', labels: { boxWidth: 12, font: { family: 'Outfit', size: 12, weight: '600' } } },
+            legend: {
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                color: tickColor,
+                font: { family: 'Outfit', size: 12, weight: '600' }
+              }
+            },
             tooltip: {
-              backgroundColor: 'rgba(24, 24, 27, 0.95)',
+              backgroundColor: 'rgba(15, 23, 42, 0.94)',
               titleFont: { family: 'Outfit', size: 13, weight: 'bold' },
               bodyFont: { family: 'JetBrains Mono', size: 12 },
               padding: 12,
-              cornerRadius: 8,
+              cornerRadius: 10,
+              borderColor: 'rgba(255, 255, 255, 0.12)',
+              borderWidth: 1,
               callbacks: {
                 label: (ctx) => ` ${ctx.dataset.label}: ₹${Number(ctx.parsed.y).toLocaleString('en-IN')}`
               }
@@ -1604,15 +1992,19 @@
           },
           scales: {
             y: {
-              grid: { color: 'rgba(0,0,0,0.04)' },
+              grid: { color: gridColor },
               ticks: {
-                callback: (val) => '₹' + (val / 1000) + 'k',
+                color: tickColor,
+                callback: (val) => '₹' + Math.round(val / 1000) + 'k',
                 font: { family: 'JetBrains Mono', size: 11 }
               }
             },
             x: {
               grid: { display: false },
-              ticks: { font: { family: 'Inter', size: 11 } }
+              ticks: {
+                color: tickColor,
+                font: { family: 'Outfit', size: 11, weight: '600' }
+              }
             }
           }
         }
@@ -1897,25 +2289,38 @@
         </div>
 
         <div style="margin-bottom: 16px;">
-          <div style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy-900); margin-bottom: 8px;">
-            Simulated Real-Time Carrier Fares (${routeId} · Non-Stop Flights)
+          <div style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy-900); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <span>Simulated Carrier Quotes (${routeId} · Non-Stop)</span>
+            <span style="font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Real-Time Snapshot</span>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--surface-raised); border-radius: 6px; border: 1px solid var(--border-subtle);">
-              <span style="font-weight: 700; font-size: 12.5px; color: #4338ca;">IndiGo 6E-204</span>
-              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13px; color: var(--navy-900);">₹${Math.round(avgFare * 0.96).toLocaleString('en-IN')}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 8px; border: 1px solid var(--border-subtle);">
+              <div style="display: flex; align-items: center; gap: 7px;">
+                <span class="carrier-badge-chip" style="background: #4338ca; width: 24px; height: 18px; border-radius: 3px; font-size: 9.5px;">6E</span>
+                <span style="font-weight: 700; font-size: 12.5px; color: var(--navy-900);">IndiGo</span>
+              </div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13.5px; color: var(--navy-900);">₹${Math.round(avgFare * 0.96).toLocaleString('en-IN')}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--surface-raised); border-radius: 6px; border: 1px solid var(--border-subtle);">
-              <span style="font-weight: 700; font-size: 12.5px; color: #b91c1c;">Air India AI-805</span>
-              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13px; color: var(--navy-900);">₹${Math.round(avgFare * 1.06).toLocaleString('en-IN')}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 8px; border: 1px solid var(--border-subtle);">
+              <div style="display: flex; align-items: center; gap: 7px;">
+                <span class="carrier-badge-chip" style="background: #b91c1c; width: 24px; height: 18px; border-radius: 3px; font-size: 9.5px;">AI</span>
+                <span style="font-weight: 700; font-size: 12.5px; color: var(--navy-900);">Air India</span>
+              </div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13.5px; color: var(--navy-900);">₹${Math.round(avgFare * 1.06).toLocaleString('en-IN')}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--surface-raised); border-radius: 6px; border: 1px solid var(--border-subtle);">
-              <span style="font-weight: 700; font-size: 12.5px; color: #ea580c;">Akasa QP-1102</span>
-              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13px; color: var(--navy-900);">₹${Math.round(avgFare * 0.92).toLocaleString('en-IN')}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 8px; border: 1px solid var(--border-subtle);">
+              <div style="display: flex; align-items: center; gap: 7px;">
+                <span class="carrier-badge-chip" style="background: #ea580c; width: 24px; height: 18px; border-radius: 3px; font-size: 9.5px;">QP</span>
+                <span style="font-weight: 700; font-size: 12.5px; color: var(--navy-900);">Akasa Air</span>
+              </div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13.5px; color: var(--navy-900);">₹${Math.round(avgFare * 0.92).toLocaleString('en-IN')}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--surface-raised); border-radius: 6px; border: 1px solid var(--border-subtle);">
-              <span style="font-weight: 700; font-size: 12.5px; color: #d97706;">SpiceJet SG-8169</span>
-              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13px; color: var(--navy-900);">₹${Math.round(avgFare * 0.98).toLocaleString('en-IN')}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 9px 12px; background: var(--surface-raised); border-radius: 8px; border: 1px solid var(--border-subtle);">
+              <div style="display: flex; align-items: center; gap: 7px;">
+                <span class="carrier-badge-chip" style="background: #d97706; width: 24px; height: 18px; border-radius: 3px; font-size: 9.5px;">SG</span>
+                <span style="font-weight: 700; font-size: 12.5px; color: var(--navy-900);">SpiceJet</span>
+              </div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 13.5px; color: var(--navy-900);">₹${Math.round(avgFare * 0.98).toLocaleString('en-IN')}</span>
             </div>
           </div>
         </div>
@@ -1941,6 +2346,7 @@
       `;
 
       modal.style.display = 'flex';
+      modal.onclick = (e) => { if (e.target === modal) closeHeatmapDrilldown(); };
     }
 
     function closeHeatmapDrilldown() {
@@ -1989,40 +2395,49 @@
         container.innerHTML = `
           <div class="method-pill-box highlight">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; color: var(--heat-100);">Jevons Index (Gold Standard)</span>
-              <span class="badge badge-success" style="font-size: 10px;">Time-Reversible</span>
+              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; color: var(--heat-100); display: flex; align-items: center; gap: 6px;">
+                <span>Jevons Index</span>
+                <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);">(Geometric Mean)</span>
+              </span>
+              <span class="badge badge-success" style="font-size: 10px; font-weight: 700;">Time-Reversible ✓</span>
             </div>
             <div style="font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; margin: 6px 0; color: var(--navy-900);">
-              ${data.jevons_index.toFixed(2)} pts
+              ${data.jevons_index.toFixed(2)} <span style="font-size: 13px; font-weight: 600; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">pts</span>
             </div>
-            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
-              Geometric mean of price relatives. Satisfies circular transitivity & zero upward drift per ILO Manual §10.28.
+            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.45;">
+              Geometric mean of price relatives: I<sub>J</sub> = ∏ (p<sub>t</sub> / p<sub>0</sub>)<sup>1/n</sup>. Satisfies circular transitivity & zero upward drift per ILO Manual §10.28.
             </div>
           </div>
 
           <div class="method-pill-box">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy-800);">Carli Index (Arithmetic)</span>
-              <span class="badge badge-danger" style="font-size: 10px;">+${data.carli_upward_bias_pts.toFixed(2)} Bias</span>
+              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy-800); display: flex; align-items: center; gap: 6px;">
+                <span>Carli Index</span>
+                <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);">(Arithmetic)</span>
+              </span>
+              <span class="badge badge-danger" style="font-size: 10px; font-weight: 700;">+${data.carli_upward_bias_pts.toFixed(2)} Bias ⚠</span>
             </div>
             <div style="font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; margin: 6px 0; color: #dc2626;">
-              ${data.carli_index.toFixed(2)} pts
+              ${data.carli_index.toFixed(2)} <span style="font-size: 13px; font-weight: 600; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">pts</span>
             </div>
-            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
-              Arithmetic average of price ratios. Violates time-reversal test due to Jensen's inequality asymmetry.
+            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.45;">
+              Arithmetic average of price ratios. Violates time-reversal test due to Jensen's inequality asymmetry (I<sub>C</sub> × I<sub>C</sub><sup>-1</sup> &gt; 1).
             </div>
           </div>
 
           <div class="method-pill-box">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy-800);">Dutot Index (Ratio of Means)</span>
-              <span class="badge" style="background: var(--alpha-4); font-size: 10px;">${data.dutot_variance_pts > 0 ? '+' : ''}${data.dutot_variance_pts.toFixed(2)} pts</span>
+              <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy-800); display: flex; align-items: center; gap: 6px;">
+                <span>Dutot Index</span>
+                <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);">(Ratio of Means)</span>
+              </span>
+              <span class="badge" style="background: var(--alpha-4); font-size: 10px; font-weight: 700;">${data.dutot_variance_pts > 0 ? '+' : ''}${data.dutot_variance_pts.toFixed(2)} pts</span>
             </div>
             <div style="font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; margin: 6px 0; color: var(--navy-900);">
-              ${data.dutot_index.toFixed(2)} pts
+              ${data.dutot_index.toFixed(2)} <span style="font-size: 13px; font-weight: 600; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">pts</span>
             </div>
-            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.4;">
-              Ratio of unweighted mean prices. Disproportionately skewed by high-fare business-class outliers.
+            <div style="font-size: 11.5px; color: var(--text-muted); line-height: 1.45;">
+              Ratio of unweighted mean prices: I<sub>D</sub> = p̄<sub>t</sub> / p̄<sub>0</sub>. Disproportionately skewed by high-fare business-class outliers.
             </div>
           </div>
         `;
@@ -2248,6 +2663,27 @@
         showToast('Recompute error: ' + e.message, 'error');
       }
     }
+
+    // Global Modal Dismissal: ESC key & Backdrop Click
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeScrapeModal();
+        closeBulletinModal();
+        closeAiModal();
+        closeHeatmapDrilldown();
+      }
+    });
+
+    ['scrape-modal', 'bulletin-modal', 'ai-modal', 'heatmap-drilldown-modal'].forEach(id => {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.style.display = 'none';
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>
