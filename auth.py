@@ -1,7 +1,7 @@
 import logging
 import os
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Query, Request
 from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 
@@ -21,36 +21,44 @@ security_bearer = HTTPBearer(auto_error=False)
 
 
 async def verify_api_key(
+    request: Request = None,
     x_api_key: str | None = Depends(security_header),
     bearer: HTTPAuthorizationCredentials | None = Depends(security_bearer),
+    api_key: str | None = Query(None),
+    token: str | None = Query(None),
 ):
-    token = None
+    token_str = None
     if x_api_key:
-        token = x_api_key.strip()
-    elif bearer:
-        token = bearer.credentials.strip()
+        token_str = x_api_key.strip()
+    elif bearer and bearer.credentials:
+        token_str = bearer.credentials.strip()
+    elif api_key:
+        token_str = api_key.strip()
+    elif token:
+        token_str = token.strip()
+    elif request and getattr(request, "cookies", None) and "apix_token" in request.cookies:
+        token_str = request.cookies.get("apix_token")
 
-    if token:
+    if token_str:
         # Check ENV dynamically or static set
         env_keys = {
             k.strip() for k in os.getenv("API_KEYS", "").split(",") if k.strip()
         }
-        if token in VALID_KEYS or token in env_keys:
+        if token_str in VALID_KEYS or token_str in env_keys:
             return
 
         # Check DB
         async with async_session_maker() as session:
-            key_record = await session.get(ApiKey, token)
+            key_record = await session.get(ApiKey, token_str)
             if key_record:
                 return
 
-    # Accept a valid officer JWT so authenticated browser sessions can use
-    # the fetch/admin endpoints without embedding an API key in client JS.
-    if bearer and bearer.credentials:
+        # Accept a valid officer JWT so authenticated browser sessions can use
+        # the fetch/admin endpoints without embedding an API key in client JS.
         try:
             from routers.auth_routes import get_current_user
 
-            if await get_current_user(bearer.credentials):
+            if await get_current_user(token_str):
                 return
         except Exception:
             pass
