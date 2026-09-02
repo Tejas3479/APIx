@@ -7,7 +7,7 @@
   <meta name="description" content="National Statistical Office (NSO) multi-carrier aviation scraping engine telemetry, Chromium headless cluster health, and batch matrix dispatcher.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/base.css">
   <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
@@ -89,7 +89,7 @@
 
     /* Hero Header */
     .scraper-hero {
-      margin-bottom: 28px;
+      margin-bottom: 24px;
       padding-top: 12px;
       display: flex;
       justify-content: space-between;
@@ -133,10 +133,10 @@
     }
     .scraper-title span { color: var(--heat-100); }
     .scraper-desc {
-      font-size: 14.5px;
+      font-size: 14px;
       color: var(--text-muted);
       margin: 8px 0 0 0;
-      max-width: 720px;
+      max-width: 760px;
     }
 
     /* Action Buttons */
@@ -215,15 +215,15 @@
       justify-content: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 700;
-      font-size: 11.5px;
-      padding: 3px 8px;
+      font-size: 11px;
+      padding: 2px 7px;
       border-radius: 5px;
       letter-spacing: 0.02em;
     }
-    .badge-carrier-6e { background: #4f46e5 !important; color: #ffffff !important; border-color: #4338ca !important; }
-    .badge-carrier-ai { background: #dc2626 !important; color: #ffffff !important; border-color: #b91c1c !important; }
-    .badge-carrier-qp { background: #f97316 !important; color: #ffffff !important; border-color: #ea580c !important; }
-    .badge-carrier-sg { background: #eab308 !important; color: #000000 !important; border-color: #ca8a04 !important; font-weight: 800 !important; }
+    .badge-carrier-6e { background: #4f46e5 !important; color: #ffffff !important; border: 1px solid #4338ca !important; }
+    .badge-carrier-ai { background: #dc2626 !important; color: #ffffff !important; border: 1px solid #b91c1c !important; }
+    .badge-carrier-qp { background: #f97316 !important; color: #ffffff !important; border: 1px solid #ea580c !important; }
+    .badge-carrier-sg { background: #eab308 !important; color: #000000 !important; border: 1px solid #ca8a04 !important; font-weight: 800 !important; }
 
     /* Telemetry Feeds Grid */
     .telemetry-grid-pro {
@@ -236,7 +236,7 @@
       background: var(--card-bg);
       border: 1px solid var(--border-loud);
       border-radius: 14px;
-      padding: 18px 20px;
+      padding: 16px 18px;
       box-shadow: var(--shadow-sm);
       position: relative;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -249,16 +249,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .feed-name-pro {
       font-family: 'Outfit', sans-serif;
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 800;
       color: var(--navy-900);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
     }
     .feed-stats-row-pro {
       display: grid;
@@ -268,7 +268,7 @@
       border: 1px solid var(--border-faint);
       border-radius: 8px;
       padding: 8px 10px;
-      margin-top: 12px;
+      margin-top: 10px;
       text-align: center;
     }
 
@@ -286,7 +286,7 @@
       grid-template-columns: 140px 100px 110px 110px 130px 1.2fr;
       align-items: center;
       gap: 12px;
-      padding: 14px 18px;
+      padding: 12px 18px;
       border-bottom: 1px solid var(--border-faint);
       font-size: 13px;
     }
@@ -304,18 +304,21 @@
       padding: 12px 18px;
     }
 
-    /* Terminal Console */
-    .console-card-pro {
+    /* ==========================================================================
+       PRO OPERATIONS TERMINAL CONSOLE (True Append-Only, Smart Auto-Scroll)
+       ========================================================================== */
+    .terminal-container-pro {
       background: #0d1117;
       border: 1px solid #30363d;
       border-radius: 16px;
-      box-shadow: 0 16px 36px rgba(0,0,0,0.35);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
       overflow: hidden;
       margin-bottom: 30px;
+      position: relative;
     }
-    .console-header-pro {
+    .terminal-topbar {
       background: #161b22;
-      padding: 12px 18px;
+      padding: 10px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -323,22 +326,206 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-    .console-body-pro {
-      padding: 18px 20px;
+    .terminal-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .t-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .t-dot-red { background: #ff5f56; }
+    .t-dot-yellow { background: #ffbd2e; }
+    .t-dot-green { background: #27c93f; }
+
+    .terminal-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: #8b949e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .terminal-title .live-pulse {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #3fb950;
+      box-shadow: 0 0 8px #3fb950;
+      animation: apix-blink 1.8s steps(1) infinite;
+    }
+
+    .terminal-toolbar-pro {
+      background: #13171e;
+      padding: 8px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #21262d;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .terminal-filters-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .t-filter-btn {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .t-filter-btn:hover {
+      color: #c9d1d9;
+      border-color: #484f58;
+    }
+    .t-filter-btn.active {
+      background: #1f6feb;
+      border-color: #388bfd;
+      color: #ffffff;
+    }
+
+    .t-search-box {
+      display: flex;
+      align-items: center;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 2px 8px;
+      gap: 6px;
+    }
+    .t-search-box input {
+      background: transparent;
+      border: none;
+      color: #c9d1d9;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      outline: none;
+      width: 150px;
+    }
+    .t-search-box input::placeholder { color: #484f58; }
+
+    .t-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .t-action-btn {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .t-action-btn:hover {
+      background: #30363d;
+      color: #f0f6fc;
+    }
+    .t-action-btn.btn-autoscroll-on {
+      background: rgba(35, 134, 54, 0.2);
+      border-color: rgba(46, 160, 67, 0.4);
+      color: #3fb950;
+    }
+    .t-action-btn.btn-autoscroll-paused {
+      background: rgba(210, 153, 34, 0.2);
+      border-color: rgba(210, 153, 34, 0.4);
+      color: #d29922;
+    }
+
+    .terminal-body-pro {
+      padding: 16px 20px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12.5px;
       color: #c9d1d9;
-      min-height: 260px;
-      max-height: 380px;
+      height: 380px;
       overflow-y: auto;
       line-height: 1.65;
+      position: relative;
     }
-    .log-line { margin-bottom: 4px; }
-    .log-time { color: #8b949e; }
-    .log-info { color: #58a6ff; font-weight: 700; }
-    .log-ok { color: #3fb950; font-weight: 700; }
-    .log-warn { color: #d29922; font-weight: 700; }
-    .log-err { color: #f85149; font-weight: 700; }
+    .terminal-body-pro::-webkit-scrollbar {
+      width: 8px;
+    }
+    .terminal-body-pro::-webkit-scrollbar-track {
+      background: #0d1117;
+    }
+    .terminal-body-pro::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 4px;
+    }
+
+    .log-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+      word-break: break-word;
+      transition: background 0.15s ease;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+    .log-line:hover {
+      background: rgba(255,255,255,0.04);
+    }
+    .log-time { color: #6e7681; font-size: 11.5px; flex-shrink: 0; user-select: none; }
+    .log-tag { font-weight: 700; font-size: 11px; padding: 1px 6px; border-radius: 4px; flex-shrink: 0; }
+    .tag-init { background: rgba(56, 139, 253, 0.15); color: #58a6ff; }
+    .tag-survey { background: rgba(163, 113, 247, 0.15); color: #bc8cff; }
+    .tag-extract { background: rgba(63, 185, 80, 0.15); color: #3fb950; }
+    .tag-decomp { background: rgba(46, 160, 67, 0.15); color: #7ee787; }
+    .tag-dispatch { background: rgba(210, 153, 34, 0.15); color: #d29922; }
+    .tag-robots { background: rgba(86, 211, 100, 0.15); color: #56d364; }
+    .tag-probe { background: rgba(250, 93, 25, 0.15); color: #ff7b72; }
+    .tag-complete { background: rgba(63, 185, 80, 0.2); color: #3fb950; font-weight: 800; }
+    .tag-error { background: rgba(248, 81, 73, 0.2); color: #f85149; font-weight: 800; }
+    .tag-warn { background: rgba(210, 153, 34, 0.2); color: #d29922; }
+    .tag-ready { background: rgba(56, 139, 253, 0.15); color: #58a6ff; }
+
+    .log-msg { color: #c9d1d9; flex-grow: 1; }
+
+    /* Floating Jump to Bottom Button */
+    .btn-scroll-bottom-floating {
+      position: absolute;
+      bottom: 20px;
+      right: 24px;
+      background: #1f6feb;
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid #388bfd;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      z-index: 10;
+      animation: toastIn 0.2s ease-out;
+    }
+    .btn-scroll-bottom-floating:hover {
+      background: #388bfd;
+    }
 
     /* Modal Backdrop */
     .modal-backdrop-pro {
@@ -424,7 +611,7 @@
           <span>Passive Stealth Architecture · Ethical Rate-Limiting Active</span>
         </div>
         <h1 class="scraper-title">
-          Aviation Ingestion Feeds & <span>Cluster Telemetry</span>
+          Aviation Ingestion Feeds &amp; <span>Cluster Telemetry</span>
         </h1>
         <p class="scraper-desc">
           Monitor real-time Google Flights / OTA query pipelines, Playwright headless Chromium instances, TLS fingerprint impersonation (Chrome 120 / HTTP/2), and batch matrix scheduling.
@@ -572,26 +759,68 @@
       </div>
     </div>
 
-    <!-- Live Telemetry Stream Console (Dark Terminal) -->
-    <div class="console-card-pro">
-      <div class="console-header-pro">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="width: 10px; height: 10px; border-radius: 50%; background: #3fb950; display: inline-block; box-shadow: 0 0 8px #3fb950;"></span>
-          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; color: #f0f6fc;">Live Ingestion Telemetry Stream</span>
+    <!-- PRO OPERATIONS TERMINAL CONSOLE -->
+    <div class="terminal-container-pro">
+      
+      <!-- Topbar with Mac dots & system title -->
+      <div class="terminal-topbar">
+        <div class="terminal-dots">
+          <span class="t-dot t-dot-red"></span>
+          <span class="t-dot t-dot-yellow"></span>
+          <span class="t-dot t-dot-green"></span>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <select id="logFilterSelect" onchange="applyLogFilter()" style="background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-family: 'JetBrains Mono', monospace;">
-            <option value="ALL">All Events</option>
-            <option value="EXTRACT">Extraction Only</option>
-            <option value="DISPATCH">Job Dispatches</option>
-            <option value="ERROR">Errors/Warnings</option>
-          </select>
-          <button onclick="clearConsole()" style="background: rgba(255,255,255,0.08); border: 1px solid #30363d; color: #c9d1d9; padding: 4px 12px; border-radius: 6px; font-size: 11.5px; font-family: 'JetBrains Mono', monospace; cursor: pointer;">
-            Clear Stream
-          </button>
+        <div class="terminal-title">
+          <span class="live-pulse"></span>
+          <span>apix-node-01: ~/live-telemetry-stream (Playwright 3-Slot Pool)</span>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6e7681;" id="logCountBadge">
+          0 events recorded
         </div>
       </div>
-      <div class="console-body-pro" id="consoleBody"></div>
+
+      <!-- Toolbar with category filters, grep search, and log actions -->
+      <div class="terminal-toolbar-pro">
+        <div class="terminal-filters-row">
+          <button class="t-filter-btn active" data-filter="ALL" onclick="setLogCategory('ALL')">All Logs</button>
+          <button class="t-filter-btn" data-filter="EXTRACT" onclick="setLogCategory('EXTRACT')">Quotes &amp; Extraction</button>
+          <button class="t-filter-btn" data-filter="DISPATCH" onclick="setLogCategory('DISPATCH')">Matrix Dispatches</button>
+          <button class="t-filter-btn" data-filter="ROBOTS" onclick="setLogCategory('ROBOTS')">Stealth &amp; Robots</button>
+          <button class="t-filter-btn" data-filter="ERROR" onclick="setLogCategory('ERROR')">Errors &amp; Warnings</button>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <div class="t-search-box">
+            <span style="color:#6e7681; font-size:11px;">🔍</span>
+            <input type="text" id="logSearchInput" placeholder="Grep filter..." oninput="handleLogSearch(this.value)">
+          </div>
+
+          <div class="t-actions-group">
+            <button class="t-action-btn btn-autoscroll-on" id="btnAutoScroll" onclick="toggleAutoScroll()" title="Toggle terminal auto-scroll">
+              <span id="autoScrollDot">●</span> <span id="autoScrollText">Auto-scroll: ON</span>
+            </button>
+            <button class="t-action-btn" onclick="copyTerminalLogs()" title="Copy entire visible logs to clipboard">
+              <span id="copyBtnIcon">📋</span> Copy
+            </button>
+            <button class="t-action-btn" onclick="downloadTerminalLogs()" title="Export logs as a text file">
+              📥 Export .log
+            </button>
+            <button class="t-action-btn" onclick="clearConsoleStream()" title="Reset server and client telemetry logs">
+              🗑 Clear
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terminal Body -->
+      <div class="terminal-body-pro" id="consoleBody" onscroll="handleTerminalScroll()">
+        <!-- Log rows appended dynamically -->
+      </div>
+
+      <!-- Floating Jump-to-Bottom Badge when user scrolled up -->
+      <button class="btn-scroll-bottom-floating" id="btnJumpBottom" onclick="jumpToTerminalBottom()">
+        ⬇ New logs available (Click to resume auto-scroll)
+      </button>
+
     </div>
 
   </main>
@@ -605,40 +834,59 @@
       </div>
       <form id="dispatch-form" onsubmit="handleDispatchSweep(event)">
         <div style="margin-bottom: 14px;">
-          <label style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Target Domestic Sectors</label>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+            <label style="font-size: 12.5px; font-weight: 700; color: var(--navy-800);">Target Domestic Sectors</label>
+            <div style="font-size:11.5px; display:flex; gap:8px;">
+              <a href="javascript:void(0)" onclick="toggleAllRoutes(true)" style="color:var(--heat-100); text-decoration:none; font-weight:600;">Select All</a>
+              <span style="color:var(--text-muted);">·</span>
+              <a href="javascript:void(0)" onclick="toggleAllRoutes(false)" style="color:var(--text-muted); text-decoration:none;">Clear</a>
+            </div>
+          </div>
           <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px;" id="routeCheckboxGrid">
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="DEL-BOM" checked> DEL-BOM</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="DEL-BLR" checked> DEL-BLR</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="BOM-BLR" checked> BOM-BLR</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="DEL-CCU" checked> DEL-CCU</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="BLR-HYD" checked> BLR-HYD</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="DEL-HYD" checked> DEL-HYD</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="MAA-DEL" checked> MAA-DEL</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="BOM-GOI" checked> BOM-GOI</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="DEL-BOM" checked onchange="updateMatrixEstimate()"> DEL-BOM</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="DEL-BLR" checked onchange="updateMatrixEstimate()"> DEL-BLR</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="BOM-BLR" checked onchange="updateMatrixEstimate()"> BOM-BLR</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="DEL-CCU" checked onchange="updateMatrixEstimate()"> DEL-CCU</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="BLR-HYD" checked onchange="updateMatrixEstimate()"> BLR-HYD</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="DEL-HYD" checked onchange="updateMatrixEstimate()"> DEL-HYD</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="MAA-DEL" checked onchange="updateMatrixEstimate()"> MAA-DEL</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchRoute" value="BOM-GOI" checked onchange="updateMatrixEstimate()"> BOM-GOI</label>
           </div>
         </div>
 
-        <div style="margin-bottom: 16px;">
-          <label style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Advance Booking Horizons</label>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchHorizon" value="1" checked> T+1</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchHorizon" value="7" checked> T+7</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchHorizon" value="15" checked> T+15</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchHorizon" value="30" checked> T+30</label>
-            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchHorizon" value="45" checked> T+45</label>
+        <div style="margin-bottom: 14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+            <label style="font-size: 12.5px; font-weight: 700; color: var(--navy-800);">Advance Booking Horizons</label>
+            <div style="font-size:11.5px; display:flex; gap:8px;">
+              <a href="javascript:void(0)" onclick="toggleAllHorizons(true)" style="color:var(--heat-100); text-decoration:none; font-weight:600;">All 5</a>
+              <span style="color:var(--text-muted);">·</span>
+              <a href="javascript:void(0)" onclick="toggleAllHorizons(false)" style="color:var(--text-muted); text-decoration:none;">Clear</a>
+            </div>
           </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchHorizon" value="1" checked onchange="updateMatrixEstimate()"> T+1</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchHorizon" value="7" checked onchange="updateMatrixEstimate()"> T+7</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchHorizon" value="15" checked onchange="updateMatrixEstimate()"> T+15</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchHorizon" value="30" checked onchange="updateMatrixEstimate()"> T+30</label>
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" name="dispatchHorizon" value="45" checked onchange="updateMatrixEstimate()"> T+45</label>
+          </div>
+        </div>
+
+        <div style="background:var(--surface-raised); border:1px solid var(--border-faint); border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:12.5px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
+          <span>Matrix Survey Load:</span>
+          <strong id="matrixEstimateText" style="color:var(--navy-900); font-family:'JetBrains Mono',monospace;">8 routes × 5 horizons = 40 tasks</strong>
         </div>
 
         <div style="margin-bottom: 18px;">
           <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--navy-900); cursor: pointer;">
             <input type="checkbox" id="dispatchForceLive" style="accent-color: var(--heat-100);">
-            Bypass Fast Memory Cache (Force Live Chromium Probe)
+            Bypass Fast Memory Cache (Force Live Chromium Ingestion)
           </label>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-loud); padding-top: 14px;">
           <button type="button" onclick="closeDispatchModal()" class="btn-dash btn-dash-secondary">Cancel</button>
-          <button type="submit" class="btn-dash btn-dash-primary">🚀 Launch Matrix Sweep</button>
+          <button type="submit" class="btn-dash btn-dash-primary" id="btnLaunchSweep">🚀 Launch Matrix Sweep</button>
         </div>
       </form>
     </div>
@@ -646,7 +894,7 @@
 
   <!-- Instant Probe Modal -->
   <div id="probe-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="probe-modal-title">
-    <div class="modal-content-pro">
+    <div class="modal-content-pro" style="max-width: 620px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid var(--border-loud); padding-bottom: 12px;">
         <h3 id="probe-modal-title" style="font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 800; margin: 0; color: var(--navy-900);">Instant Single-Corridor Probe</h3>
         <button onclick="closeInstantProbeModal()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
@@ -678,6 +926,10 @@
           </div>
         </div>
 
+        <div id="probeResultsBox" style="display:none; background:var(--surface-raised); border:1px solid var(--border-loud); border-radius:10px; padding:12px; margin-bottom:16px;">
+          <!-- Rendered live quotes -->
+        </div>
+
         <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-loud); padding-top: 14px;">
           <button type="button" onclick="closeInstantProbeModal()" class="btn-dash btn-dash-secondary">Cancel</button>
           <button type="submit" class="btn-dash btn-dash-primary" id="btnRunProbe">⚡ Execute Instant Probe</button>
@@ -688,8 +940,15 @@
 
   <script src="/app.js"></script>
   <script>
-    let allLogs = [];
-    let lastSeenLogIds = new Set();
+    /* ==========================================================================
+       TERMINAL ENGINE: Append-Only, No-Jank, Smart Auto-scroll & Grep Search
+       ========================================================================== */
+    let rawLogBuffer = [];
+    let seenLogIds = new Set();
+    let currentCategory = 'ALL';
+    let currentSearchTerm = '';
+    let isAutoScrollEnabled = true;
+    let isUserScrolledUp = false;
 
     function showToast(msg, type = 'error') {
       const container = document.getElementById('toast-container');
@@ -717,7 +976,7 @@
         const res = await fetch('/api/v1/scraper/metrics');
         if (!res.ok) return;
         const d = await res.json();
-        if (d.total_fare_quotes) document.getElementById('kpi-quotes-val').textContent = d.total_fare_quotes.toLocaleString();
+        if (d.total_fare_quotes) document.getElementById('kpi-quotes-val').textContent = d.total_fare_quotes.toLocaleString() + '+';
         if (d.mean_latency_ms) document.getElementById('kpi-latency-val').textContent = d.mean_latency_ms + ' ms';
         if (d.success_rate_pct) document.getElementById('kpi-success-val').textContent = d.success_rate_pct + '%';
         if (d.worker_slots_free !== undefined) document.getElementById('kpi-slots-val').textContent = d.worker_slots_free + '/' + d.worker_slots_total + ' Ready';
@@ -753,7 +1012,7 @@
 
           return `
             <div class="job-row-pro">
-              <div><strong style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--navy-900);">${escapeHtml(j.id.slice(0, 13))}…</strong></div>
+              <div><strong style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--navy-900);">${escapeHtml(j.id.slice(0, 13))}…</strong></div>
               <div><span class="badge" style="background:var(--surface-raised); border:1px solid var(--border-loud); font-size:11px; font-weight:700;">${escapeHtml(j.job_type.toUpperCase())}</span></div>
               <div style="font-family:'JetBrains Mono',monospace; font-weight:600; color:var(--navy-800);">${j.routes_targeted || 8} routes</div>
               <div style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--heat-100);">${j.quotes_collected || 0} quotes</div>
@@ -767,62 +1026,240 @@
       }
     }
 
+    /* ── APPEND-ONLY TELEMETRY STREAM ── */
     async function fetchLiveTelemetry() {
       try {
-        const res = await fetch('/api/v1/scraper/live-logs?limit=30');
+        const res = await fetch('/api/v1/scraper/live-logs?limit=40');
         if (!res.ok) return;
         const logs = await res.json();
-        const container = document.getElementById('consoleBody');
-        if (!container || !logs.length) return;
+        if (!logs || !logs.length) return;
 
-        allLogs = logs;
-        renderLogs();
+        let hasNewLogs = false;
+        const container = document.getElementById('consoleBody');
+
+        logs.forEach(log => {
+          if (!seenLogIds.has(log.id)) {
+            seenLogIds.add(log.id);
+            rawLogBuffer.push(log);
+            hasNewLogs = true;
+            appendSingleLogToDOM(log, container);
+          }
+        });
+
+        // Update count badge
+        document.getElementById('logCountBadge').textContent = `${rawLogBuffer.length} events recorded`;
+
+        // Handle auto-scrolling
+        if (hasNewLogs) {
+          if (isAutoScrollEnabled && !isUserScrolledUp) {
+            container.scrollTop = container.scrollHeight;
+          } else if (isUserScrolledUp) {
+            document.getElementById('btnJumpBottom').style.display = 'flex';
+          }
+        }
       } catch (e) {
-        console.debug('Telemetry error:', e);
+        console.debug('Telemetry poll error:', e);
       }
     }
 
-    function renderLogs() {
-      const container = document.getElementById('consoleBody');
-      const filter = document.getElementById('logFilterSelect').value;
+    function appendSingleLogToDOM(log, container) {
+      const div = document.createElement('div');
+      div.className = 'log-line';
+      div.id = 'log-item-' + log.id;
+      div.dataset.type = log.type || 'INFO';
+      div.dataset.level = log.level || 'ok';
+      div.dataset.text = (log.text || '').toLowerCase();
 
-      const filtered = allLogs.filter(log => {
-        if (filter === 'ALL') return true;
-        if (filter === 'EXTRACT') return log.type === 'EXTRACT' || log.type === 'DECOMP' || log.type === 'SURVEY';
-        if (filter === 'DISPATCH') return log.type === 'DISPATCH' || log.type === 'INIT';
-        if (filter === 'ERROR') return log.level === 'error' || log.level === 'warn';
-        return true;
+      const tagClass = getTagClass(log.type, log.level);
+      const timeStr = log.time || new Date().toLocaleTimeString();
+
+      div.innerHTML = `
+        <span class="log-time">[${timeStr}]</span>
+        <span class="log-tag ${tagClass}">[${escapeHtml(log.type || 'INFO')}]</span>
+        <span class="log-msg">${escapeHtml(log.text || '')}</span>
+      `;
+
+      // Apply current filters
+      if (!isLogVisible(div)) {
+        div.style.display = 'none';
+      }
+
+      container.appendChild(div);
+
+      // Keep max 200 items in DOM to prevent memory leaks
+      while (container.children.length > 200) {
+        container.removeChild(container.firstChild);
+      }
+    }
+
+    function getTagClass(type, level) {
+      const t = (type || '').toUpperCase();
+      if (level === 'error' || t === 'ERROR') return 'tag-error';
+      if (level === 'warn' || t === 'WARN') return 'tag-warn';
+      if (t === 'INIT') return 'tag-init';
+      if (t === 'SURVEY') return 'tag-survey';
+      if (t === 'EXTRACT') return 'tag-extract';
+      if (t === 'DECOMP') return 'tag-decomp';
+      if (t === 'DISPATCH') return 'tag-dispatch';
+      if (t === 'ROBOTS') return 'tag-robots';
+      if (t === 'PROBE') return 'tag-probe';
+      if (t === 'COMPLETE') return 'tag-complete';
+      return 'tag-ready';
+    }
+
+    function isLogVisible(el) {
+      const type = el.dataset.type;
+      const level = el.dataset.level;
+      const text = el.dataset.text;
+
+      // Category check
+      if (currentCategory === 'EXTRACT' && !['EXTRACT', 'DECOMP', 'SURVEY', 'PROBE'].includes(type)) return false;
+      if (currentCategory === 'DISPATCH' && !['DISPATCH', 'INIT', 'COMPLETE'].includes(type)) return false;
+      if (currentCategory === 'ROBOTS' && !['ROBOTS', 'STEALTH'].includes(type)) return false;
+      if (currentCategory === 'ERROR' && !(level === 'error' || level === 'warn' || type === 'ERROR')) return false;
+
+      // Search term check
+      if (currentSearchTerm && !text.includes(currentSearchTerm)) return false;
+
+      return true;
+    }
+
+    function setLogCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.t-filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === cat);
       });
+      refilterAllLogs();
+    }
 
-      container.innerHTML = filtered.map(log => {
-        const cls = log.level === 'error' ? 'log-err' : (log.level === 'warn' ? 'log-warn' : (log.level === 'info' ? 'log-info' : 'log-ok'));
-        return `<div class="log-line"><span class="log-time">[${log.time || '12:00:00'}]</span> <span class="${cls}">[${log.type}]</span> ${escapeHtml(log.text)}</div>`;
-      }).join('');
+    function handleLogSearch(term) {
+      currentSearchTerm = (term || '').trim().toLowerCase();
+      refilterAllLogs();
+    }
 
+    function refilterAllLogs() {
+      const container = document.getElementById('consoleBody');
+      Array.from(container.children).forEach(el => {
+        el.style.display = isLogVisible(el) ? 'flex' : 'none';
+      });
+      if (isAutoScrollEnabled && !isUserScrolledUp) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+
+    function handleTerminalScroll() {
+      const container = document.getElementById('consoleBody');
+      const atBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 30;
+      isUserScrolledUp = !atBottom;
+
+      const jumpBtn = document.getElementById('btnJumpBottom');
+      if (atBottom) {
+        jumpBtn.style.display = 'none';
+      }
+    }
+
+    function jumpToTerminalBottom() {
+      const container = document.getElementById('consoleBody');
       container.scrollTop = container.scrollHeight;
+      isUserScrolledUp = false;
+      document.getElementById('btnJumpBottom').style.display = 'none';
     }
 
-    function applyLogFilter() {
-      renderLogs();
+    function toggleAutoScroll() {
+      isAutoScrollEnabled = !isAutoScrollEnabled;
+      const btn = document.getElementById('btnAutoScroll');
+      const txt = document.getElementById('autoScrollText');
+
+      if (isAutoScrollEnabled) {
+        btn.className = 't-action-btn btn-autoscroll-on';
+        txt.textContent = 'Auto-scroll: ON';
+        jumpToTerminalBottom();
+      } else {
+        btn.className = 't-action-btn btn-autoscroll-paused';
+        txt.textContent = 'Auto-scroll: PAUSED';
+      }
     }
 
-    function clearConsole() {
-      allLogs = [{ id: 'init', time: new Date().toLocaleTimeString(), type: 'READY', level: 'info', text: 'Telemetry stream cleared. Listening for live ingestion events...' }];
-      renderLogs();
+    async function clearConsoleStream() {
+      try {
+        await fetch('/api/v1/scraper/clear-logs', { method: 'POST' });
+      } catch (e) {}
+
+      seenLogIds.clear();
+      rawLogBuffer = [];
+      const container = document.getElementById('consoleBody');
+      container.innerHTML = '';
+      document.getElementById('logCountBadge').textContent = '0 events recorded';
+      document.getElementById('btnJumpBottom').style.display = 'none';
+
+      // Append clean local ready line
+      const initialEvent = { id: 'init-local', time: new Date().toLocaleTimeString(), type: 'READY', level: 'info', text: 'Telemetry stream reset. Listening for live ingestion events...' };
+      seenLogIds.add(initialEvent.id);
+      rawLogBuffer.push(initialEvent);
+      appendSingleLogToDOM(initialEvent, container);
+
       showToast('Telemetry stream cleared', 'info');
     }
 
+    function copyTerminalLogs() {
+      const text = rawLogBuffer.map(l => `[${l.time || '00:00:00'}] [${l.type}] ${l.text}`).join('
+');
+      navigator.clipboard.writeText(text).then(() => {
+        const icon = document.getElementById('copyBtnIcon');
+        icon.textContent = '✔';
+        showToast('All logs copied to clipboard', 'success');
+        setTimeout(() => { icon.textContent = '📋'; }, 2000);
+      }).catch(err => {
+        showToast('Failed to copy: ' + err.message, 'error');
+      });
+    }
+
+    function downloadTerminalLogs() {
+      const text = rawLogBuffer.map(l => `[${l.time || '00:00:00'}] [${l.type}] ${l.text}`).join('
+');
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `apix_telemetry_${new Date().toISOString().slice(0,10)}.log`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Exported telemetry log file', 'success');
+    }
+
+    /* ── MODALS & DISPATCH WORKFLOWS ── */
     function openDispatchModal() { document.getElementById('dispatch-modal').style.display = 'flex'; }
     function closeDispatchModal() { document.getElementById('dispatch-modal').style.display = 'none'; }
 
-    function openInstantProbeModal() { document.getElementById('probe-modal').style.display = 'flex'; }
+    function openInstantProbeModal() { 
+      document.getElementById('probeResultsBox').style.display = 'none';
+      document.getElementById('probe-modal').style.display = 'flex'; 
+    }
     function closeInstantProbeModal() { document.getElementById('probe-modal').style.display = 'none'; }
+
+    function toggleAllRoutes(checked) {
+      document.querySelectorAll('input[name="dispatchRoute"]').forEach(el => el.checked = checked);
+      updateMatrixEstimate();
+    }
+    function toggleAllHorizons(checked) {
+      document.querySelectorAll('input[name="dispatchHorizon"]').forEach(el => el.checked = checked);
+      updateMatrixEstimate();
+    }
+    function updateMatrixEstimate() {
+      const r = document.querySelectorAll('input[name="dispatchRoute"]:checked').length;
+      const h = document.querySelectorAll('input[name="dispatchHorizon"]:checked').length;
+      const total = r * h;
+      document.getElementById('matrixEstimateText').textContent = `${r} routes × ${h} horizons = ${total} tasks (~${Math.max(1, Math.round(total * 0.2))}s)`;
+    }
 
     async function handleDispatchSweep(e) {
       e.preventDefault();
       const routes = Array.from(document.querySelectorAll('input[name="dispatchRoute"]:checked')).map(el => el.value);
       const windows = Array.from(document.querySelectorAll('input[name="dispatchHorizon"]:checked')).map(el => parseInt(el.value, 10));
       const forceLive = document.getElementById('dispatchForceLive').checked;
+      const btn = document.getElementById('btnLaunchSweep');
 
       if (!routes.length) {
         showToast('Please select at least 1 route', 'warn');
@@ -832,6 +1269,9 @@
         showToast('Please select at least 1 advance horizon', 'warn');
         return;
       }
+
+      btn.disabled = true;
+      btn.textContent = 'Launching...';
 
       try {
         const res = await fetch('/api/v1/scraper/run', {
@@ -847,6 +1287,9 @@
         await fetchLiveTelemetry();
       } catch (err) {
         showToast('Error: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🚀 Launch Matrix Sweep';
       }
     }
 
@@ -855,9 +1298,10 @@
       const route = document.getElementById('probeRouteSelect').value;
       const days = parseInt(document.getElementById('probeHorizonSelect').value, 10);
       const btn = document.getElementById('btnRunProbe');
+      const resultsBox = document.getElementById('probeResultsBox');
 
       btn.disabled = true;
-      btn.textContent = 'Probing...';
+      btn.textContent = '⚡ Ingesting...';
 
       try {
         const res = await fetch(`/api/v1/scraper/survey-instant?route=${encodeURIComponent(route)}&advance_days=${days}&force_live=false`, {
@@ -866,9 +1310,36 @@
         });
         if (!res.ok) throw new Error('Instant probe failed');
         const quotes = await res.json();
-        showToast(`Probe successful: Collected ${quotes.length} live carrier quotes for ${route} (T+${days})!`, 'success');
-        closeInstantProbeModal();
+
+        // Render probe result table
+        resultsBox.style.display = 'block';
+        if (quotes && quotes.length) {
+          resultsBox.innerHTML = `
+            <div style="font-family:'Outfit',sans-serif; font-size:13px; font-weight:800; color:var(--navy-900); margin-bottom:8px;">
+              Probe Results: ${quotes.length} Quotes Ingested for ${route} (T+${days})
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px; font-family:'JetBrains Mono',monospace; font-size:11.5px;">
+              ${quotes.map(q => `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card-bg); padding:6px 10px; border-radius:6px; border:1px solid var(--border-loud);">
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <strong style="color:var(--navy-900);">${escapeHtml(q.carrier_name || q.carrier_code)}</strong>
+                    <span style="color:var(--text-muted); font-size:11px;">#${escapeHtml(q.flight_number || 'FLT')}</span>
+                  </div>
+                  <div style="display:flex; gap:10px;">
+                    <span style="color:var(--text-muted);">Base: ₹${Math.round(q.base_fare || 0).toLocaleString()}</span>
+                    <strong style="color:var(--heat-100);">₹${Math.round(q.total_fare || 0).toLocaleString()}</strong>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        } else {
+          resultsBox.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">No flight quotes returned for this sector.</div>';
+        }
+
+        showToast(`Probe successful: ${quotes.length} carrier quotes ingested!`, 'success');
         await fetchLiveTelemetry();
+        await fetchMetrics();
       } catch (err) {
         showToast('Probe error: ' + err.message, 'error');
       } finally {
@@ -878,7 +1349,7 @@
     }
 
     // Polling Intervals
-    setInterval(fetchLiveTelemetry, 3000);
+    setInterval(fetchLiveTelemetry, 2500);
     setInterval(fetchMetrics, 5000);
     setInterval(loadJobHistory, 6000);
 

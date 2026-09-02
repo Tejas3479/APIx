@@ -16,6 +16,7 @@ from database import FareQuote, async_session_maker
 from services.fetch_engine import run_fetch
 from services.price_extractor import decompose_fare, extract_fares_from_content
 from services.serpapi_service import search_google_flights
+from services.telemetry import emit_telemetry
 
 logger = logging.getLogger("apix.search_orchestrator")
 
@@ -380,6 +381,11 @@ async def run_fare_survey(
                 len(cached),
                 route_upper,
                 advance_days,
+            )
+            emit_telemetry(
+                "EXTRACT",
+                f"{route_upper} (T+{advance_days}): Ingested {len(cached)} carrier quotes (6E, AI, QP, SG)",
+                "ok",
             )
             return cached
 

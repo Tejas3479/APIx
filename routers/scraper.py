@@ -9,8 +9,12 @@ from sqlalchemy import desc, func, select
 from auth import verify_api_key
 from database import FareQuote, ScrapeJob, async_session_maker
 from models import ScrapeJobResponse, ScrapeRequest
-from services.scrape_scheduler import ScrapeScheduler, get_live_telemetry_logs
+from services.scrape_scheduler import ScrapeScheduler
 from services.search_orchestrator import run_fare_survey
+from services.telemetry import (
+    clear_telemetry_logs,
+    get_live_telemetry_logs,
+)
 
 logger = logging.getLogger("apix.routers.scraper")
 
@@ -88,6 +92,13 @@ async def get_scrape_job(job_id: str):
 async def get_live_logs(limit: int = 30):
     """Retrieve live in-memory telemetry logs for the scraper operations stream."""
     return get_live_telemetry_logs(limit=limit)
+
+
+@router.post("/clear-logs")
+async def reset_live_logs():
+    """Clear server-side in-memory telemetry ring buffer."""
+    clear_telemetry_logs()
+    return {"status": "cleared", "message": "Telemetry stream reset successfully."}
 
 
 @router.get("/metrics")

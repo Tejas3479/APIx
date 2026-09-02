@@ -8,7 +8,6 @@ import asyncio
 import logging
 import os
 import uuid
-from collections import deque
 from datetime import date, datetime, timedelta, timezone
 from typing import Any
 
@@ -16,45 +15,14 @@ from sqlalchemy import select
 
 from database import RouteConfig, ScrapeJob, async_session_maker
 from services.search_orchestrator import run_fare_survey
+from services.telemetry import (
+    emit_telemetry,
+)
 
 logger = logging.getLogger("apix.scheduler")
 
 STANDARD_WINDOWS = [1, 7, 15, 30, 45]
 SCHEDULED_INTERVAL_HOURS = int(os.getenv("SCRAPE_INTERVAL_HOURS", "24"))
-
-# Live In-Memory Telemetry Ring Buffer (bounded to last 100 events)
-_TELEMETRY_LOGS: deque[dict[str, Any]] = deque(maxlen=100)
-
-
-def emit_telemetry(event_type: str, text: str, level: str = "ok"):
-    """Append a live event to the in-memory telemetry ring buffer."""
-    event = {
-        "id": str(uuid.uuid4())[:8],
-        "time": datetime.now(timezone.utc).strftime("%H:%M:%S"),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "type": event_type.upper(),
-        "text": text,
-        "level": level,  # "ok", "info", "warn", "error"
-    }
-    _TELEMETRY_LOGS.append(event)
-    logger.debug("Telemetry [%s]: %s", event["type"], text)
-
-
-def get_live_telemetry_logs(limit: int = 30) -> list[dict[str, Any]]:
-    """Retrieve recent live telemetry log items."""
-    logs = list(_TELEMETRY_LOGS)
-    return logs[-limit:] if limit > 0 else logs
-
-
-# Pre-populate initial system start events
-emit_telemetry(
-    "INIT",
-    "APIx Automated Ingestion Engine initialized (Playwright 3-slot pool active)",
-    "info",
-)
-emit_telemetry(
-    "ROBOTS", "Robots.txt compliance engine active with async domain cache", "ok"
-)
 
 
 class ScrapeScheduler:
