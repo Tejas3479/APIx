@@ -525,16 +525,15 @@
       .btn-swap-pro,
       .preset-chip-pro,
       .yield-slider-pro,
-      #matCounterfactualBox,
       #pathwayCard {
         display: none !important;
       }
 
       .print-only-header {
         display: block !important;
-        margin-bottom: 12px !important;
+        margin-bottom: 10px !important;
         border-bottom: 2px solid #0f172a !important;
-        padding-bottom: 8px !important;
+        padding-bottom: 6px !important;
       }
 
       .page-container {
@@ -550,7 +549,7 @@
       .card-pro {
         border: 1px solid #cbd5e1 !important;
         border-radius: 6px !important;
-        padding: 10px 14px !important;
+        padding: 8px 12px !important;
         background: #ffffff !important;
         page-break-inside: avoid;
         box-shadow: none !important;
@@ -561,13 +560,13 @@
         display: grid !important;
         grid-template-columns: repeat(4, 1fr) !important;
         gap: 6px !important;
-        margin-bottom: 12px !important;
+        margin-bottom: 10px !important;
       }
 
       .decomp-box-pro {
         border: 1px solid #cbd5e1 !important;
         border-radius: 4px !important;
-        padding: 6px 8px !important;
+        padding: 5px 7px !important;
         background: #f8fafc !important;
         page-break-inside: avoid;
       }
@@ -576,7 +575,7 @@
       .decomp-bar-pro {
         height: 8px !important;
         border: 1px solid #94a3b8 !important;
-        margin: 6px 0 !important;
+        margin: 5px 0 !important;
       }
       .decomp-seg.base { background: #0f172a !important; }
       .decomp-seg.fuel { background: #d97706 !important; }
@@ -585,12 +584,16 @@
       .decomp-seg.gst { background: #7c3aed !important; }
       .decomp-seg.fee { background: #64748b !important; }
 
-      /* Quotes Table */
+      /* Quotes Table in Print */
+      #quotesTableBody .quote-row-pro:nth-child(n+6) {
+        display: none !important;
+      }
+
       .quote-row-pro {
         border-bottom: 1px solid #e2e8f0 !important;
-        padding: 5px 8px !important;
-        font-size: 8.5pt !important;
-        grid-template-columns: 80px 1.5fr 1fr 100px 100px !important;
+        padding: 4px 6px !important;
+        font-size: 8pt !important;
+        grid-template-columns: 75px 1.4fr 1fr 90px 90px !important;
         page-break-inside: avoid;
         break-inside: avoid;
       }
@@ -598,6 +601,38 @@
       .quote-row-pro > div:last-child,
       .quote-row-pro > span:last-child {
         display: none !important;
+      }
+
+      /* 2nd-Tuesday Distortion Box in Print */
+      #matCounterfactualBox {
+        display: block !important;
+        margin-top: 10px !important;
+        padding: 8px 10px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        background: #f8fafc !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      #matCounterfactualBox h4 {
+        font-size: 9.5pt !important;
+        color: #0f172a !important;
+        margin: 0 !important;
+      }
+
+      #matCounterfactualBox div[style*="grid-template-columns"] {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1.3fr !important;
+        gap: 6px !important;
+        margin-top: 6px !important;
+      }
+
+      #matCounterfactualBox div[style*="grid-template-columns"] > div {
+        padding: 6px 8px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 4px !important;
+        background: #ffffff !important;
       }
     }
   </style>
@@ -960,7 +995,60 @@
               <span>Total Fare</span>
               <span>Action</span>
             </div>
-            <div id="quotesTableBody"></div>
+            <div id="quotesTableBody">
+              <div class="quote-row-pro">
+                <div><span class="badge-status badge-carrier-qp" style="border: 1px solid;">Akasa Air</span></div>
+                <div>
+                  <strong style="font-family:'JetBrains Mono',monospace; color:var(--navy-900); font-size:13.5px;">QP 1102</strong>
+                  <div style="font-size:11.5px; color:var(--text-muted);">08:00 → 10:15</div>
+                </div>
+                <div style="font-size:12.5px; color:var(--navy-700);">135 mins (Non-stop)</div>
+                <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹3,850</div>
+                <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹5,200</div>
+                <div style="display: flex; gap: 6px;">
+                  <button onclick="openQuoteModal(0)" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 8px;" title="Decompose Tariff Stack">Decompose ↗</button>
+                </div>
+              </div>
+              <div class="quote-row-pro">
+                <div><span class="badge-status badge-carrier-sg" style="border: 1px solid;">SpiceJet</span></div>
+                <div>
+                  <strong style="font-family:'JetBrains Mono',monospace; color:var(--navy-900); font-size:13.5px;">SG 142</strong>
+                  <div style="font-size:11.5px; color:var(--text-muted);">10:45 → 13:00</div>
+                </div>
+                <div style="font-size:12.5px; color:var(--navy-700);">135 mins (Non-stop)</div>
+                <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹4,120</div>
+                <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹5,580</div>
+                <div style="display: flex; gap: 6px;">
+                  <button onclick="openQuoteModal(1)" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 8px;" title="Decompose Tariff Stack">Decompose ↗</button>
+                </div>
+              </div>
+              <div class="quote-row-pro">
+                <div><span class="badge-status badge-carrier-6e" style="border: 1px solid;">IndiGo</span></div>
+                <div>
+                  <strong style="font-family:'JetBrains Mono',monospace; color:var(--navy-900); font-size:13.5px;">6E 2041</strong>
+                  <div style="font-size:11.5px; color:var(--text-muted);">06:00 → 08:15</div>
+                </div>
+                <div style="font-size:12.5px; color:var(--navy-700);">135 mins (Non-stop)</div>
+                <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹4,850</div>
+                <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹6,840</div>
+                <div style="display: flex; gap: 6px;">
+                  <button onclick="openQuoteModal(2)" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 8px;" title="Decompose Tariff Stack">Decompose ↗</button>
+                </div>
+              </div>
+              <div class="quote-row-pro">
+                <div><span class="badge-status badge-carrier-ai" style="border: 1px solid;">Air India</span></div>
+                <div>
+                  <strong style="font-family:'JetBrains Mono',monospace; color:var(--navy-900); font-size:13.5px;">AI 502</strong>
+                  <div style="font-size:11.5px; color:var(--text-muted);">07:15 → 09:30</div>
+                </div>
+                <div style="font-size:12.5px; color:var(--navy-700);">135 mins (Non-stop)</div>
+                <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹6,150</div>
+                <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹8,450</div>
+                <div style="display: flex; gap: 6px;">
+                  <button onclick="openQuoteModal(3)" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 8px;" title="Decompose Tariff Stack">Decompose ↗</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
