@@ -44,54 +44,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Ambient Floating Mesh */
-    .ambient-mesh {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-    .ambient-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.28;
-      animation: orbFloat 20s ease-in-out infinite alternate;
-    }
-    .orb-1 {
-      width: 480px;
-      height: 480px;
-      background: radial-gradient(circle, #fa5d19 0%, rgba(250, 93, 25, 0) 70%);
-      top: -120px;
-      right: -80px;
-      animation-duration: 22s;
-    }
-    .orb-2 {
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, #4f46e5 0%, rgba(79, 70, 229, 0) 70%);
-      bottom: 10%;
-      left: -100px;
-      animation-duration: 28s;
-      animation-delay: -5s;
-    }
-    .orb-3 {
-      width: 350px;
-      height: 350px;
-      background: radial-gradient(circle, #10b981 0%, rgba(16, 185, 129, 0) 70%);
-      top: 45%;
-      right: 15%;
-      animation-duration: 25s;
-      animation-delay: -10s;
-      opacity: 0.18;
-    }
-    @keyframes orbFloat {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(30px, -40px) scale(1.08); }
-      100% { transform: translate(-20px, 30px) scale(0.95); }
-    }
-
     /* Top Announcement Ribbon */
     .announcement-ribbon {
       background: linear-gradient(90deg, #fa5d19 0%, #ea580c 100%);
@@ -529,13 +481,6 @@
 <body>
 <div class="toast-container" id="toast-container"></div>
 
-  <!-- Ambient Floating Background Mesh -->
-  <div class="ambient-mesh" aria-hidden="true">
-    <div class="ambient-orb orb-1"></div>
-    <div class="ambient-orb orb-2"></div>
-    <div class="ambient-orb orb-3"></div>
-  </div>
-
   <!-- Top Announcement Ribbon -->
   <div class="announcement-ribbon">
     🏛️ Experimental Official Statistics (In Development) · MoSPI / NSO CPI Base Revision (2024=100) Prototype · DGCA-Weighted Multilateral GEKS-Törnqvist Engine
@@ -875,7 +820,7 @@
         </div>
 
         <!-- Econometric Aggregation Pathway to GEKS-Törnqvist -->
-        <div style="margin-top: 24px; background: linear-gradient(135deg, rgba(79, 70, 229, 0.04) 0%, rgba(250, 93, 25, 0.05) 100%); border: 1px solid var(--border-loud); border-radius: 12px; padding: 18px 20px;">
+        <div style="margin-top: 24px; background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 12px; padding: 18px 20px;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
             <div style="display: flex; align-items: center; gap: 8px;">
               <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.3); font-weight: 700; font-size: 11px;">ILO/IMF Standard Pipeline</span>
