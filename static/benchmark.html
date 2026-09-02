@@ -340,6 +340,17 @@
     }
 
     /* Carrier Badge Chips */
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      letter-spacing: 0.02em;
+    }
     .carrier-badge-chip {
       display: inline-flex;
       align-items: center;
@@ -349,13 +360,13 @@
       font-size: 11px;
       padding: 2px 7px;
       border-radius: 4px;
-      color: #fff;
+      color: #fff !important;
     }
-    .badge-carrier-6e { background: #4f46e5; }
-    .badge-carrier-ai { background: #dc2626; }
-    .badge-carrier-qp { background: #f97316; }
-    .badge-carrier-sg { background: #eab308; color: #000; }
-    .badge-carrier-ix { background: #ef4444; }
+    .badge-carrier-6e { background: #4f46e5 !important; color: #ffffff !important; border-color: #4338ca !important; }
+    .badge-carrier-ai { background: #dc2626 !important; color: #ffffff !important; border-color: #b91c1c !important; }
+    .badge-carrier-qp { background: #f97316 !important; color: #ffffff !important; border-color: #ea580c !important; }
+    .badge-carrier-sg { background: #eab308 !important; color: #000000 !important; border-color: #ca8a04 !important; font-weight: 800 !important; }
+    .badge-carrier-ix { background: #ef4444 !important; color: #ffffff !important; border-color: #dc2626 !important; }
 
     /* Quotes Table */
     .quote-row-pro {
@@ -632,6 +643,20 @@
       .quote-row-pro strong {
         font-size: 8pt !important;
       }
+
+      .badge-status {
+        padding: 2px 5px !important;
+        font-size: 7pt !important;
+        font-weight: 700 !important;
+        border-radius: 3px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .badge-carrier-6e { background: #4f46e5 !important; color: #ffffff !important; }
+      .badge-carrier-ai { background: #dc2626 !important; color: #ffffff !important; }
+      .badge-carrier-qp { background: #f97316 !important; color: #ffffff !important; }
+      .badge-carrier-sg { background: #eab308 !important; color: #000000 !important; font-weight: 800 !important; }
+      .badge-carrier-ix { background: #ef4444 !important; color: #ffffff !important; }
 
       .quote-row-pro > div:last-child,
       .quote-row-pro > span:last-child {
