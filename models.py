@@ -402,6 +402,7 @@ class AiDiagnoseRequest(BaseModel):
     days: int | None = None
     current_avg_fare: float | None = None
     benchmark_fare: float | None = None
+    quotes_sample: list[dict[str, Any]] | None = None
 
 
 class FareAnomalyReportCreate(BaseModel):

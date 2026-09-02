@@ -14,10 +14,6 @@ import httpx
 
 logger = logging.getLogger("apix.gemini")
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.7-flash")
-GEMINI_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
-
 
 async def analyze_fare_anomaly(
     route: str,
@@ -28,9 +24,13 @@ async def analyze_fare_anomaly(
     timeout_sec: float = 8.0,
 ) -> dict[str, Any] | None:
     """Diagnose why a route fare has spiked/dropped significantly vs benchmark."""
-    if not GEMINI_API_KEY or GEMINI_API_KEY.startswith("your_"):
-        logger.debug("GEMINI_API_KEY not configured. Skipping AI anomaly analysis.")
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or ""
+    if not api_key or api_key.startswith("your_"):
+        logger.debug("GEMINI_API_KEY not configured. Falling back to offline econometric diagnostics.")
         return None
+
+    model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent"
 
     surge_pct = (
         round(((current_avg_fare - benchmark_fare) / benchmark_fare) * 100, 1)
@@ -45,17 +45,17 @@ Diagnose this airfare pricing movement:
 Route: {route}
 Advance Booking Window: T+{advance_days} days
 Observed Average Fare: ₹{current_avg_fare:,.2f}
-Historical Benchmark Fare: ₹{benchmark_fare:,.2f}
-Variation: {surge_pct:+}%
-Recent Quotes Sample: {json.dumps(quotes_sample[:5], default=str)}
+Historical Baseline Tariff: ₹{benchmark_fare:,.2f}
+Variation vs Benchmark: {surge_pct:+}%
+Recent Multi-Carrier Quotes Sample: {json.dumps(quotes_sample[:6], default=str)}
 
 Provide your output ONLY as a valid JSON object with the following schema:
 {{
   "is_anomaly": true | false,
-  "surge_category": "FESTIVAL_SEASONAL" | "CAPACITY_MONOPOLY" | "LAST_MINUTE_YIELD" | "NORMAL_FLUCTUATION",
-  "root_cause_explanation": "<concise 2-sentence explanation of economic factors>",
+  "surge_category": "FESTIVAL_SEASONAL" | "CAPACITY_MONOPOLY" | "LAST_MINUTE_YIELD" | "NORMAL_FLUCTUATION" | "ATF_PASS_THROUGH",
+  "root_cause_explanation": "<concise 2-3 sentence economic and market explanation>",
   "cpi_materiality_verdict": "HIGH_IMPACT" | "MODERATE" | "NEGLIGIBLE",
-  "statistical_recommendation": "<recommendation for NSO index compiler>"
+  "statistical_recommendation": "<practical recommendation for NSO / MoSPI price index compiler>"
 }}
 """
 
@@ -68,7 +68,7 @@ Provide your output ONLY as a valid JSON object with the following schema:
     }
 
     try:
-        url = f"{GEMINI_ENDPOINT}?key={GEMINI_API_KEY}"
+        url = f"{endpoint}?key={api_key}"
         async with httpx.AsyncClient(timeout=timeout_sec) as client:
             res = await client.post(url, json=payload)
             if res.status_code != 200:
@@ -89,7 +89,10 @@ Provide your output ONLY as a valid JSON object with the following schema:
             text = parts[0].get("text", "").strip()
             json_match = re.search(r"\{.*\}", text, re.DOTALL)
             if json_match:
-                return json.loads(json_match.group(0))
+                parsed = json.loads(json_match.group(0))
+                parsed["ai_source"] = "gemini_api"
+                parsed["ai_model"] = model_name
+                return parsed
 
     except Exception as e:
         logger.warning("Gemini anomaly analysis failed for '%s': %s", route, e)
