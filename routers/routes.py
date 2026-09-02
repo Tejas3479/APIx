@@ -141,6 +141,65 @@ async def update_route(route_id: str, req: RouteBasketUpdate):
         return route
 
 
+@router.post("/rebalance", dependencies=[Depends(verify_api_key)])
+async def rebalance_basket_weights():
+    """Proportionally rebalance all active route weights to sum to exactly 1.000."""
+    async with async_session_maker() as session:
+        stmt = select(RouteConfig).where(RouteConfig.is_active == True)
+        active_routes = (await session.execute(stmt)).scalars().all()
+        if not active_routes:
+            raise HTTPException(status_code=400, detail="No active routes configured in basket.")
+        
+        current_sum = sum(r.dgca_weight for r in active_routes)
+        if current_sum <= 0:
+            raise HTTPException(status_code=400, detail="Current sum of weights is zero.")
+
+        # Normalize proportionally
+        for r in active_routes:
+            r.dgca_weight = round(r.dgca_weight / current_sum, 4)
+
+        # Reconcile any rounding residue (e.g. 0.9999 vs 1.0000) on largest route
+        new_sum = sum(r.dgca_weight for r in active_routes)
+        discrepancy = round(1.0 - new_sum, 4)
+        if discrepancy != 0:
+            largest = max(active_routes, key=lambda x: x.dgca_weight)
+            largest.dgca_weight = round(largest.dgca_weight + discrepancy, 4)
+
+        await session.commit()
+        return {
+            "status": "success",
+            "message": "Active route weights rebalanced to sum to exactly 1.000 (100.0%)",
+            "total_active_weight": 1.000,
+            "routes_rebalanced": len(active_routes),
+        }
+
+
+@router.post(
+    "/{route_id}/toggle",
+    response_model=RouteBasketConfig,
+    dependencies=[Depends(verify_api_key)],
+)
+async def toggle_route_active(route_id: str):
+    """Toggle active/inactive tracking status for a route."""
+    async with async_session_maker() as session:
+        route = (
+            (
+                await session.execute(
+                    select(RouteConfig).where(RouteConfig.id == route_id.upper())
+                )
+            )
+            .scalars()
+            .first()
+        )
+        if not route:
+            raise HTTPException(status_code=404, detail="Route not found.")
+
+        route.is_active = not route.is_active
+        await session.commit()
+        await session.refresh(route)
+        return route
+
+
 @router.delete("/{route_id}", dependencies=[Depends(verify_api_key)])
 async def delete_route(route_id: str):
     """Remove a route from the active basket."""

@@ -286,6 +286,40 @@
       from { opacity: 0; transform: scale(0.96) translateY(8px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
+
+    /* Print Stylesheet for Routes Basket */
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 10mm 12mm;
+      }
+      .announcement-ribbon,
+      .navbar,
+      .toast-container,
+      .btn-dash,
+      .modal-backdrop-pro,
+      #routeSearchInput,
+      #statusFilterSelect {
+        display: none !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      .stat-card-pro,
+      .weight-stack-card,
+      .basket-table-card-pro {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        page-break-inside: avoid;
+      }
+      .basket-row-pro {
+        grid-template-columns: 100px 1.4fr 110px 100px 120px 80px !important;
+      }
+      .basket-row-pro > div:last-child {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -349,11 +383,17 @@
       </div>
 
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn-dash btn-dash-secondary" onclick="rebalanceWeights()" title="Proportionally rebalance active route weights to sum to 1.000">
+          ⚖ Rebalance (1.000)
+        </button>
         <button class="btn-dash btn-dash-secondary" onclick="exportBasketJson()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export JSON
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> JSON
+        </button>
+        <button class="btn-dash btn-dash-secondary" onclick="exportBasketCsv()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> CSV
         </button>
         <button class="btn-dash btn-dash-primary" onclick="openAddModal()">
-          + Add Sector to Basket
+          + Add Sector
         </button>
       </div>
     </div>
@@ -363,7 +403,7 @@
       <div class="stat-card-pro">
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Total Passenger Weight (Σw<sub>r</sub>)</div>
         <div style="font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 800; color: var(--navy-900); margin: 6px 0 2px;" id="totalWeightVal">1.000 (100.0%)</div>
-        <div style="font-size: 11.5px; color: #10b981; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+        <div id="weightUnityStatus" style="font-size: 11.5px; color: #10b981; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mathematically Exact Unity
         </div>
       </div>
@@ -376,38 +416,37 @@
 
       <div class="stat-card-pro">
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Daily Scheduled Flight Volume</div>
-        <div style="font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 800; color: var(--navy-900); margin: 6px 0 2px;">480+ Flights</div>
+        <div style="font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 800; color: var(--navy-900); margin: 6px 0 2px;" id="totalFlightsVal">480+ Flights</div>
         <div style="font-size: 11.5px; color: var(--text-muted);">Surveyed continuously across 5 horizons</div>
       </div>
     </div>
 
     <!-- Weight Distribution Visual Bar -->
     <div class="weight-stack-card">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <span style="font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 800; color: var(--navy-900);">Corridor Passenger Volume Distribution</span>
         <span style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--text-muted);">DGCA Annual Passenger Traffic Share</span>
       </div>
-      <div class="weight-stack-bar" id="weightStackBar">
-        <div class="weight-stack-seg" style="width: 28.5%; background: #fa5d19;" title="DEL-BOM (28.5%)"></div>
-        <div class="weight-stack-seg" style="width: 22.0%; background: #4f46e5;" title="DEL-BLR (22.0%)"></div>
-        <div class="weight-stack-seg" style="width: 16.5%; background: #10b981;" title="BOM-BLR (16.5%)"></div>
-        <div class="weight-stack-seg" style="width: 12.0%; background: #f59e0b;" title="DEL-CCU (12.0%)"></div>
-        <div class="weight-stack-seg" style="width: 8.0%; background: #8b5cf6;" title="BLR-HYD (8.0%)"></div>
-        <div class="weight-stack-seg" style="width: 6.0%; background: #ec4899;" title="DEL-HYD (6.0%)"></div>
-        <div class="weight-stack-seg" style="width: 4.5%; background: #06b6d4;" title="MAA-DEL (4.5%)"></div>
-        <div class="weight-stack-seg" style="width: 2.5%; background: #64748b;" title="BOM-GOI (2.5%)"></div>
-      </div>
-      <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
-        <span>DEL-BOM (28.5%)</span>
-        <span>DEL-BLR (22.0%)</span>
-        <span>BOM-BLR (16.5%)</span>
-        <span>DEL-CCU (12.0%)</span>
-        <span>Other Corridors (21.0%)</span>
-      </div>
+      <div class="weight-stack-bar" id="weightStackBar"></div>
+      <div id="weightLegend" style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 6px;"></div>
     </div>
 
     <!-- Basket Table Card -->
     <div class="basket-table-card-pro">
+      <div style="padding: 16px 20px; border-bottom: 1px solid var(--border-loud); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: var(--surface-raised);">
+        <div style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; color: var(--navy-900);">
+          Registered Route Basket Specifications
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" id="routeSearchInput" oninput="filterRoutes()" placeholder="Search city or IATA (e.g. BOM, Pune)..." style="padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-loud); font-size: 12.5px; width: 240px; background: var(--card-bg); color: var(--navy-900);">
+          <select id="statusFilterSelect" onchange="filterRoutes()" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-loud); font-size: 12.5px; background: var(--card-bg); color: var(--navy-900);">
+            <option value="all">All Sectors</option>
+            <option value="active">Active Only</option>
+            <option value="inactive">Paused Only</option>
+          </select>
+        </div>
+      </div>
+
       <div class="basket-row-pro basket-head-pro">
         <span>Route ID</span>
         <span>City-Pair Sector</span>
@@ -415,7 +454,7 @@
         <span>Daily Flights</span>
         <span>DGCA Weight (w<sub>r</sub>)</span>
         <span>Status</span>
-        <span>Action</span>
+        <span style="text-align: right;">Actions</span>
       </div>
       <div id="basketTableBody">
         <!-- Populated by JS -->
@@ -435,36 +474,78 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
           <div>
             <label for="add-orig-iata" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Origin IATA</label>
-            <input type="text" id="add-orig-iata" required placeholder="e.g. PNQ" maxlength="3" style="width: 100%; padding: 10px 12px; text-transform: uppercase; border-radius: 8px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-weight: 700;">
+            <input type="text" id="add-orig-iata" required placeholder="e.g. PNQ" maxlength="3" style="width: 100%; padding: 10px 12px; text-transform: uppercase; border-radius: 8px; border: 1px solid var(--border-loud); font-family: 'JetBrains Mono', monospace; font-weight: 700; background: var(--card-bg); color: var(--navy-900);">
           </div>
           <div>
             <label for="add-dest-iata" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Destination IATA</label>
-            <input type="text" id="add-dest-iata" required placeholder="e.g. DEL" maxlength="3" style="width: 100%; padding: 10px 12px; text-transform: uppercase; border-radius: 8px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-weight: 700;">
+            <input type="text" id="add-dest-iata" required placeholder="e.g. DEL" maxlength="3" style="width: 100%; padding: 10px 12px; text-transform: uppercase; border-radius: 8px; border: 1px solid var(--border-loud); font-family: 'JetBrains Mono', monospace; font-weight: 700; background: var(--card-bg); color: var(--navy-900);">
           </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
           <div>
             <label for="add-orig-city" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Origin City</label>
-            <input type="text" id="add-orig-city" required placeholder="e.g. Pune" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif;">
+            <input type="text" id="add-orig-city" required placeholder="e.g. Pune" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-loud); font-family: 'Inter', sans-serif; background: var(--card-bg); color: var(--navy-900);">
           </div>
           <div>
             <label for="add-dest-city" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Destination City</label>
-            <input type="text" id="add-dest-city" required placeholder="e.g. Delhi" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Inter', sans-serif;">
+            <input type="text" id="add-dest-city" required placeholder="e.g. Delhi" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-loud); font-family: 'Inter', sans-serif; background: var(--card-bg); color: var(--navy-900);">
           </div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
           <div>
             <label for="add-weight" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">DGCA Passenger Weight (w<sub>r</sub>)</label>
-            <input type="number" id="add-weight" required step="0.001" min="0.001" max="1" placeholder="e.g. 0.050" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace;">
+            <input type="number" id="add-weight" required step="0.001" min="0.001" max="1" placeholder="e.g. 0.050" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-loud); font-family: 'JetBrains Mono', monospace; background: var(--card-bg); color: var(--navy-900);">
           </div>
           <div>
             <label for="add-flights" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Daily Flight Count</label>
-            <input type="number" id="add-flights" required min="1" max="200" placeholder="e.g. 24" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace;">
+            <input type="number" id="add-flights" required min="1" max="200" placeholder="e.g. 24" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-loud); font-family: 'JetBrains Mono', monospace; background: var(--card-bg); color: var(--navy-900);">
           </div>
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-loud); padding-top: 16px;">
-          <button type="button" onclick="closeAddModal()" class="btn btn-secondary">Cancel</button>
-          <button type="submit" class="btn btn-primary" style="background: var(--heat-100); border-color: var(--heat-100);">Add Sector</button>
+          <button type="button" onclick="closeAddModal()" class="btn-dash btn-dash-secondary">Cancel</button>
+          <button type="submit" class="btn-dash btn-dash-primary">Add Sector</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Route Modal -->
+  <div id="edit-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+    <div class="modal-content-pro">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-loud); padding-bottom: 14px;">
+        <h3 id="edit-modal-title" style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin: 0; color: var(--navy-900);">Edit Sector Parameters</h3>
+        <button onclick="closeEditModal()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      <form id="edit-route-form" onsubmit="handleEditRoute(event)">
+        <input type="hidden" id="edit-route-id">
+        <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px;">
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Sector ID &amp; City-Pair</div>
+          <div id="edit-route-display" style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; color: var(--navy-900);">DEL-BOM</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+          <div>
+            <label for="edit-weight" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">DGCA Passenger Weight (w<sub>r</sub>)</label>
+            <input type="number" id="edit-weight" required step="0.0001" min="0.0001" max="1" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-loud); font-family: 'JetBrains Mono', monospace; background: var(--card-bg); color: var(--navy-900);">
+          </div>
+          <div>
+            <label for="edit-flights" style="font-size: 12.5px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px;">Daily Flight Volume</label>
+            <input type="number" id="edit-flights" required min="1" max="300" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-loud); font-family: 'JetBrains Mono', monospace; background: var(--card-bg); color: var(--navy-900);">
+          </div>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--navy-900);">
+            <input type="checkbox" id="edit-is-active" style="width: 16px; height: 16px; accent-color: var(--heat-100);">
+            Active in National GEKS-Törnqvist Index Compilation
+          </label>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-loud); padding-top: 16px;">
+          <button type="button" onclick="handleDeleteRouteDirect()" class="btn-dash" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3);">
+            Delete Sector
+          </button>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" onclick="closeEditModal()" class="btn-dash btn-dash-secondary">Cancel</button>
+            <button type="submit" class="btn-dash btn-dash-primary">Save Changes</button>
+          </div>
         </div>
       </form>
     </div>
@@ -476,13 +557,17 @@
 
     const DGCA_PAX_VOLUME = {
       'DEL-BOM': '4.85M pax',
-      'DEL-BLR': '3.75M pax',
-      'BOM-BLR': '2.90M pax',
-      'DEL-CCU': '2.15M pax',
-      'BLR-HYD': '1.40M pax',
-      'DEL-HYD': '1.15M pax',
-      'MAA-DEL': '0.90M pax',
-      'BOM-GOI': '0.65M pax'
+      'DEL-BLR': '3.98M pax',
+      'BOM-BLR': '3.12M pax',
+      'DEL-CCU': '2.65M pax',
+      'BLR-HYD': '2.21M pax',
+      'DEL-HYD': '1.99M pax',
+      'MAA-DEL': '1.76M pax',
+      'BOM-GOI': '1.54M pax',
+      'DEL-MAA': '1.70M pax',
+      'DEL-PNQ': '1.45M pax',
+      'BOM-DEL': '4.85M pax',
+      'BLR-DEL': '3.98M pax'
     };
 
     function showToast(msg, type = 'error') {
@@ -516,6 +601,7 @@
         }
         currentRoutes = await res.json();
         renderBasketTable(currentRoutes);
+        await loadWeightValidation();
       } catch (e) {
         console.error('Error loading routes:', e);
         showToast('Error loading routes: ' + e.message, 'error');
@@ -528,27 +614,68 @@
         if (!res.ok) return;
         const data = await res.json();
         const weightEl = document.getElementById('totalWeightVal');
+        const unityEl = document.getElementById('weightUnityStatus');
         if (weightEl) {
           weightEl.textContent = data.total_active_weight.toFixed(3) + ' (' + (data.total_active_weight * 100).toFixed(1) + '%)';
+        }
+        if (unityEl) {
+          if (data.is_balanced) {
+            unityEl.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Mathematically Exact Unity';
+            unityEl.style.color = '#10b981';
+          } else {
+            unityEl.innerHTML = `⚠️ Discrepancy: ${data.discrepancy > 0 ? '+' : ''}${data.discrepancy.toFixed(3)} (Rebalance recommended)`;
+            unityEl.style.color = '#f59e0b';
+          }
         }
       } catch (e) {
         console.error('Weight validation error:', e);
       }
     }
 
-    function renderBasketTable(routes) {
-      document.getElementById('totalRoutesVal').textContent = routes.length + ' City-Pairs';
-      const sumWeight = routes.reduce((acc, r) => acc + (r.dgca_weight || 0), 0);
-      document.getElementById('totalWeightVal').textContent = sumWeight.toFixed(3) + ' (' + (sumWeight * 100).toFixed(1) + '%)';
+    function filterRoutes() {
+      const q = (document.getElementById('routeSearchInput').value || '').toLowerCase().trim();
+      const status = document.getElementById('statusFilterSelect').value;
+
+      const filtered = currentRoutes.filter(r => {
+        const matchesQuery = !q || 
+          r.id.toLowerCase().includes(q) || 
+          r.origin_city.toLowerCase().includes(q) || 
+          r.destination_city.toLowerCase().includes(q) ||
+          r.origin_iata.toLowerCase().includes(q) ||
+          r.destination_iata.toLowerCase().includes(q);
+
+        const matchesStatus = status === 'all' || 
+          (status === 'active' && r.is_active) || 
+          (status === 'inactive' && !r.is_active);
+
+        return matchesQuery && matchesStatus;
+      });
+
+      renderBasketTable(filtered, true);
+    }
+
+    function renderBasketTable(routes, isFiltered = false) {
+      if (!isFiltered) {
+        document.getElementById('totalRoutesVal').textContent = routes.filter(r => r.is_active).length + ' Active / ' + routes.length + ' Total';
+        const sumWeight = routes.filter(r => r.is_active).reduce((acc, r) => acc + (r.dgca_weight || 0), 0);
+        document.getElementById('totalWeightVal').textContent = sumWeight.toFixed(3) + ' (' + (sumWeight * 100).toFixed(1) + '%)';
+        const totalFlights = routes.filter(r => r.is_active).reduce((acc, r) => acc + (r.daily_flights || 0), 0);
+        document.getElementById('totalFlightsVal').textContent = totalFlights + '+ Flights';
+      }
 
       const container = document.getElementById('basketTableBody');
       if (!routes || !routes.length) {
-        container.innerHTML = '<div style="padding: 28px; text-align: center; color: var(--text-muted); font-family: \'Inter\', sans-serif;">No routes configured in basket.</div>';
+        container.innerHTML = '<div style="padding: 28px; text-align: center; color: var(--text-muted); font-family: \'Inter\', sans-serif;">No matching routes found.</div>';
       } else {
         container.innerHTML = routes.map(r => {
-          const pax = DGCA_PAX_VOLUME[r.id] || '0.50M pax';
+          const pax = DGCA_PAX_VOLUME[r.id] || '0.85M pax';
+          const isActive = r.is_active !== false;
+          const statusBadge = isActive
+            ? `<button onclick="toggleRouteStatus('${escapeHtml(r.id)}')" class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px; cursor: pointer;" title="Click to Pause Tracking">ACTIVE</button>`
+            : `<button onclick="toggleRouteStatus('${escapeHtml(r.id)}')" class="badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.25); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px; cursor: pointer;" title="Click to Activate Tracking">PAUSED</button>`;
+
           return `
-          <div class="basket-row-pro">
+          <div class="basket-row-pro" style="${isActive ? '' : 'opacity: 0.6;'}">
             <div>
               <strong style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--navy-900);">${escapeHtml(r.id)}</strong>
             </div>
@@ -565,10 +692,11 @@
               <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--heat-100); width: 45px; text-align: right;">${((r.dgca_weight || 0) * 100).toFixed(1)}%</span>
             </div>
             <div>
-              <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px;">ACTIVE</span>
+              ${statusBadge}
             </div>
-            <div>
-              <button onclick="surveyRouteDirect('${escapeHtml(r.id)}')" class="btn-dash btn-dash-secondary" style="font-size: 11px; padding: 4px 10px;">Survey ↗</button>
+            <div style="display: flex; gap: 6px; justify-content: flex-end;">
+              <button onclick="surveyRouteDirect('${escapeHtml(r.id)}')" class="btn-dash btn-dash-secondary" style="font-size: 11px; padding: 4px 8px;" title="Survey corridor">Survey ↗</button>
+              <button onclick="openEditModal('${escapeHtml(r.id)}')" class="btn-dash btn-dash-secondary" style="font-size: 11px; padding: 4px 8px;" title="Edit route">Edit ✎</button>
             </div>
           </div>
         `;
@@ -577,23 +705,23 @@
 
       // Update dynamic weight stack bar
       const barContainer = document.getElementById('weightStackBar');
+      const legendContainer = document.getElementById('weightLegend');
       const colors = ['#fa5d19', '#4f46e5', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b', '#94a3b8'];
+      
+      const activeList = currentRoutes.filter(r => r.is_active);
       if (barContainer) {
-        barContainer.innerHTML = routes.map((r, i) => {
+        barContainer.innerHTML = activeList.map((r, i) => {
           const color = colors[i % colors.length];
           const pct = ((r.dgca_weight || 0) * 100).toFixed(1);
           return `<div class="weight-stack-seg" style="width: ${pct}%; background: ${color};" title="${escapeHtml(r.id)} (${pct}%)"></div>`;
         }).join('');
       }
 
-      // Update daily flights stat card
-      const totalFlights = routes.reduce((acc, r) => acc + (r.daily_flights || 0), 0);
-      const statCards = document.querySelectorAll('.stat-grid-pro .stat-card-pro');
-      if (statCards && statCards.length >= 3) {
-        const flightsEl = statCards[2].querySelector('div:nth-child(2)');
-        if (flightsEl) {
-          flightsEl.textContent = totalFlights + '+ Flights';
-        }
+      if (legendContainer) {
+        legendContainer.innerHTML = activeList.slice(0, 5).map((r, i) => {
+          const pct = ((r.dgca_weight || 0) * 100).toFixed(1);
+          return `<span>${escapeHtml(r.id)} (${pct}%)</span>`;
+        }).join('') + (activeList.length > 5 ? `<span>+${activeList.length - 5} other corridors</span>` : '');
       }
     }
 
@@ -603,6 +731,19 @@
 
     function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
     function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; }
+
+    function openEditModal(routeId) {
+      const r = currentRoutes.find(x => x.id === routeId);
+      if (!r) return;
+      document.getElementById('edit-route-id').value = r.id;
+      document.getElementById('edit-route-display').textContent = `${r.id} · ${r.origin_city} (${r.origin_iata}) ⇄ ${r.destination_city} (${r.destination_iata})`;
+      document.getElementById('edit-weight').value = r.dgca_weight;
+      document.getElementById('edit-flights').value = r.daily_flights;
+      document.getElementById('edit-is-active').checked = r.is_active !== false;
+      document.getElementById('edit-modal').style.display = 'flex';
+    }
+
+    function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
 
     async function handleAddRoute(e) {
       e.preventDefault();
@@ -627,12 +768,87 @@
           headers: typeof authHeaders === 'function' ? authHeaders({ 'Content-Type': 'application/json' }) : { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        if (!res.ok) throw new Error('Failed to create route');
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.detail || 'Failed to create route');
+        }
         showToast(`Route ${routeId} added to national basket!`, 'success');
         closeAddModal();
-        await loadRouteBasket();
+        await loadRoutes();
       } catch (err) {
         showToast('Error adding route: ' + err.message, 'error');
+      }
+    }
+
+    async function handleEditRoute(e) {
+      e.preventDefault();
+      const routeId = document.getElementById('edit-route-id').value;
+      const payload = {
+        dgca_weight: parseFloat(document.getElementById('edit-weight').value),
+        daily_flights: parseInt(document.getElementById('edit-flights').value),
+        is_active: document.getElementById('edit-is-active').checked
+      };
+
+      try {
+        const res = await fetch('/api/v1/routes/' + encodeURIComponent(routeId), {
+          method: 'PUT',
+          headers: typeof authHeaders === 'function' ? authHeaders({ 'Content-Type': 'application/json' }) : { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Failed to update route');
+        showToast(`Route ${routeId} parameters updated!`, 'success');
+        closeEditModal();
+        await loadRoutes();
+      } catch (err) {
+        showToast('Error updating route: ' + err.message, 'error');
+      }
+    }
+
+    async function toggleRouteStatus(routeId) {
+      try {
+        const res = await fetch('/api/v1/routes/' + encodeURIComponent(routeId) + '/toggle', {
+          method: 'POST',
+          headers: typeof authHeaders === 'function' ? authHeaders() : {}
+        });
+        if (!res.ok) throw new Error('Failed to toggle route');
+        const data = await res.json();
+        showToast(`Route ${routeId} status set to ${data.is_active ? 'ACTIVE' : 'PAUSED'}`, 'success');
+        await loadRoutes();
+      } catch (err) {
+        showToast('Error toggling route status: ' + err.message, 'error');
+      }
+    }
+
+    async function handleDeleteRouteDirect() {
+      const routeId = document.getElementById('edit-route-id').value;
+      if (!confirm(`Are you sure you want to permanently remove sector ${routeId} from the national index basket?`)) return;
+
+      try {
+        const res = await fetch('/api/v1/routes/' + encodeURIComponent(routeId), {
+          method: 'DELETE',
+          headers: typeof authHeaders === 'function' ? authHeaders() : {}
+        });
+        if (!res.ok) throw new Error('Failed to delete route');
+        showToast(`Route ${routeId} removed from national basket`, 'success');
+        closeEditModal();
+        await loadRoutes();
+      } catch (err) {
+        showToast('Error deleting route: ' + err.message, 'error');
+      }
+    }
+
+    async function rebalanceWeights() {
+      try {
+        const res = await fetch('/api/v1/routes/rebalance', {
+          method: 'POST',
+          headers: typeof authHeaders === 'function' ? authHeaders() : {}
+        });
+        if (!res.ok) throw new Error('Rebalance request failed');
+        const data = await res.json();
+        showToast(data.message || 'Route weights rebalanced to sum to 1.000', 'success');
+        await loadRoutes();
+      } catch (err) {
+        showToast('Error rebalancing weights: ' + err.message, 'error');
       }
     }
 
@@ -643,6 +859,30 @@
       a.download = 'nso_airfare_route_basket.json';
       a.click();
       showToast('Route basket JSON exported successfully', 'success');
+    }
+
+    function exportBasketCsv() {
+      if (!currentRoutes || !currentRoutes.length) {
+        showToast('No routes to export', 'warn');
+        return;
+      }
+      const headers = ['Route_ID', 'Origin_City', 'Origin_IATA', 'Destination_City', 'Destination_IATA', 'DGCA_Weight', 'Daily_Flights', 'Is_Active'];
+      const rows = currentRoutes.map(r => [
+        r.id,
+        `"${r.origin_city}"`,
+        r.origin_iata,
+        `"${r.destination_city}"`,
+        r.destination_iata,
+        r.dgca_weight,
+        r.daily_flights,
+        r.is_active
+      ]);
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const a = document.createElement('a');
+      a.href = encodeURI(csvContent);
+      a.download = 'nso_airfare_route_basket.csv';
+      a.click();
+      showToast('Route basket CSV exported successfully', 'success');
     }
   </script>
 </body>
