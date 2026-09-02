@@ -1388,8 +1388,8 @@
         <!-- Corridor Category Filter Tabs -->
         <div class="heatmap-filter-group" role="tablist" aria-label="Corridor category filters">
           <button class="heatmap-tab active" id="tab-all" role="tab" aria-selected="true" onclick="setHeatmapFilter('ALL', this)">All Corridors (8)</button>
-          <button class="heatmap-tab" id="tab-metro" role="tab" aria-selected="false" onclick="setHeatmapFilter('METRO', this)">Metro Trunks (4)</button>
-          <button class="heatmap-tab" id="tab-surge" role="tab" aria-selected="false" onclick="setHeatmapFilter('SURGE', this)">High Volatility (3)</button>
+          <button class="heatmap-tab" id="tab-metro" role="tab" aria-selected="false" onclick="setHeatmapFilter('METRO', this)">Metro Trunks (5)</button>
+          <button class="heatmap-tab" id="tab-surge" role="tab" aria-selected="false" onclick="setHeatmapFilter('SURGE', this)">Regional &amp; Surge (3)</button>
         </div>
       </div>
 
@@ -1424,7 +1424,7 @@
         </div>
         <div class="heatmap-kpi-item">
           <span class="kpi-label">📈 Weekend Surcharge Premium</span>
-          <span class="kpi-value" style="color: var(--heat-100);">+28.4% Avg Peak</span>
+          <span class="kpi-value" style="color: var(--heat-100);" id="kpi-weekend-surcharge">+18.5% Weekend Peak</span>
         </div>
       </div>
 
@@ -1435,10 +1435,10 @@
           <span style="font-weight: 500; text-transform: none; color: var(--text-muted);">(Click any cell for sector quote breakdown)</span>
         </div>
         <div style="display: flex; gap: 8px; font-size: 11px; align-items: center; flex-wrap: wrap;">
-          <span class="badge heatmap-low" style="padding: 3px 8px;" title="Fares below ₹5,000">🟢 Low (&lt;₹5k)</span>
-          <span class="badge heatmap-mid" style="padding: 3px 8px;" title="Fares between ₹5,000 and ₹8,000">🟡 Mid (₹5-8k)</span>
-          <span class="badge heatmap-high" style="padding: 3px 8px;" title="Fares between ₹8,000 and ₹14,000">🟠 High (₹8-14k)</span>
-          <span class="badge heatmap-surge" style="padding: 3px 8px;" title="Surge fares exceeding ₹14,000">🔴 Surge (&gt;₹14k)</span>
+          <span class="badge heatmap-low" style="padding: 3px 8px;" title="Tariff &lt; 4% below corridor baseline">🟢 Off-Peak Trough</span>
+          <span class="badge heatmap-mid" style="padding: 3px 8px;" title="Tariff within baseline range (-4% to +8%)">🟡 Baseline Rate</span>
+          <span class="badge heatmap-high" style="padding: 3px 8px;" title="Tariff +8% to +20% above baseline">🟠 Weekend Surge</span>
+          <span class="badge heatmap-surge" style="padding: 3px 8px;" title="Tariff &gt; +20% above baseline">🔴 Peak Surge</span>
         </div>
       </div>
 
@@ -2294,14 +2294,14 @@
     let currentHeatmapMetric = 'fare';
 
     const CORRIDOR_METADATA = {
-      'DEL-BOM': { name: 'Delhi ⇄ Mumbai', base: 6200, tier: 'METRO', weight: '28.5%' },
-      'DEL-BLR': { name: 'Delhi ⇄ Bengaluru', base: 6800, tier: 'METRO', weight: '22.0%' },
-      'BOM-BLR': { name: 'Mumbai ⇄ Bengaluru', base: 5400, tier: 'METRO', weight: '14.0%' },
-      'DEL-CCU': { name: 'Delhi ⇄ Kolkata', base: 6100, tier: 'METRO', weight: '12.5%' },
-      'BLR-HYD': { name: 'Bengaluru ⇄ Hyderabad', base: 4500, tier: 'SOUTH', weight: '8.0%' },
-      'DEL-HYD': { name: 'Delhi ⇄ Hyderabad', base: 5800, tier: 'METRO', weight: '6.5%' },
-      'MAA-DEL': { name: 'Chennai ⇄ Delhi', base: 7200, tier: 'SURGE', weight: '5.0%' },
-      'BOM-GOI': { name: 'Mumbai ⇄ Goa', base: 4800, tier: 'SURGE', weight: '3.5%' }
+      'DEL-BOM': { name: 'Delhi ⇄ Mumbai', base: 6500, tier: 'METRO', weight: '28.5%' },
+      'DEL-BLR': { name: 'Delhi ⇄ Bengaluru', base: 7400, tier: 'METRO', weight: '22.0%' },
+      'BOM-BLR': { name: 'Mumbai ⇄ Bengaluru', base: 4900, tier: 'METRO', weight: '14.0%' },
+      'DEL-CCU': { name: 'Delhi ⇄ Kolkata', base: 6200, tier: 'METRO', weight: '12.5%' },
+      'DEL-HYD': { name: 'Delhi ⇄ Hyderabad', base: 5700, tier: 'METRO', weight: '6.5%' },
+      'MAA-DEL': { name: 'Chennai ⇄ Delhi', base: 7100, tier: 'SURGE', weight: '5.0%' },
+      'BOM-GOI': { name: 'Mumbai ⇄ Goa', base: 4300, tier: 'SURGE', weight: '3.5%' },
+      'BLR-HYD': { name: 'Bengaluru ⇄ Hyderabad', base: 3600, tier: 'SURGE', weight: '8.0%' }
     };
 
     function generateSparklineSvg(fares) {
@@ -2319,21 +2319,27 @@
         return `${x},${y}`;
       }).join(' ');
 
-      const isTrendingUp = fares[fares.length - 1] > fares[0];
+      const isTrendingUp = fares[fares.length - 1] >= fares[0];
       const strokeColor = isTrendingUp ? '#ea580c' : '#10b981';
 
       return `
         <svg class="sparkline-svg" viewBox="0 0 ${w} ${h}">
           <polyline fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${points}" />
-          <circle cx="${(fares.length - 1) * step}" cy="${(h - ((fares[fares.length - 1] - min) / range) * (h - 4) - 2).toFixed(1)}" r="2.5" fill="${strokeColor}" />
+          <circle cx="${((fares.length - 1) * step).toFixed(1)}" cy="${(h - ((fares[fares.length - 1] - min) / range) * (h - 4) - 2).toFixed(1)}" r="2.5" fill="${strokeColor}" />
         </svg>
       `;
     }
 
     function setHeatmapFilter(filter, el) {
       currentHeatmapFilter = filter;
-      document.querySelectorAll('.heatmap-tab').forEach(t => t.classList.remove('active'));
-      if (el) el.classList.add('active');
+      document.querySelectorAll('.heatmap-tab').forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      if (el) {
+        el.classList.add('active');
+        el.setAttribute('aria-selected', 'true');
+      }
       renderHeatmapMatrix();
     }
 
@@ -2373,16 +2379,18 @@
               const p = pointMap[`${r}_${d}`];
               const meta = CORRIDOR_METADATA[r] || { name: r, base: 5500 };
               const avg = p ? p.avg_fare : meta.base;
-              const minF = p ? p.min_fare : avg * 0.6;
-              const maxF = p ? p.max_fare : avg * 1.8;
-              const lvl = p ? (p.intensity_level || (avg > 14000 ? 'surge' : (avg > 8000 ? 'high' : (avg > 5000 ? 'mid' : 'low')))) : 'mid';
+              const minF = p ? p.min_fare : avg * 0.78;
+              const maxF = p ? p.max_fare : avg * 1.42;
+              const ratio = meta.base ? (avg / meta.base) : 1.0;
+              const defaultLvl = ratio < 0.96 ? 'low' : (ratio < 1.08 ? 'mid' : (ratio < 1.20 ? 'high' : 'surge'));
+              const lvl = p && p.intensity_level ? p.intensity_level : defaultLvl;
               
               return {
                 date: d,
                 avg_fare: avg,
                 min_fare: minF,
                 max_fare: maxF,
-                quote_count: p ? (p.quote_count || 12) : 12,
+                quote_count: p ? (p.quote_count || 16) : 16,
                 category: lvl
               };
             });
@@ -2394,17 +2402,82 @@
 
         heatmapGlobalData = { dates, matrix };
 
-        // Update Quick KPIs
-        if (allFares.length > 0) {
-          const sorted = [...allFares].sort((a, b) => a - b);
-          const median = sorted[Math.floor(sorted.length / 2)];
-          const medianEl = document.getElementById('kpi-median-fare');
-          if (medianEl) medianEl.textContent = `₹${Math.round(median).toLocaleString('en-IN')}`;
-        }
-
         renderHeatmapMatrix();
       } catch (e) {
         console.error('Heatmap error:', e);
+      }
+    }
+
+    function updateHeatmapKpiStrip(activeRoutes, matrix) {
+      let peakFare = 0;
+      let peakRoute = '';
+      let lowestRoute = '';
+      let lowestAvgFare = Infinity;
+      let lowestMinFare = Infinity;
+      let weekendFares = [];
+      let weekdayFares = [];
+      let allFares = [];
+
+      activeRoutes.forEach(r => {
+        const cells = matrix[r] || [];
+        if (!cells.length) return;
+        const rAvg = cells.reduce((sum, c) => sum + c.avg_fare, 0) / cells.length;
+        const rMin = Math.min(...cells.map(c => c.min_fare || c.avg_fare));
+
+        if (rAvg < lowestAvgFare) {
+          lowestAvgFare = rAvg;
+          lowestMinFare = rMin;
+          lowestRoute = r;
+        }
+
+        cells.forEach(c => {
+          allFares.push(c.avg_fare);
+          const cellPeak = Math.max(c.max_fare || 0, c.avg_fare || 0);
+          if (cellPeak > peakFare) {
+            peakFare = cellPeak;
+            peakRoute = r;
+          }
+          const dateObj = new Date(c.date + 'T00:00:00');
+          const dow = dateObj.getDay(); // 0 = Sun, 6 = Sat
+          if (dow === 0 || dow === 6) {
+            weekendFares.push(c.avg_fare);
+          } else {
+            weekdayFares.push(c.avg_fare);
+          }
+        });
+      });
+
+      const topSurgeEl = document.getElementById('kpi-top-surge');
+      if (topSurgeEl) {
+        topSurgeEl.textContent = peakRoute ? `${peakRoute} (₹${(peakFare / 1000).toFixed(1)}k Peak)` : '--';
+      }
+
+      const medianEl = document.getElementById('kpi-median-fare');
+      if (medianEl) {
+        if (allFares.length > 0) {
+          const sorted = [...allFares].sort((a, b) => a - b);
+          const median = sorted[Math.floor(sorted.length / 2)];
+          medianEl.textContent = `₹${Math.round(median).toLocaleString('en-IN')}`;
+        } else {
+          medianEl.textContent = '--';
+        }
+      }
+
+      const lowestEl = document.getElementById('kpi-lowest-corridor');
+      if (lowestEl) {
+        lowestEl.textContent = lowestRoute ? `${lowestRoute} (₹${(lowestMinFare / 1000).toFixed(1)}k Min / ₹${(lowestAvgFare / 1000).toFixed(1)}k Avg)` : '--';
+      }
+
+      const weekendEl = document.getElementById('kpi-weekend-surcharge');
+      if (weekendEl) {
+        if (weekendFares.length > 0 && weekdayFares.length > 0) {
+          const avgWeekend = weekendFares.reduce((a, b) => a + b, 0) / weekendFares.length;
+          const avgWeekday = weekdayFares.reduce((a, b) => a + b, 0) / weekdayFares.length;
+          const weekendPrem = Math.max(0, Math.round(((avgWeekend - avgWeekday) / avgWeekday) * 100));
+          weekendEl.textContent = `+${weekendPrem}% Weekend Surge`;
+        } else {
+          weekendEl.textContent = '--';
+        }
       }
     }
 
@@ -2420,11 +2493,11 @@
       if (currentHeatmapFilter === 'METRO') {
         routes = routes.filter(r => (CORRIDOR_METADATA[r] && CORRIDOR_METADATA[r].tier === 'METRO'));
       } else if (currentHeatmapFilter === 'SURGE') {
-        routes = routes.filter(r => {
-          const cells = matrix[r] || [];
-          return cells.some(c => c.category === 'high' || c.category === 'surge') || (CORRIDOR_METADATA[r] && CORRIDOR_METADATA[r].tier === 'SURGE');
-        });
+        routes = routes.filter(r => (CORRIDOR_METADATA[r] && CORRIDOR_METADATA[r].tier === 'SURGE'));
       }
+
+      // Recompute and synchronize Quick KPIs dynamically for the active filtered corridors
+      updateHeatmapKpiStrip(routes, matrix);
 
       if (!routes.length || !dates.length) {
         container.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-muted);">No corridors matched the active filter.</div>';
@@ -2440,9 +2513,10 @@
             const dayName = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dateObj.getDay()] || '';
             const isWeekend = (dateObj.getDay() === 0 || dateObj.getDay() === 6);
             const headerColor = isWeekend ? 'var(--heat-100)' : 'var(--text-muted)';
+            const weekendColStyle = isWeekend ? 'background: rgba(234, 88, 12, 0.05); border-radius: 6px 6px 0 0;' : '';
             return `
-              <div style="text-align: center; font-size: 10px; color: ${headerColor};">
-                <div style="font-weight: 800;">${dayName}</div>
+              <div style="text-align: center; font-size: 10px; color: ${headerColor}; ${weekendColStyle} padding: 4px 1px;">
+                <div style="font-weight: 800; ${isWeekend ? 'color: var(--heat-100);' : ''}">${dayName}</div>
                 <div>${d.slice(5)}</div>
               </div>
             `;
@@ -2454,8 +2528,12 @@
         const cells = matrix[r] || [];
         const meta = CORRIDOR_METADATA[r] || { name: r, base: 5500, weight: '10%' };
         const fares = cells.map(c => c.avg_fare);
-        const avg14 = fares.length ? Math.round(fares.reduce((a,b)=>a+b,0)/fares.length) : meta.base;
-        const delta14 = Math.round(((avg14 - meta.base) / meta.base) * 100);
+        const startFare = fares[0] || meta.base;
+        const endFare = fares[fares.length - 1] || startFare;
+        const delta14 = Math.round(((endFare - startFare) / startFare) * 100);
+        const isUp = delta14 >= 0;
+        const trendColor = isUp ? '#ea580c' : '#10b981';
+        const trendSymbol = isUp ? '▲ +' : '▼ ';
         const sparklineSvg = generateSparklineSvg(fares);
 
         html += `
@@ -2463,8 +2541,8 @@
             <div class="heatmap-corridor-cell">
               <div style="display: flex; align-items: center; gap: 6px;">
                 <span class="heatmap-corridor-code">${r}</span>
-                <span style="font-size: 10px; font-weight: 700; color: ${delta14 >= 0 ? '#ea580c' : '#10b981'}; font-family: 'JetBrains Mono', monospace;">
-                  ${delta14 >= 0 ? '▲ +' : '▼ '}${delta14}%
+                <span style="font-size: 10px; font-weight: 700; color: ${trendColor}; font-family: 'JetBrains Mono', monospace;">
+                  ${trendSymbol}${Math.abs(delta14)}%
                 </span>
               </div>
               <div class="heatmap-corridor-name">${meta.name}</div>
@@ -2475,11 +2553,12 @@
             </div>
 
             ${cells.map(c => {
+              const dateObj = new Date(c.date + 'T00:00:00');
+              const isWeekend = (dateObj.getDay() === 0 || dateObj.getDay() === 6);
               const lvl = c.category || 'mid';
               const cls = 'heatmap-' + lvl;
-              const dateObj = new Date(c.date + 'T00:00:00');
               const dayStr = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dateObj.getDay()] || '';
-              const tip = `${r} (${dayStr}, ${c.date}): ₹${Math.round(c.avg_fare).toLocaleString('en-IN')} [${lvl.toUpperCase()}] · Click for deep-dive`;
+              const tip = `${r} (${dayStr}, ${c.date}): ₹${Math.round(c.avg_fare).toLocaleString('en-IN')} [${lvl.toUpperCase()} TIER · Click for deep-dive]`;
 
               let displayVal = `₹${(c.avg_fare / 1000).toFixed(1)}k`;
               if (currentHeatmapMetric === 'delta') {
@@ -2490,8 +2569,11 @@
                 displayVal = `±₹${spread}k`;
               }
 
+              const weekendPillar = isWeekend ? 'box-shadow: inset 0 0 0 1.5px rgba(234, 88, 12, 0.22);' : '';
+
               return `
                 <div class="heatmap-cell heatmap-cell-pro ${cls}" 
+                     style="${weekendPillar}"
                      title="${tip}" 
                      tabindex="0"
                      role="button"
