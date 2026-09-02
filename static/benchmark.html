@@ -428,7 +428,7 @@
         </button>
         <a href="/profile" id="officerBadge" class="officer-pill" style="text-decoration: none;" title="View Analyst Profile & Settings">
           <span class="pulse-live"></span>
-          <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">Dr. S. K. Mukherjee (NSO)</span>
+          <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">MoSPI Price Division (Analyst)</span>
         </a>
       </div>
     </div>
@@ -697,6 +697,31 @@
               <span>Action</span>
             </div>
             <div id="quotesTableBody"></div>
+          </div>
+        </div>
+
+        <!-- Econometric Aggregation Pathway to GEKS-Törnqvist -->
+        <div style="margin-top: 24px; background: linear-gradient(135deg, rgba(79, 70, 229, 0.04) 0%, rgba(250, 93, 25, 0.05) 100%); border: 1px solid var(--border-loud); border-radius: 12px; padding: 18px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.3); font-weight: 700; font-size: 11px;">ILO/IMF Standard Pipeline</span>
+              <h4 style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; margin: 0; color: var(--navy-900);">Macroeconomic Aggregation Pathway: Corridor Microdata → GEKS-Törnqvist National Index</h4>
+            </div>
+            <a href="/dashboard" style="font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 700; color: var(--heat-100); text-decoration: none;">View National APIx Dashboard →</a>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; font-size: 12px;">
+            <div style="background: var(--card-bg); border: 1px solid var(--border-loud); border-radius: 8px; padding: 12px;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; color: #4f46e5; margin-bottom: 4px;">1. MICRODATA SCRAPE</div>
+              <div style="color: var(--navy-800); line-height: 1.45;">Decomposes multi-carrier raw fares into statutory fees (₹200 ASF, UDF, GST) vs dynamic airline base tariffs.</div>
+            </div>
+            <div style="background: var(--card-bg); border: 1px solid var(--border-loud); border-radius: 8px; padding: 12px;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; color: var(--heat-100); margin-bottom: 4px;">2. ELEMENTARY JEVONS</div>
+              <div style="color: var(--navy-800); line-height: 1.45;">Computes geometric mean price relatives (\(I_J = \prod (p_t/p_0)^{1/n}\)) across all 5 advance booking windows.</div>
+            </div>
+            <div style="background: var(--card-bg); border: 1px solid var(--border-loud); border-radius: 8px; padding: 12px;">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; color: #10b981; margin-bottom: 4px;">3. MULTILATERAL GEKS</div>
+              <div style="color: var(--navy-800); line-height: 1.45;">Synthesizes 8 DGCA passenger-weighted corridors (\(\sum w_r=1.0\)) using GEKS movement splicing to eliminate chain drift.</div>
+            </div>
           </div>
         </div>
       </div>
