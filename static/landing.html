@@ -302,11 +302,20 @@
       line-height: 1.55;
     }
 
-    .playground {
+    .playground-stage {
+      perspective: 1200px;
       max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .playground {
+      max-width: 100%;
       margin: 0 auto;
       text-align: left;
       position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
     }
     .playground .corner {
       position: absolute;
@@ -319,6 +328,16 @@
     .playground .corner-tr { top: -1px; right: -1px; transform: scaleX(-1); }
     .playground .corner-bl { bottom: -1px; left: -1px; transform: scaleY(-1); }
     .playground .corner-br { bottom: -1px; right: -1px; transform: scale(-1); }
+
+    @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+      .playground-stage {
+        perspective: none;
+      }
+      .playground-stage .playground {
+        transform: none !important;
+        transition: none !important;
+      }
+    }
 
     .pg-window {
       background: var(--card-bg);
@@ -1609,51 +1628,53 @@
           </p>
         </div>
 
-        <!-- Live Terminal Playground -->
-        <div class="playground reveal">
-          <svg class="corner corner-tl" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
-          <svg class="corner corner-tr" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
-          <svg class="corner corner-bl" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
-          <svg class="corner corner-br" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
+        <!-- Live Terminal Playground with 3D Tilt Stage -->
+        <div class="playground-stage">
+          <div class="playground reveal" id="playground-target">
+            <svg class="corner corner-tl" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
+            <svg class="corner corner-tr" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
+            <svg class="corner corner-bl" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
+            <svg class="corner corner-br" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
 
-          <div class="pg-window">
-            <div class="pg-chrome">
-              <span class="pg-dot r"></span>
-              <span class="pg-dot y"></span>
-              <span class="pg-dot g"></span>
-              <span class="pg-url">apix.mospi.gov.in/pipeline-telemetry</span>
-            </div>
-
-            <div class="pg-tabs" role="tablist" aria-label="Statistical pipeline steps">
-              <button type="button" class="pg-tab active" role="tab" data-pg-tier="0" aria-selected="true">
-                <span class="tier-dot" style="background:#4f46e5;"></span>1. FLIGHT SCRAPING
-              </button>
-              <button type="button" class="pg-tab" role="tab" data-pg-tier="1" aria-selected="false">
-                <span class="tier-dot" style="background:#10b981;"></span>2. DECOMPOSITION
-              </button>
-              <button type="button" class="pg-tab" role="tab" data-pg-tier="2" aria-selected="false">
-                <span class="tier-dot" style="background:#f59e0b;"></span>3. YIELD CURVES
-              </button>
-              <button type="button" class="pg-tab" role="tab" data-pg-tier="3" aria-selected="false">
-                <span class="tier-dot" style="background:#fa5d19;"></span>4. JEVONS SUB-INDEX
-              </button>
-              <button type="button" class="pg-tab" role="tab" data-pg-tier="4" aria-selected="false">
-                <span class="tier-dot" style="background:#dc2626;"></span>5. GEKS SYNTHESIS
-              </button>
-            </div>
-
-            <div class="pg-body" id="pg-body" aria-live="polite">
-              <div class="pg-line">
-                <span class="prompt">$ apix pipeline-runner --sector DEL-BOM --horizon T+7</span>
+            <div class="pg-window">
+              <div class="pg-chrome">
+                <span class="pg-dot r"></span>
+                <span class="pg-dot y"></span>
+                <span class="pg-dot g"></span>
+                <span class="pg-url">apix.mospi.gov.in/pipeline-telemetry</span>
               </div>
-              <div class="pg-line">
-                <span class="prompt">query &nbsp;›</span>&nbsp;<span class="query" id="pg-query">Google Flights Multi-Carrier Survey (DEL ⇄ BOM)</span><span class="fc-cursor"></span>
+
+              <div class="pg-tabs" role="tablist" aria-label="Statistical pipeline steps">
+                <button type="button" class="pg-tab active" role="tab" data-pg-tier="0" aria-selected="true">
+                  <span class="tier-dot" style="background:#4f46e5;"></span>1. FLIGHT SCRAPING
+                </button>
+                <button type="button" class="pg-tab" role="tab" data-pg-tier="1" aria-selected="false">
+                  <span class="tier-dot" style="background:#10b981;"></span>2. DECOMPOSITION
+                </button>
+                <button type="button" class="pg-tab" role="tab" data-pg-tier="2" aria-selected="false">
+                  <span class="tier-dot" style="background:#f59e0b;"></span>3. YIELD CURVES
+                </button>
+                <button type="button" class="pg-tab" role="tab" data-pg-tier="3" aria-selected="false">
+                  <span class="tier-dot" style="background:#fa5d19;"></span>4. JEVONS SUB-INDEX
+                </button>
+                <button type="button" class="pg-tab" role="tab" data-pg-tier="4" aria-selected="false">
+                  <span class="tier-dot" style="background:#dc2626;"></span>5. GEKS SYNTHESIS
+                </button>
               </div>
-              <div id="pg-loading"></div>
-              <div id="pg-result-box"></div>
-              <div class="pg-foot">
-                <span><span class="demo-chip">LIVE DEMO</span> ILO/IMF CPI Manual Ch. 10 · 8 Indian Domestic Sectors</span>
-                <a href="/dashboard">Launch National Dashboard <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+
+              <div class="pg-body" id="pg-body" aria-live="polite">
+                <div class="pg-line">
+                  <span class="prompt">$ apix pipeline-runner --sector DEL-BOM --horizon T+7</span>
+                </div>
+                <div class="pg-line">
+                  <span class="prompt">query &nbsp;›</span>&nbsp;<span class="query" id="pg-query">Google Flights Multi-Carrier Survey (DEL ⇄ BOM)</span><span class="fc-cursor"></span>
+                </div>
+                <div id="pg-loading"></div>
+                <div id="pg-result-box"></div>
+                <div class="pg-foot">
+                  <span><span class="demo-chip">LIVE DEMO</span> ILO/IMF CPI Manual Ch. 10 · 8 Indian Domestic Sectors</span>
+                  <a href="/dashboard">Launch National Dashboard <svg class="icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+                </div>
               </div>
             </div>
           </div>
@@ -2436,6 +2457,59 @@
       }, { threshold: 0.35 });
       pgObserver.observe(pgWindow);
     }
+
+    /* ── 3D Tilt Hover Effect for Terminal Playground ── */
+    (function initPlaygroundTilt() {
+      const stage = document.querySelector('.playground-stage');
+      const target = stage ? stage.querySelector('.playground') : null;
+      if (!stage || !target) return;
+
+      const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const hoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+      let isListening = false;
+      const MAX_TILT_DEG = 2.5; // max ~2-3 degrees on each axis
+
+      function handleMouseMove(e) {
+        const rect = stage.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const normX = ((e.clientX - rect.left) / rect.width) - 0.5;
+        const normY = ((e.clientY - rect.top) / rect.height) - 0.5;
+        const rotX = -normY * (MAX_TILT_DEG * 2);
+        const rotY = normX * (MAX_TILT_DEG * 2);
+        target.style.transform = `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg)`;
+      }
+
+      function handleMouseLeave() {
+        target.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      }
+
+      function syncTiltListeners() {
+        const allowTilt = !motionQuery.matches && hoverQuery.matches;
+        if (allowTilt && !isListening) {
+          stage.addEventListener('mousemove', handleMouseMove);
+          stage.addEventListener('mouseleave', handleMouseLeave);
+          isListening = true;
+        } else if (!allowTilt && isListening) {
+          stage.removeEventListener('mousemove', handleMouseMove);
+          stage.removeEventListener('mouseleave', handleMouseLeave);
+          isListening = false;
+          target.style.transform = 'none';
+        } else if (!allowTilt) {
+          target.style.transform = 'none';
+        }
+      }
+
+      syncTiltListeners();
+
+      if (typeof motionQuery.addEventListener === 'function') {
+        motionQuery.addEventListener('change', syncTiltListeners);
+        hoverQuery.addEventListener('change', syncTiltListeners);
+      } else if (typeof motionQuery.addListener === 'function') {
+        motionQuery.addListener(syncTiltListeners);
+        hoverQuery.addListener(syncTiltListeners);
+      }
+    })();
 
     /* ── Workflow Studio Interactive Controller ── */
     const wfCards = Array.prototype.slice.call(document.querySelectorAll('.wf-step-card'));
