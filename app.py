@@ -323,7 +323,7 @@ async def serve_routes():
 
 @app.get("/scraper", response_class=FileResponse, include_in_schema=False)
 async def serve_scraper():
-    return FileResponse("static/index.html")
+    return FileResponse("static/scraper.html")
 
 
 @app.get("/profile", response_class=FileResponse, include_in_schema=False)
