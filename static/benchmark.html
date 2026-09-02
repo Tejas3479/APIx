@@ -476,6 +476,130 @@
       from { opacity: 0; transform: scale(0.96) translateY(8px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
+
+    /* Print-Only Header (Hidden on Screen) */
+    .print-only-header {
+      display: none;
+    }
+
+    /* ==========================================================================
+       PRINT STYLESHEET (Statutory Report Document Formatting)
+       ========================================================================== */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+      }
+
+      *, *::before, *::after {
+        background: transparent !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        filter: none !important;
+        animation: none !important;
+        transition: none !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        font-size: 9.5pt !important;
+        line-height: 1.35 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      /* Strictly hide all web chrome, navigation, forms, tutorials, buttons, and banners */
+      .announcement-ribbon,
+      .navbar,
+      .bench-hero,
+      .search-card-pro,
+      .stepper-pro,
+      .ai-box-pro,
+      .modal-backdrop-pro,
+      .toast-container,
+      .btn-dash,
+      #btnRunSurvey,
+      #btnAiDiag,
+      .btn-swap-pro,
+      .preset-chip-pro,
+      .yield-slider-pro,
+      #matCounterfactualBox,
+      #pathwayCard {
+        display: none !important;
+      }
+
+      .print-only-header {
+        display: block !important;
+        margin-bottom: 12px !important;
+        border-bottom: 2px solid #0f172a !important;
+        padding-bottom: 8px !important;
+      }
+
+      .page-container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      #surveyResults {
+        display: block !important;
+      }
+
+      .card-pro {
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        padding: 10px 14px !important;
+        background: #ffffff !important;
+        page-break-inside: avoid;
+        box-shadow: none !important;
+      }
+
+      /* KPI Cards */
+      .decomp-grid-pro {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 6px !important;
+        margin-bottom: 12px !important;
+      }
+
+      .decomp-box-pro {
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 4px !important;
+        padding: 6px 8px !important;
+        background: #f8fafc !important;
+        page-break-inside: avoid;
+      }
+
+      /* Decomposition Stack Bar */
+      .decomp-bar-pro {
+        height: 8px !important;
+        border: 1px solid #94a3b8 !important;
+        margin: 6px 0 !important;
+      }
+      .decomp-seg.base { background: #0f172a !important; }
+      .decomp-seg.fuel { background: #d97706 !important; }
+      .decomp-seg.udf { background: #2563eb !important; }
+      .decomp-seg.asf { background: #059669 !important; }
+      .decomp-seg.gst { background: #7c3aed !important; }
+      .decomp-seg.fee { background: #64748b !important; }
+
+      /* Quotes Table */
+      .quote-row-pro {
+        border-bottom: 1px solid #e2e8f0 !important;
+        padding: 5px 8px !important;
+        font-size: 8.5pt !important;
+        grid-template-columns: 80px 1.5fr 1fr 100px 100px !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .quote-row-pro > div:last-child,
+      .quote-row-pro > span:last-child {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -523,6 +647,27 @@
 
   <main class="page-container page-enter" style="max-width: 1320px; margin: 0 auto; padding: 28px 24px;">
     
+    <!-- Institutional Print-Only Header -->
+    <div class="print-only-header">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+          <div style="font-family: 'Inter', sans-serif; font-size: 9pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #475569;">
+            Government of India · Ministry of Statistics &amp; Programme Implementation (MoSPI)
+          </div>
+          <div style="font-family: 'Outfit', sans-serif; font-size: 16pt; font-weight: 800; color: #0f172a; margin-top: 2px;">
+            Airfare Price Index (APIx) · Statutory Tariff Decomposition &amp; Microdata Report
+          </div>
+          <div style="font-size: 8.5pt; color: #64748b; margin-top: 2px;">
+            Methodological Prototype under UN COICOP 2018 Division 07.3.3 / MoSPI CPI 2024=100 Base Revision
+          </div>
+        </div>
+        <div style="text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 8.5pt; color: #475569;">
+          <div><strong>Classification:</strong> OFFICIAL USE ONLY</div>
+          <div id="printTimestamp">Generated: 2026-09-02</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Page Header -->
     <div class="bench-hero">
       <div>
@@ -539,7 +684,7 @@
       </div>
 
       <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <button class="btn-dash btn-dash-secondary" onclick="window.print()">
+        <button class="btn-dash btn-dash-secondary" onclick="printStatutoryReport()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print Report
         </button>
         <button class="btn-dash btn-dash-ai" onclick="triggerAiDiagnosis()" id="btnAiDiag">
@@ -770,7 +915,7 @@
         </div>
 
         <!-- Dedicated Section: 2nd-Tuesday Materiality Gap Counterfactual Simulator -->
-        <div style="margin-top: 28px; background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 14px; padding: 20px;">
+        <div id="matCounterfactualBox" style="margin-top: 28px; background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 14px; padding: 20px;">
           <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
             <div>
               <div style="display: flex; align-items: center; gap: 8px;">
@@ -820,7 +965,7 @@
         </div>
 
         <!-- Econometric Aggregation Pathway to GEKS-Törnqvist -->
-        <div style="margin-top: 24px; background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 12px; padding: 18px 20px;">
+        <div id="pathwayCard" style="margin-top: 24px; background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 12px; padding: 18px 20px;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
             <div style="display: flex; align-items: center; gap: 8px;">
               <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.3); font-weight: 700; font-size: 11px;">ILO/IMF Standard Pipeline</span>
@@ -1217,6 +1362,15 @@
           quoteModal.style.display = 'none';
         }
       });
+    }
+
+    function printStatutoryReport() {
+      const tsEl = document.getElementById('printTimestamp');
+      if (tsEl) {
+        const now = new Date();
+        tsEl.textContent = 'Generated: ' + now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST';
+      }
+      window.print();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
