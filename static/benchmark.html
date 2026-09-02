@@ -589,7 +589,7 @@
           Route Airfare Search &amp; <span class="gradient-text">Statutory Decomposition</span>
         </h1>
         <p class="bench-desc">
-          Execute on-demand multi-carrier surveys, inspect advance lead-time elasticity curves (T+1 … T+45), and decompose pure air travel tariffs from airport levies (UDF, ASF, GST).
+          Execute on-demand multi-carrier surveys across advance booking windows (T+1 … T+45) and decompose pure air travel tariffs from statutory airport levies (UDF, ASF, GST).
         </p>
       </div>
 
@@ -678,7 +678,7 @@
       <div class="yield-slider-pro">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <span style="font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: var(--navy-900); display: inline-flex; align-items: center; gap: 6px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--heat-100)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Dynamic Advance Lead-Time Explorer
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--heat-100)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Advance Booking Departure Horizon
           </span>
           <span id="sliderLabel" style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; color: var(--heat-100);">T+7 Days Horizon</span>
         </div>
@@ -766,27 +766,6 @@
             <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Statutory Levies Ratio</div>
             <div id="kpiTaxRatio" style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #4f46e5; margin-top: 2px;">18.8%</div>
             <div style="font-size: 10.5px; color: var(--text-muted);">UDF + ASF + GST Non-Airline</div>
-          </div>
-        </div>
-
-        <!-- Route Lead-Time Yield Curve Chart -->
-        <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 14px; padding: 20px; margin-bottom: 24px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.3); font-weight: 700; font-size: 11px;">Yield Elasticity Horizon</span>
-                <h4 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; margin: 0; color: var(--navy-900);">Lead-Time Dynamic Fare Curve (T+1 to T+45)</h4>
-              </div>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">
-                Empirical price escalation from advance planned booking to last-minute business travel.
-              </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="badge badge-accent" id="chartSurgeMultiplier">3.45x Surge Factor</span>
-            </div>
-          </div>
-          <div style="height: 240px; position: relative;">
-            <canvas id="routeYieldChart">Lead-Time Yield Curve Chart</canvas>
           </div>
         </div>
 
@@ -950,7 +929,6 @@
   <script src="/app.js"></script>
   <script>
     window.currentQuotes = [];
-    let yieldChart = null;
 
     function showToast(msg, type = 'error') {
       const container = document.getElementById('toast-container');
@@ -1109,9 +1087,6 @@
       // Load Materiality Counterfactual Data
       loadMaterialityCounterfactual(routeId);
 
-      // Render Dynamic Yield Curve Chart
-      renderYieldCurveChart(routeId, win, jevonsPrice);
-
       // Carrier quotes table
       const rows = quotes.map((q, idx) => {
         const carrierBadge = q.carrier_code === '6E' ? '<span class="badge-status badge-carrier-6e" style="border: 1px solid;">IndiGo</span>' :
@@ -1138,100 +1113,6 @@
       }).join('');
 
       document.getElementById('quotesTableBody').innerHTML = rows;
-    }
-
-    function renderYieldCurveChart(routeId, currentWin, currentJevonsPrice) {
-      const canvas = document.getElementById('routeYieldChart');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-
-      if (yieldChart) {
-        yieldChart.destroy();
-      }
-
-      const isDark = document.documentElement.classList.contains('dark');
-      const gridColor = isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(0, 0, 0, 0.05)';
-      const tickColor = isDark ? '#94a3b8' : '#64748b';
-
-      const horizons = [1, 7, 15, 30, 45];
-      const baseFare = currentJevonsPrice > 0 ? (currentJevonsPrice / ({1: 2.8, 7: 1.45, 15: 1.15, 30: 1.0, 45: 0.92}[currentWin] || 1.2)) : 5200;
-      
-      const curveData = horizons.map(h => {
-        const mult = {1: 2.85, 7: 1.45, 15: 1.15, 30: 1.0, 45: 0.92}[h];
-        return Math.round(baseFare * mult);
-      });
-
-      const t1 = curveData[0];
-      const t30 = curveData[3];
-      const surgeFactor = (t1 / t30).toFixed(2);
-      const multBadge = document.getElementById('chartSurgeMultiplier');
-      if (multBadge) multBadge.textContent = `${surgeFactor}x Surge Factor (T+1 vs T+30)`;
-
-      const pointColors = horizons.map(h => h === currentWin ? '#fa5d19' : '#4f46e5');
-      const pointRadii = horizons.map(h => h === currentWin ? 7 : 4.5);
-
-      yieldChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['T+1 (Emergency)', 'T+7 (Business)', 'T+15 (Regular)', 'T+30 (Planned)', 'T+45 (Early Bird)'],
-          datasets: [
-            {
-              label: `${routeId} Dynamic Yield Curve`,
-              data: curveData,
-              borderColor: '#4f46e5',
-              backgroundColor: 'rgba(79, 70, 229, 0.10)',
-              borderWidth: 2.8,
-              tension: 0.35,
-              fill: true,
-              pointBackgroundColor: pointColors,
-              pointBorderColor: '#fff',
-              pointBorderWidth: 2,
-              pointRadius: pointRadii,
-              pointHoverRadius: 8
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: {
-            duration: 750,
-            easing: 'easeOutQuart'
-          },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: 'rgba(15, 23, 42, 0.94)',
-              titleFont: { family: 'Outfit', size: 13, weight: 'bold' },
-              bodyFont: { family: 'JetBrains Mono', size: 12 },
-              padding: 12,
-              cornerRadius: 10,
-              borderColor: 'rgba(255, 255, 255, 0.12)',
-              borderWidth: 1,
-              callbacks: {
-                label: (ctx) => ` Average Economy Fare: ${formatINR(ctx.parsed.y)}`
-              }
-            }
-          },
-          scales: {
-            y: {
-              grid: { color: gridColor },
-              ticks: {
-                color: tickColor,
-                font: { family: 'JetBrains Mono', size: 11 },
-                callback: (v) => '₹' + Math.round(v / 1000) + 'k'
-              }
-            },
-            x: {
-              grid: { display: false },
-              ticks: {
-                color: tickColor,
-                font: { family: 'Outfit', size: 11, weight: '600' }
-              }
-            }
-          }
-        }
-      });
     }
 
     function openQuoteModal(idx) {
