@@ -45,6 +45,32 @@
     }
     .navbar.scrolled { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); }
 
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-links .nav-link {
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.72);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+    }
+    .nav-links .nav-link:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .nav-links .nav-link.active {
+      color: #ffffff !important;
+      font-weight: 700;
+      background: var(--heat-100) !important;
+      box-shadow: 0 2px 8px rgba(250, 93, 25, 0.3);
+    }
+
     .btn-nav-launch {
       color: #fff !important;
       background: var(--heat-100);
@@ -231,6 +257,51 @@
     .hero-ghost-link:hover svg { transform: translateX(3px); }
 
     /* ── Live Terminal Playground (Firecrawl window) ── */
+    .playground-intro {
+      scroll-margin-top: 86px;
+      margin-top: 48px;
+      margin-bottom: 22px;
+      text-align: center;
+      position: relative;
+    }
+    .playground-intro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--heat-100);
+      background: var(--heat-4);
+      border: 1px solid rgba(250, 93, 25, 0.2);
+      padding: 4px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+    .playground-intro-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(26px, 3.4vw, 34px);
+      font-weight: 800;
+      color: var(--navy-900);
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .playground-intro-title span {
+      background: linear-gradient(135deg, var(--heat-100) 0%, #ea580c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .playground-intro-sub {
+      font-size: 14.5px;
+      color: var(--navy-700);
+      max-width: 720px;
+      margin: 0 auto;
+      line-height: 1.55;
+    }
+
     .playground {
       max-width: 900px;
       margin: 0 auto;
@@ -528,178 +599,663 @@
     .section-title span { color: var(--heat-100); }
     .section-sub { margin: 12px auto 0; max-width: 600px; font-size: 15px; color: var(--text-muted); line-height: 1.6; }
 
-    .capabilities-section { padding: 80px 0 64px; }
+    /* ── Platform Capabilities: Figma/Canva Interactive Studio ── */
+    .capabilities-section { padding: 72px 0 60px; position: relative; }
 
-    /* Three pillars */
-    .pillars-grid {
+    .workflow-studio {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 18px;
-      margin-bottom: 44px;
+      grid-template-columns: 1fr 1.32fr;
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 24px;
     }
-    .pillar-card {
-      position: relative;
+    @media (max-width: 960px) {
+      .workflow-studio { grid-template-columns: 1fr; }
+    }
+
+    /* Left Stepper */
+    .workflow-stepper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: space-between;
+    }
+
+    .wf-step-card {
       background: var(--card-bg);
       border: 1px solid var(--border-loud);
       border-radius: 14px;
-      padding: 26px 24px;
+      padding: 18px 20px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s var(--transition-spring);
       box-shadow: var(--shadow-sm);
-      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      user-select: none;
     }
-    .pillar-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-fc); border-color: var(--border-muted); }
-    .pillar-card::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 24px;
-      bottom: 24px;
-      width: 3px;
-      border-radius: 0 3px 3px 0;
-      background: var(--heat-100);
-      opacity: 0;
-      transform: scaleY(0);
-      transform-origin: top;
-      transition: opacity 0.3s ease, transform 0.3s ease;
+    .wf-step-card:hover {
+      border-color: var(--border-muted);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-fc);
     }
-    .pillar-card:hover::before { opacity: 1; transform: scaleY(1); }
-    .pillar-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      background: var(--heat-8);
+    .wf-step-card.active {
+      border-color: var(--heat-100);
+      background: var(--card-bg);
+      box-shadow: 0 6px 24px rgba(250, 93, 25, 0.10), var(--shadow-sm);
+    }
+
+    .wf-step-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+    .wf-step-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: -0.02em;
+      transition: color 0.2s ease;
+    }
+    .wf-step-card.active .wf-step-num {
       color: var(--heat-100);
+    }
+    .wf-step-progress {
+      width: 3px;
+      height: 38px;
+      background: var(--alpha-4);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+    .wf-step-bar {
+      display: block;
+      width: 100%;
+      height: 0%;
+      background: var(--heat-100);
+      border-radius: 999px;
+      transition: height 0.2s ease;
+    }
+    .wf-step-card.active .wf-step-bar {
+      height: 100%;
+    }
+
+    .wf-step-content { flex: 1; min-width: 0; }
+    .wf-step-header { margin-bottom: 5px; }
+    .wf-step-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+      transition: color 0.2s ease;
+    }
+    .wf-step-card.active .wf-step-badge { color: var(--heat-100); }
+    .wf-step-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    .wf-step-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 4px 0 10px;
+    }
+    .wf-step-footer {
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
     }
-    .pillar-name { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; color: var(--navy-900); margin-bottom: 8px; }
-    .pillar-desc { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
-    .pillar-link {
-      font-size: 13px;
+    .wf-micro-tags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .wf-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--navy-700);
+      background: var(--alpha-3);
+      border: 1px solid var(--border-faint);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .wf-step-card.active .wf-tag {
+      background: var(--heat-8);
+      border-color: rgba(250, 93, 25, 0.2);
+      color: var(--heat-100);
+    }
+    .wf-step-link {
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--heat-100);
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
+      transition: transform 0.15s ease, color 0.15s ease;
     }
-    .pillar-link:hover { color: var(--primary-hover); }
-    .pillar-link svg { transition: transform 0.15s ease; }
-    .pillar-link:hover svg { transform: translateX(3px); }
+    .wf-step-link:hover { transform: translateX(3px); color: var(--primary-hover); }
 
-    /* Feature bento grid */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 16px;
-      border: 1px solid var(--border-faint);
-      border-radius: 14px;
-      padding: 6px;
-      background: var(--background-lighter);
-    }
-    .feature-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-faint);
-      border-radius: 12px;
-      padding: 20px 20px 18px;
-      transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
-    }
-    .feature-card:hover { border-color: var(--border-muted); box-shadow: var(--shadow-fc); transform: translateY(-2px); }
-    .feature-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 9px;
-      background: var(--heat-8);
-      color: var(--heat-100);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 13px;
-    }
-    .feature-name { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; color: var(--navy-900); margin-bottom: 6px; }
-    .feature-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
-
-    /* ── 5-Stage cascade ── */
-    .tiers-section { padding: 80px 0; border-top: 1px solid var(--border-faint); }
-    .tiers-cascade-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 14px;
-    }
-    .tier-card {
+    /* Right Canvas Artboard */
+    .workflow-canvas-wrap {
       background: var(--card-bg);
       border: 1px solid var(--border-loud);
       border-radius: 14px;
-      padding: 20px;
+      box-shadow: var(--shadow-fc);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      box-shadow: var(--shadow-sm);
+      overflow: hidden;
       position: relative;
-      cursor: pointer;
-      transition: transform 0.3s var(--transition-spring), box-shadow 0.3s ease, border-color 0.3s ease;
     }
-    .tier-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-fc);
-      border-color: var(--border-muted);
+
+    .canvas-chrome {
+      background: var(--surface-raised);
+      border-bottom: 1px solid var(--border-faint);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
-    .tier-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 14px;
-      bottom: 14px;
-      width: 3px;
-      border-radius: 0 3px 3px 0;
-      background: var(--tier-accent, var(--border));
-      opacity: 0.7;
+    .canvas-chrome-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .tier-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-    .tier-pill-badge {
+    .canvas-tool-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+    .canvas-tool-dot.red { background: #f87171; }
+    .canvas-tool-dot.yellow { background: #fbbf24; }
+    .canvas-tool-dot.green { background: #34d399; }
+
+    .canvas-mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--alpha-4);
+      border: 1px solid var(--border-faint);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--navy-800);
+      margin-left: 6px;
+    }
+    .canvas-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 10.5px;
       font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 4px;
-      width: fit-content;
-      margin-bottom: 12px;
+      color: var(--heat-100);
+      letter-spacing: 0.04em;
     }
-    .t0-badge { background: rgba(79, 70, 229, 0.1); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.25); }
-    .t1-badge { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); }
-    .t2-badge { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.25); }
-    .t3-badge { background: rgba(249, 115, 22, 0.1); color: #fa5d19; border: 1px solid rgba(249, 115, 22, 0.25); }
-    .t4-badge { background: rgba(220, 38, 38, 0.1); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.25); }
-    .tier-accent-0 { --tier-accent: #4f46e5; }
-    .tier-accent-1 { --tier-accent: #10b981; }
-    .tier-accent-2 { --tier-accent: #f59e0b; }
-    .tier-accent-3 { --tier-accent: #fa5d19; }
-    .tier-accent-4 { --tier-accent: #dc2626; }
-    .tier-toggle {
-      background: var(--alpha-4);
-      border: 1px solid var(--border-faint);
+    .canvas-pulse-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      width: 24px;
+      background: var(--heat-100);
+      box-shadow: 0 0 8px var(--heat-100);
+      animation: apix-blink 1.4s steps(1) infinite;
+    }
+
+    .workflow-canvas-body {
+      padding: 20px;
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 380px;
+      overflow: hidden;
+    }
+    .canvas-dot-grid {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(var(--alpha-10) 1px, transparent 1px);
+      background-size: 16px 16px;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    /* Floating Figma / Canva Collaborator Cursors */
+    .figma-cursor {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      pointer-events: none;
+      z-index: 10;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
+    }
+    .cursor-pointer { flex-shrink: 0; }
+    .cursor-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: #ffffff;
+      white-space: nowrap;
+      letter-spacing: 0.01em;
+    }
+    .mospi-label { background: #fa5d19; }
+    .rbi-label { background: #4f46e5; }
+    .dgca-label { background: #10b981; }
+
+    .cursor-mospi { animation: figma-float-1 6s ease-in-out infinite; }
+    .cursor-rbi { animation: figma-float-2 7s ease-in-out infinite; }
+    .cursor-dgca { animation: figma-float-3 6.5s ease-in-out infinite; }
+
+    @keyframes figma-float-1 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-8px, 6px); }
+    }
+    @keyframes figma-float-2 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(10px, -6px); }
+    }
+    @keyframes figma-float-3 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(6px, 8px); }
+    }
+    @media (max-width: 640px) {
+      .figma-cursor { display: none; }
+    }
+
+    /* Views */
+    .canvas-view-deck { position: relative; z-index: 2; width: 100%; }
+    .canvas-view {
+      display: none;
+      animation: apix-slide-up 0.35s var(--transition-spring) both;
+    }
+    .canvas-view.active { display: block; }
+
+    .canvas-card {
+      background: var(--surface-raised);
+      border: 1px solid var(--border-loud);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .canvas-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-faint);
+    }
+    .canvas-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+    .canvas-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .canvas-badge.green { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+    .canvas-badge.blue { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .canvas-badge.orange { background: var(--heat-8); color: var(--heat-100); border: 1px solid var(--heat-24); }
+
+    /* Carrier Feed Table (View 0) */
+    .carrier-feed-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+    .carrier-feed-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border-faint);
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    .carrier-col-id {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--navy-900);
+      min-width: 120px;
+    }
+    .carrier-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .carrier-dot.indigo { background: #4f46e5; }
+    .carrier-dot.red { background: #dc2626; }
+    .carrier-dot.orange { background: #f97316; }
+    .carrier-dot.yellow { background: #eab308; }
+    .carrier-status-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #16a34a;
+      background: rgba(22, 163, 74, 0.08);
+      border: 1px solid rgba(22, 163, 74, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .carrier-metric {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .carrier-metric strong { color: var(--navy-900); }
+
+    .canvas-metrics-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border-faint);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .cms-item { flex: 1; }
+    .cms-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--heat-100);
+      line-height: 1.1;
+    }
+    .cms-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+    .cms-divider {
+      width: 1px;
       height: 24px;
+      background: var(--border-faint);
+    }
+
+    /* Decomposition View (View 1) */
+    .fare-total-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border-faint);
+      border-radius: 8px;
+    }
+    .fare-total-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+    .fare-total-price {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--navy-900);
+      letter-spacing: -0.02em;
+    }
+    .fare-isolated-chip {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--navy-700);
-      flex-shrink: 0;
-      transition: transform 0.2s ease, background 0.15s;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #047857;
+      padding: 4px 10px;
+      border-radius: 999px;
     }
-    .tier-toggle:hover { background: var(--alpha-6); }
-    .tier-card.is-open .tier-toggle { transform: rotate(180deg); }
-    .tier-name { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy-900); margin-bottom: 6px; }
-    .tier-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
-    .tier-detail { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-faint); font-size: 12.5px; color: var(--navy-700); line-height: 1.55; }
-    .tier-card.is-open .tier-detail { display: block; animation: apix-fade-up 0.3s ease both; }
-    .tier-detail-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 4px; }
-    .tier-example { margin-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--surface-raised); border: 1px solid var(--border-faint); border-radius: 8px; padding: 7px 10px; }
-    .tier-example-item { font-weight: 600; color: var(--navy-800); font-size: 11.5px; }
-    .tier-example-price { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--heat-100); white-space: nowrap; }
+    .f-iso-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; }
+
+    .fare-bar-wrapper { margin-bottom: 14px; }
+    .fare-bar-stack {
+      display: flex;
+      height: 20px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--alpha-4);
+      margin-bottom: 10px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+    .fare-bar-seg { height: 100%; transition: width 0.4s ease, opacity 0.2s; position: relative; }
+    .fare-bar-seg:hover { opacity: 0.85; }
+    .seg-base { background: #4f46e5; }
+    .seg-udf { background: #10b981; }
+    .seg-asf { background: #f59e0b; }
+    .seg-gst { background: #ec4899; }
+    .seg-surge { background: #fa5d19; }
+
+    .fare-bar-legend {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--navy-800);
+    }
+    .f-leg-item { display: inline-flex; align-items: center; gap: 5px; }
+    .f-leg-dot { width: 7px; height: 7px; border-radius: 2px; }
+    .f-leg-dot.base { background: #4f46e5; }
+    .f-leg-dot.udf { background: #10b981; }
+    .f-leg-dot.asf { background: #f59e0b; }
+    .f-leg-dot.gst { background: #ec4899; }
+    .f-leg-dot.surge { background: #fa5d19; }
+
+    .statutory-note-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.18);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 11.5px;
+      color: var(--navy-800);
+      line-height: 1.45;
+    }
+
+    /* Index Synthesis View (View 2) */
+    .geks-headline-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .geks-index-stat {
+      background: var(--surface);
+      border: 1px solid var(--border-faint);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+    .geks-stat-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--navy-900);
+      line-height: 1.1;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .geks-stat-pct { font-size: 13px; font-weight: 700; color: #16a34a; font-family: 'JetBrains Mono', monospace; }
+    .geks-stat-lbl { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+
+    .geks-gap-stat {
+      background: rgba(220, 38, 38, 0.05);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .geks-gap-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #dc2626;
+      margin-bottom: 2px;
+    }
+    .geks-gap-desc { font-size: 10.5px; color: var(--text-muted); line-height: 1.35; }
+
+    .dgca-weights-preview {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border-faint);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .dw-row {
+      display: grid;
+      grid-template-columns: 130px 1fr 45px;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+    }
+    .dw-corridor { font-weight: 600; color: var(--navy-800); }
+    .dw-track {
+      height: 6px;
+      background: var(--alpha-4);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .dw-fill {
+      height: 100%;
+      background: var(--heat-100);
+      border-radius: 999px;
+    }
+    .dw-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--navy-900);
+      text-align: right;
+    }
+
+    .geks-footer-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .geks-proof-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: #16a34a;
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    /* Capabilities Smart Ribbon */
+    .capabilities-smart-ribbon {
+      background: var(--card-bg);
+      border: 1px solid var(--border-loud);
+      border-radius: 12px;
+      padding: 14px 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .smart-ribbon-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .smart-chips-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .smart-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-loud);
+      background: var(--surface);
+      color: var(--navy-800);
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s var(--transition-spring);
+    }
+    .smart-chip:hover {
+      border-color: var(--heat-100);
+      background: var(--heat-4);
+      color: var(--heat-100);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-fc);
+    }
+    .smart-chip .s-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--heat-100);
+      flex-shrink: 0;
+    }
+    .smart-chip .s-dot.green { background: #10b981; }
+    .smart-chip .s-dot.red { background: #dc2626; }
+    .smart-chip .s-dot.orange { background: #f97316; }
+    .smart-chip .s-dot.violet { background: #4f46e5; }
+    .smart-chip .s-dot.yellow { background: #eab308; }
+    .smart-chip .s-dot.blue { background: #0284c7; }
 
     /* ── Technical benchmarks ── */
     .bench-section { padding: 80px 0; border-top: 1px solid var(--border-faint); }
@@ -1039,6 +1595,20 @@
           </a>
         </div>
 
+        <!-- The 5-Stage Aviation Intelligence Pipeline Terminal -->
+        <div class="playground-intro fade-up fade-up-delay-3" id="pipeline">
+          <div class="playground-intro-badge">
+            <span class="p-dot" style="background:var(--heat-100); width:6px; height:6px; border-radius:50%; display:inline-block;"></span>
+            <span>Methodological Architecture</span>
+          </div>
+          <h2 class="playground-intro-title">
+            The 5-Stage <span>Aviation Intelligence Pipeline</span>
+          </h2>
+          <p class="playground-intro-sub">
+            End-to-end econometric pipeline from multi-carrier web ingestion to DGCA-weighted multilateral index synthesis.
+          </p>
+        </div>
+
         <!-- Live Terminal Playground -->
         <div class="playground reveal">
           <svg class="corner corner-tl" width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><path d="M0 11V0h11" fill="none" stroke="var(--border-muted)" stroke-width="1"/></svg>
@@ -1065,10 +1635,10 @@
                 <span class="tier-dot" style="background:#f59e0b;"></span>3. YIELD CURVES
               </button>
               <button type="button" class="pg-tab" role="tab" data-pg-tier="3" aria-selected="false">
-                <span class="tier-dot" style="background:#fa5d19;"></span>4. GEKS INDEX
+                <span class="tier-dot" style="background:#fa5d19;"></span>4. JEVONS SUB-INDEX
               </button>
               <button type="button" class="pg-tab" role="tab" data-pg-tier="4" aria-selected="false">
-                <span class="tier-dot" style="background:#dc2626;"></span>5. MATERIALITY GAP
+                <span class="tier-dot" style="background:#dc2626;"></span>5. GEKS SYNTHESIS
               </button>
             </div>
 
@@ -1122,197 +1692,328 @@
       </div>
     </section>
 
-    <!-- Platform Capabilities -->
+    <!-- Platform Capabilities (Modern Figma/Canva Interactive Studio) -->
     <section class="capabilities-section" id="capabilities">
       <div class="section-container">
         <div class="section-header reveal">
           <div class="section-pre">Econometric Architecture</div>
           <h2 class="section-title">Everything a modern price compiler needs in <span>one continuous workflow</span></h2>
-          <p class="section-sub">From automated carrier scraping to chained multilateral index output — built to solve the dynamic-pricing blindspot in CPI.</p>
+          <p class="section-sub">From automated multi-carrier scraping to chained multilateral index output — built to solve the dynamic-pricing blindspot in CPI.</p>
         </div>
 
-        <!-- Three pillars -->
-        <div class="pillars-grid">
-          <div class="pillar-card reveal">
-            <div class="pillar-icon">
-              <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <!-- Modern Figma/Canva-Style Interactive Workflow Studio -->
+        <div class="workflow-studio reveal">
+          <!-- Left Column: 3-Stage Interactive Workflow Controller -->
+          <div class="workflow-stepper">
+            <!-- Step 1 Card -->
+            <div class="wf-step-card active" data-wf-step="0" role="button" tabindex="0" aria-label="Workflow Stage 1: Ingestion and Stealth">
+              <div class="wf-step-indicator">
+                <span class="wf-step-num">01</span>
+                <span class="wf-step-progress"><span class="wf-step-bar"></span></span>
+              </div>
+              <div class="wf-step-content">
+                <div class="wf-step-header">
+                  <div class="wf-step-badge">INGESTION &amp; STEALTH</div>
+                  <h3 class="wf-step-title">Multi-Carrier Daily Scraping</h3>
+                </div>
+                <p class="wf-step-desc">Passive TLS stealth across Google Flights, Akasa Air, and SpiceJet over 5 advance horizons (T+1…T+45).</p>
+                <div class="wf-step-footer">
+                  <div class="wf-micro-tags">
+                    <span class="wf-tag">3-Slot Worker Pool</span>
+                    <span class="wf-tag">Zero CAPTCHA Evasion</span>
+                  </div>
+                  <a href="/scraper" class="wf-step-link" onclick="event.stopPropagation()">Telemetry &rarr;</a>
+                </div>
+              </div>
             </div>
-            <div class="pillar-name">Ingest &amp; Scrape</div>
-            <div class="pillar-desc">Multi-carrier daily scraping across Google Flights, Akasa, and SpiceJet using passive TLS stealth and a 3-slot Chromium worker pool.</div>
-            <a href="/scraper" class="pillar-link">View scraper telemetry <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+
+            <!-- Step 2 Card -->
+            <div class="wf-step-card" data-wf-step="1" role="button" tabindex="0" aria-label="Workflow Stage 2: Statutory Decomposition">
+              <div class="wf-step-indicator">
+                <span class="wf-step-num">02</span>
+                <span class="wf-step-progress"><span class="wf-step-bar"></span></span>
+              </div>
+              <div class="wf-step-content">
+                <div class="wf-step-header">
+                  <div class="wf-step-badge">DECOMPOSITION</div>
+                  <h3 class="wf-step-title">Statutory Fare Unbundling</h3>
+                </div>
+                <p class="wf-step-desc">Isolates dynamic airline tariffs from fixed airport levies: flat ₹200 ASF, airport UDF, and 5% GST.</p>
+                <div class="wf-step-footer">
+                  <div class="wf-micro-tags">
+                    <span class="wf-tag">Base Tariff Isolated</span>
+                    <span class="wf-tag">Statutory Fee Matrix</span>
+                  </div>
+                  <a href="/benchmark" class="wf-step-link" onclick="event.stopPropagation()">Test Discovery &rarr;</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3 Card -->
+            <div class="wf-step-card" data-wf-step="2" role="button" tabindex="0" aria-label="Workflow Stage 3: Multilateral Index Synthesis">
+              <div class="wf-step-indicator">
+                <span class="wf-step-num">03</span>
+                <span class="wf-step-progress"><span class="wf-step-bar"></span></span>
+              </div>
+              <div class="wf-step-content">
+                <div class="wf-step-header">
+                  <div class="wf-step-badge">INDEX SYNTHESIS</div>
+                  <h3 class="wf-step-title">Multilateral GEKS-T&ouml;rnqvist</h3>
+                </div>
+                <p class="wf-step-desc">Eliminates chain drift and aggregates 8 high-density sectors weighted by official DGCA passenger shares (w_r).</p>
+                <div class="wf-step-footer">
+                  <div class="wf-micro-tags">
+                    <span class="wf-tag">Zero Chain Drift</span>
+                    <span class="wf-tag">DGCA Volume Weighted</span>
+                  </div>
+                  <a href="/dashboard" class="wf-step-link" onclick="event.stopPropagation()">Explore Series &rarr;</a>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="pillar-card reveal">
-            <div class="pillar-icon">
-              <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+
+          <!-- Right Column: Figma/Canva Collaborative Visual Canvas Artboard -->
+          <div class="workflow-canvas-wrap">
+            <!-- Figma/Canva Canvas Toolbar Chrome -->
+            <div class="canvas-chrome">
+              <div class="canvas-chrome-left">
+                <span class="canvas-tool-dot red"></span>
+                <span class="canvas-tool-dot yellow"></span>
+                <span class="canvas-tool-dot green"></span>
+                <span class="canvas-mode-pill">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 3 21 12 12 14 8 21 3 3"/></svg>
+                  <span>LIVE COMPILATION CANVAS</span>
+                </span>
+              </div>
+              <div class="canvas-chrome-right">
+                <span class="canvas-status-pill">
+                  <span class="canvas-pulse-dot"></span>
+                  <span id="canvas-status-text">STAGE 01: INGESTION &amp; STEALTH</span>
+                </span>
+              </div>
             </div>
-            <div class="pillar-name">Decompose</div>
-            <div class="pillar-desc">Statutory fare decomposition isolating volatile airline tariffs from airport User Development Fees (UDF), statutory flat ₹200 ASF, and 5% GST.</div>
-            <a href="/benchmark" class="pillar-link">Test fare discovery <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
-          </div>
-          <div class="pillar-card reveal">
-            <div class="pillar-icon">
-              <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+
+            <!-- Canvas Background with Dot Matrix & Collaborator Cursors -->
+            <div class="workflow-canvas-body">
+              <div class="canvas-dot-grid" aria-hidden="true"></div>
+
+              <!-- Floating Figma / Canva Collaborator Cursors -->
+              <div class="figma-cursor cursor-mospi" style="top: 16px; right: 24px;">
+                <svg class="cursor-pointer" width="16" height="16" viewBox="0 0 24 24" fill="#fa5d19" stroke="#fff" stroke-width="1.5"><polygon points="3 3 21 12 12 14 8 21 3 3"/></svg>
+                <span class="cursor-label mospi-label">Dr. Mukherjee (MoSPI)</span>
+              </div>
+              <div class="figma-cursor cursor-rbi" style="bottom: 20px; right: 30px;">
+                <svg class="cursor-pointer" width="16" height="16" viewBox="0 0 24 24" fill="#4f46e5" stroke="#fff" stroke-width="1.5"><polygon points="3 3 21 12 12 14 8 21 3 3"/></svg>
+                <span class="cursor-label rbi-label">Ananya (RBI Nowcast)</span>
+              </div>
+              <div class="figma-cursor cursor-dgca" style="top: 56px; left: 20px;">
+                <svg class="cursor-pointer" width="16" height="16" viewBox="0 0 24 24" fill="#10b981" stroke="#fff" stroke-width="1.5"><polygon points="3 3 21 12 12 14 8 21 3 3"/></svg>
+                <span class="cursor-label dgca-label">DGCA Tariff Desk</span>
+              </div>
+
+              <!-- Interactive Dynamic Views Container -->
+              <div class="canvas-view-deck">
+                <!-- View 0: Ingest & Stealth Canvas Card -->
+                <div class="canvas-view active" id="canvas-view-0">
+                  <div class="canvas-card">
+                    <div class="canvas-card-head">
+                      <div class="canvas-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--heat-100)" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        <span>Multi-Carrier Stealth Pipeline Telemetry</span>
+                      </div>
+                      <span class="canvas-badge green">TLS Chrome 120 impersonation</span>
+                    </div>
+
+                    <div class="carrier-feed-grid">
+                      <div class="carrier-feed-row">
+                        <div class="carrier-col-id">
+                          <span class="carrier-dot indigo"></span>
+                          <strong>IndiGo (6E)</strong>
+                        </div>
+                        <span class="carrier-status-tag active">PASSIVE STEALTH</span>
+                        <div class="carrier-metric"><span>48/48 quotes</span> · <strong>100%</strong></div>
+                      </div>
+                      <div class="carrier-feed-row">
+                        <div class="carrier-col-id">
+                          <span class="carrier-dot red"></span>
+                          <strong>Air India (AI)</strong>
+                        </div>
+                        <span class="carrier-status-tag active">PASSIVE STEALTH</span>
+                        <div class="carrier-metric"><span>48/48 quotes</span> · <strong>100%</strong></div>
+                      </div>
+                      <div class="carrier-feed-row">
+                        <div class="carrier-col-id">
+                          <span class="carrier-dot orange"></span>
+                          <strong>Akasa Air (QP)</strong>
+                        </div>
+                        <span class="carrier-status-tag active">PASSIVE STEALTH</span>
+                        <div class="carrier-metric"><span>36/36 quotes</span> · <strong>100%</strong></div>
+                      </div>
+                      <div class="carrier-feed-row">
+                        <div class="carrier-col-id">
+                          <span class="carrier-dot yellow"></span>
+                          <strong>SpiceJet (SG)</strong>
+                        </div>
+                        <span class="carrier-status-tag active">PASSIVE STEALTH</span>
+                        <div class="carrier-metric"><span>30/30 quotes</span> · <strong>100%</strong></div>
+                      </div>
+                    </div>
+
+                    <div class="canvas-metrics-strip">
+                      <div class="cms-item">
+                        <div class="cms-val">4,800</div>
+                        <div class="cms-lbl">Continuous Daily Quotes</div>
+                      </div>
+                      <div class="cms-divider"></div>
+                      <div class="cms-item">
+                        <div class="cms-val">8 Sectors</div>
+                        <div class="cms-lbl">DGCA Corridors</div>
+                      </div>
+                      <div class="cms-divider"></div>
+                      <div class="cms-item">
+                        <div class="cms-val">5 Horizons</div>
+                        <div class="cms-lbl">T+1 to T+45</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- View 1: Statutory Fare Decomposition Canvas Card -->
+                <div class="canvas-view" id="canvas-view-1">
+                  <div class="canvas-card">
+                    <div class="canvas-card-head">
+                      <div class="canvas-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                        <span>Statutory Tariff Unbundling · DEL-BOM IndiGo 6E</span>
+                      </div>
+                      <span class="canvas-badge blue">Statutory Formula Applied</span>
+                    </div>
+
+                    <div class="fare-total-banner">
+                      <div>
+                        <span class="fare-total-label">Total Consumer Fare</span>
+                        <div class="fare-total-price">₹6,840</div>
+                      </div>
+                      <div class="fare-isolated-chip">
+                        <span class="f-iso-dot"></span>
+                        <span>Isolated Base Tariff: <strong>₹4,850</strong></span>
+                      </div>
+                    </div>
+
+                    <!-- Interactive Stacked Bar Visualizer -->
+                    <div class="fare-bar-wrapper">
+                      <div class="fare-bar-stack">
+                        <div class="fare-bar-seg seg-base" style="width: 70.9%;" title="Base Fare: ₹4,850 (70.9%)"></div>
+                        <div class="fare-bar-seg seg-udf" style="width: 4.4%;" title="UDF Airport Fee: ₹300 (4.4%)"></div>
+                        <div class="fare-bar-seg seg-asf" style="width: 2.9%;" title="Statutory ASF: ₹200 (2.9%)"></div>
+                        <div class="fare-bar-seg seg-gst" style="width: 3.8%;" title="GST 5%: ₹257 (3.8%)"></div>
+                        <div class="fare-bar-seg seg-surge" style="width: 18.0%;" title="Dynamic Surge: ₹1,233 (18.0%)"></div>
+                      </div>
+                      <div class="fare-bar-legend">
+                        <span class="f-leg-item"><span class="f-leg-dot base"></span>Base: ₹4,850</span>
+                        <span class="f-leg-item"><span class="f-leg-dot udf"></span>UDF: ₹300</span>
+                        <span class="f-leg-item"><span class="f-leg-dot asf"></span>ASF: ₹200</span>
+                        <span class="f-leg-item"><span class="f-leg-dot gst"></span>GST: ₹257</span>
+                        <span class="f-leg-item"><span class="f-leg-dot surge"></span>Surge: ₹1,233</span>
+                      </div>
+                    </div>
+
+                    <div class="statutory-note-box">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" style="flex-shrink:0; margin-top:2px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      <span>Fixed statutory airport charges (₹200 ASF + UDF + 5% GST) separated so CPI captures true airline commercial tariff trends.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- View 2: GEKS-Törnqvist Multilateral Synthesis Canvas Card -->
+                <div class="canvas-view" id="canvas-view-2">
+                  <div class="canvas-card">
+                    <div class="canvas-card-head">
+                      <div class="canvas-card-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fa5d19" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        <span>Multilateral GEKS Chained Aggregation (Base 2024=100)</span>
+                      </div>
+                      <span class="canvas-badge orange">Eurostat / ILO Standard</span>
+                    </div>
+
+                    <div class="geks-headline-grid">
+                      <div class="geks-index-stat">
+                        <div class="geks-stat-num">103.7 <span class="geks-stat-pct">+1.2% MoM</span></div>
+                        <div class="geks-stat-lbl">National Chained Aviation Index</div>
+                      </div>
+                      <div class="geks-gap-stat">
+                        <div class="geks-gap-badge">+20.6% Materiality Gap</div>
+                        <div class="geks-gap-desc">Inflation distortion in legacy 1-day sample</div>
+                      </div>
+                    </div>
+
+                    <!-- DGCA Passenger Volume Weight Distribution -->
+                    <div class="dgca-weights-preview">
+                      <div class="dw-row">
+                        <span class="dw-corridor">DEL ⇄ BOM (w=0.22)</span>
+                        <div class="dw-track"><div class="dw-fill" style="width: 88%;"></div></div>
+                        <span class="dw-val">104.2</span>
+                      </div>
+                      <div class="dw-row">
+                        <span class="dw-corridor">DEL ⇄ BLR (w=0.18)</span>
+                        <div class="dw-track"><div class="dw-fill" style="width: 72%;"></div></div>
+                        <span class="dw-val">103.5</span>
+                      </div>
+                      <div class="dw-row">
+                        <span class="dw-corridor">BOM ⇄ BLR (w=0.14)</span>
+                        <div class="dw-track"><div class="dw-fill" style="width: 56%;"></div></div>
+                        <span class="dw-val">102.9</span>
+                      </div>
+                    </div>
+
+                    <div class="geks-footer-strip">
+                      <span class="geks-proof-pill">✓ Zero Chain Drift</span>
+                      <span class="geks-proof-pill">✓ Transitivity Preserved</span>
+                      <span class="geks-proof-pill">✓ 8 Corridors &sum;w_r=1.000</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="pillar-name">Aggregate &amp; Index</div>
-            <div class="pillar-desc">Multilateral GEKS-Törnqvist rolling-window index eliminating chain drift, weighted by official DGCA passenger volume shares (w_r).</div>
-            <a href="/dashboard" class="pillar-link">Explore index series <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
           </div>
         </div>
 
-        <!-- Feature Bento Grid -->
-        <div class="features-grid">
-          <div class="feature-card reveal">
-            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></div>
-            <div class="feature-name">GEKS-Törnqvist Multilateral Index</div>
-            <div class="feature-desc">Eliminates chain drift and handles new/cancelled flight numbers across booking horizons without quality degradation (Eurostat standard).</div>
-          </div>
-          <div class="feature-card reveal">
-            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-            <div class="feature-name">Lead-Time Yield Elasticity Curves</div>
-            <div class="feature-desc">Measures fare surge curves across T+1, T+7, T+15, T+30, and T+45 days, capturing dynamic airline yield management in real time.</div>
-          </div>
-          <div class="feature-card reveal">
-            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h5"/></svg></div>
-            <div class="feature-name">Statutory Fare Decomposition</div>
-            <div class="feature-desc">Separates volatile airline base tariffs from fixed government fees (UDF, ASF flat ₹200, 5% economy GST, and platform fees).</div>
-          </div>
-          <div class="feature-card reveal">
-            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-            <div class="feature-name">Materiality Gap Diagnostic</div>
-            <div class="feature-desc">Quantifies the exact inflation distortion (+20.6% to +46.9%) caused by legacy single-point monthly snapshots.</div>
-          </div>
-          <div class="feature-card reveal">
-            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg></div>
-            <div class="feature-name">Sector Fare Heatmap Grid</div>
-            <div class="feature-desc">Instant color-coded visual identification of price surges, festival spikes (Diwali/Chhath), and route duopoly markups across 14 days.</div>
-          </div>
-          <div class="feature-card reveal">
-            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-            <div class="feature-name">Passive Stealth Web Scraping</div>
-            <div class="feature-desc">TLS impersonation (Chrome 120) + Playwright Chromium browser pool with zero invasive CAPTCHA-farm evasion.</div>
-          </div>
-          <div class="feature-card reveal">
-            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></div>
-            <div class="feature-name">DGCA Passenger Traffic Weighting</div>
-            <div class="feature-desc">Weights each city-pair sub-index by its official share of total domestic air traffic (DEL-BOM = 0.22, DEL-BLR = 0.18).</div>
-          </div>
-          <div class="feature-card reveal">
-            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/></svg></div>
-            <div class="feature-name">Gemini AI Anomaly Diagnoser</div>
-            <div class="feature-desc">LLM-assisted diagnosis explaining the economic root cause of sudden fare spikes for NSO statistical bulletin releases.</div>
-          </div>
-          <div class="feature-card reveal">
-            <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
-            <div class="feature-name">Monetary Policy Nowcasting</div>
-            <div class="feature-desc">Provides the Reserve Bank of India (RBI) with real-time transport inflation nowcasts ahead of official monthly CPI releases.</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5-Stage Index Construction Pipeline -->
-    <section class="tiers-section" id="pipeline">
-      <div class="section-container">
-        <div class="section-header reveal">
-          <div class="section-pre">Statistical Compilation Order</div>
-          <h2 class="section-title">The 5-Stage Aviation Intelligence Pipeline</h2>
-          <p class="section-sub">Click any pipeline stage to inspect its econometric formula and sample quote.</p>
-        </div>
-
-        <div class="tiers-cascade-grid">
-          <!-- Stage 0 -->
-          <div class="tier-card tier-accent-0 fade-up fade-up-delay-1" data-tier="0">
-            <div>
-              <div class="tier-top">
-                <div class="tier-pill-badge t0-badge">STAGE 1</div>
-                <button type="button" class="tier-toggle" aria-expanded="false" aria-label="Expand Stage 1">
-                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-                </button>
-              </div>
-              <div class="tier-name">Flight Scraping</div>
-              <div class="tier-desc">Multi-carrier daily scraping across Google Flights, Akasa Air, and SpiceJet with passive stealth.</div>
-            </div>
-            <div class="tier-detail">
-              <div class="tier-detail-label">Data Ingestion Basis</div>
-              <p>Captures one-way economy quotes across T+1, T+7, T+15, T+30, T+45 booking windows.</p>
-              <div class="tier-example"><span class="tier-example-item">IndiGo 6E-2045 (DEL-BOM)</span><span class="tier-example-price">₹6,840</span></div>
-            </div>
-          </div>
-
-          <!-- Stage 1 -->
-          <div class="tier-card tier-accent-1 fade-up fade-up-delay-2" data-tier="1">
-            <div>
-              <div class="tier-top">
-                <div class="tier-pill-badge t1-badge">STAGE 2</div>
-                <button type="button" class="tier-toggle" aria-expanded="false" aria-label="Expand Stage 2">
-                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-                </button>
-              </div>
-              <div class="tier-name">Fare Decomposition</div>
-              <div class="tier-desc">Separates dynamic airline tariffs from fixed government fees: UDF, flat ₹200 ASF, and 5% GST.</div>
-            </div>
-            <div class="tier-detail">
-              <div class="tier-detail-label">Statutory Formula</div>
-              <p>Total = (Base + Fuel) × (1 + GST) + UDF + ASF + Convenience</p>
-              <div class="tier-example"><span class="tier-example-item">Base Tariff Isolated</span><span class="tier-example-price">₹4,850</span></div>
-            </div>
-          </div>
-
-          <!-- Stage 2 -->
-          <div class="tier-card tier-accent-2 fade-up fade-up-delay-3" data-tier="2">
-            <div>
-              <div class="tier-top">
-                <div class="tier-pill-badge t2-badge">STAGE 3</div>
-                <button type="button" class="tier-toggle" aria-expanded="false" aria-label="Expand Stage 3">
-                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-                </button>
-              </div>
-              <div class="tier-name">Lead-Time Yield Curve</div>
-              <div class="tier-desc">Maps the dynamic escalation curve from T+45 (early bird) to T+1 (emergency booking).</div>
-            </div>
-            <div class="tier-detail">
-              <div class="tier-detail-label">Yield Metric</div>
-              <p>Computes the lead-time spread ratio across booking windows for each sector.</p>
-              <div class="tier-example"><span class="tier-example-item">T+1 vs T+30 Spread</span><span class="tier-example-price">3.85x Surge</span></div>
-            </div>
-          </div>
-
-          <!-- Stage 3 -->
-          <div class="tier-card tier-accent-3 fade-up fade-up-delay-4" data-tier="3">
-            <div>
-              <div class="tier-top">
-                <div class="tier-pill-badge t3-badge">STAGE 4</div>
-                <button type="button" class="tier-toggle" aria-expanded="false" aria-label="Expand Stage 4">
-                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-                </button>
-              </div>
-              <div class="tier-name">Jevons Sub-Index</div>
-              <div class="tier-desc">Computes elementary price relatives using the geometric mean of observed flight prices.</div>
-            </div>
-            <div class="tier-detail">
-              <div class="tier-detail-label">ILO Formula</div>
-              <p>I = exp( (1/N) × Σ ln(p_t / p_0) ) × 100</p>
-              <div class="tier-example"><span class="tier-example-item">DEL-BOM Sector Index</span><span class="tier-example-price">103.7</span></div>
-            </div>
-          </div>
-
-          <!-- Stage 4 -->
-          <div class="tier-card tier-accent-4 fade-up fade-up-delay-5" data-tier="4">
-            <div>
-              <div class="tier-top">
-                <div class="tier-pill-badge t4-badge">STAGE 5</div>
-                <button type="button" class="tier-toggle" aria-expanded="false" aria-label="Expand Stage 5">
-                  <svg class="icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-                </button>
-              </div>
-              <div class="tier-name">GEKS Aggregation</div>
-              <div class="tier-desc">Aggregates sectors with DGCA traffic weights (w_r) and eliminates chain drift via GEKS.</div>
-            </div>
-            <div class="tier-detail">
-              <div class="tier-detail-label">National Metric</div>
-              <p>Continuous multilateral chained index for CPI transport series (Base 2024=100).</p>
-              <div class="tier-example"><span class="tier-example-item">National APIx Series</span><span class="tier-example-price">103.7 (+1.2%)</span></div>
-            </div>
+        <!-- Interactive Capability Smart Pills Ribbon -->
+        <div class="capabilities-smart-ribbon reveal">
+          <div class="smart-ribbon-label">Key Platform Capabilities (Click to inspect):</div>
+          <div class="smart-chips-grid">
+            <button type="button" class="smart-chip" data-goto-step="0" title="Click to inspect Ingestion Telemetry">
+              <span class="s-dot"></span>
+              <span>⚡ Passive TLS Stealth</span>
+            </button>
+            <button type="button" class="smart-chip" data-goto-step="0" title="Click to inspect Yield Curve Horizons">
+              <span class="s-dot orange"></span>
+              <span>📈 Lead-Time Yield Curves (T+1…T+45)</span>
+            </button>
+            <button type="button" class="smart-chip" data-goto-step="1" title="Click to inspect Statutory Decomposition">
+              <span class="s-dot green"></span>
+              <span>⚖️ Statutory Fee Isolator</span>
+            </button>
+            <button type="button" class="smart-chip" data-goto-step="2" title="Click to inspect Materiality Gap Proof">
+              <span class="s-dot red"></span>
+              <span>🔍 Materiality Gap Diagnostic (+20.6%)</span>
+            </button>
+            <button type="button" class="smart-chip" data-goto-step="0" title="Click to inspect 14-Day Sector Heatmap">
+              <span class="s-dot yellow"></span>
+              <span>🗺️ 14-Day Sector Fare Heatmap</span>
+            </button>
+            <button type="button" class="smart-chip" data-goto-step="2" title="Click to inspect DGCA Traffic Weights">
+              <span class="s-dot violet"></span>
+              <span>📊 DGCA Traffic Weighting (w_r)</span>
+            </button>
+            <button type="button" class="smart-chip" data-goto-step="2" title="Click to inspect Gemini AI Diagnoser">
+              <span class="s-dot yellow"></span>
+              <span>🧠 Gemini AI Anomaly Diagnoser</span>
+            </button>
+            <button type="button" class="smart-chip" data-goto-step="2" title="Click to inspect RBI Nowcasting">
+              <span class="s-dot blue"></span>
+              <span>🏛️ RBI Monetary Policy Nowcasting</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1542,9 +2243,9 @@
       </div>
       <div class="footer-col">
         <div class="footer-head">Methodology</div>
-        <a href="#pipeline">GEKS-Törnqvist Index</a>
-        <a href="#pipeline">Lead-Time Yield Curves</a>
-        <a href="#capabilities">Statutory Decomposition</a>
+        <a href="#pipeline">5-Stage Econometric Pipeline</a>
+        <a href="#capabilities">Interactive Methodology Studio</a>
+        <a href="/docs">Statistical Specifications</a>
       </div>
       <div class="footer-col">
         <div class="footer-head">Institutional Access</div>
@@ -1567,44 +2268,44 @@
     /* ── Live terminal playground data for APIx ── */
     const PG_TIERS = [
       {
-        tier: 'STAGE 1',
+        tier: 'STAGE 1 · INGESTION',
         query: 'Google Flights Multi-Carrier Survey (DEL ⇄ BOM)',
         chip: 'MULTI-CARRIER SCRAPING',
         name: 'IndiGo 6E-2045 · Air India AI-805 · Akasa QP-1102',
-        source: 'Google Flights via SerpAPI · 15 quotes collected across carriers',
+        source: '8 Domestic Sectors × 5 Horizons (T+1…T+45) · 4,800 Daily Quotes',
         price: 6840,
         priceLabel: 'avg fare',
         conf: '100% COVERAGE',
         tierColor: '#4f46e5'
       },
       {
-        tier: 'STAGE 2',
-        query: 'Statutory Fare Decomposition (IndiGo 6E-2045)',
+        tier: 'STAGE 2 · DECOMPOSITION',
+        query: 'Statutory Tariff & Levy Unbundling (IndiGo 6E-2045)',
         chip: 'FARE DECOMPOSITION',
-        name: 'Base Tariff ₹4,850 + UDF ₹300 + ASF ₹200 + GST ₹257 + Fee ₹350',
-        source: 'Statutory Fee Isolator · Airline Commercial Tariff Separated',
+        name: 'Base Tariff ₹4,850 + UDF ₹300 + Flat ASF ₹200 + GST ₹257 (MoCA Rules)',
+        source: 'Statutory Fee Isolator · Base Tariff Separated from Airport Levies',
         price: 4850,
         priceLabel: 'base tariff',
         conf: 'STATUTORY ISOLATED',
         tierColor: '#10b981'
       },
       {
-        tier: 'STAGE 3',
-        query: 'Lead-Time Advance Window Yield Curves (DEL-BOM)',
+        tier: 'STAGE 3 · YIELD CURVES',
+        query: 'Advance Booking Yield Elasticity Curves (DEL-BOM)',
         chip: 'YIELD ELASTICITY',
-        name: 'T+1: ₹16.8k · T+7: ₹7.8k · T+15: ₹5.2k · T+30: ₹3.9k',
-        source: 'Dynamic Revenue Management Curve · 3.85x Surge Multiplier',
+        name: 'T+1: ₹16.8k · T+7: ₹7.8k · T+15: ₹5.2k · T+30: ₹3.9k (3.85x Surge)',
+        source: 'Dynamic Revenue Management Escalation Curve · 5 Advance Horizons',
         price: 16800,
         priceLabel: 'T+1 surge fare',
         conf: 'HIGH-FREQUENCY',
         tierColor: '#f59e0b'
       },
       {
-        tier: 'STAGE 4',
-        query: 'National GEKS-Törnqvist Chained Multilateral Aggregation',
-        chip: 'GEKS INDEX ENGINE',
-        name: '8 High-Density Sectors Weighted by DGCA Passenger Volume (w_r)',
-        source: 'Jevons Geometric Relatives · Zero Chain Drift',
+        tier: 'STAGE 4 · JEVONS SUB-INDEX',
+        query: 'Elementary Geometric Mean Sub-Index (DEL-BOM Corridor)',
+        chip: 'JEVONS SUB-INDEX',
+        name: 'Geometric Mean Price Relatives · I = exp(1/N Σ ln(p_t / p_0)) × 100',
+        source: 'ILO/IMF CPI Manual Chapter 10 · Satisfies Time-Reversal Axiom',
         price: 103.7,
         isIndex: true,
         priceLabel: 'index points',
@@ -1612,14 +2313,15 @@
         tierColor: '#fa5d19'
       },
       {
-        tier: 'STAGE 5',
-        query: 'Statistical Materiality Gap Analysis',
-        chip: 'MATERIALITY PROOF',
-        name: 'Continuous APIx Index (₹7,840) vs Legacy Snapshot (₹6,500)',
-        source: 'Inflation Under-reporting Measured: +20.6% Discrepancy',
-        price: 1340,
-        priceLabel: 'gap per ticket',
-        conf: 'CPI PROOF VERIFIED',
+        tier: 'STAGE 5 · GEKS SYNTHESIS',
+        query: 'Multilateral GEKS-Törnqvist National Aggregation',
+        chip: 'GEKS SYNTHESIS',
+        name: '8 Corridors Weighted by DGCA Passenger Volume Shares (∑w_r = 1.0)',
+        source: 'Zero Chain Drift · +20.6% Materiality Gap Measured vs Monthly Snapshot',
+        price: 103.7,
+        isIndex: true,
+        priceLabel: 'national index',
+        conf: 'DRIFT-FREE INDEX',
         tierColor: '#dc2626'
       }
     ];
@@ -1735,6 +2437,89 @@
       pgObserver.observe(pgWindow);
     }
 
+    /* ── Workflow Studio Interactive Controller ── */
+    const wfCards = Array.prototype.slice.call(document.querySelectorAll('.wf-step-card'));
+    const canvasViews = Array.prototype.slice.call(document.querySelectorAll('.canvas-view'));
+    const canvasStatusText = document.getElementById('canvas-status-text');
+    let wfActiveIndex = 0;
+    let wfAutoTimer = null;
+    let wfIsPaused = false;
+    const WF_STAGE_LABELS = ['STAGE 01: INGESTION & STEALTH', 'STAGE 02: STATUTORY DECOMPOSITION', 'STAGE 03: MULTILATERAL INDEX'];
+
+    function switchWfStage(idx, isManual) {
+      if (idx < 0 || idx >= wfCards.length) return;
+      wfActiveIndex = idx;
+
+      wfCards.forEach((c, i) => {
+        const active = i === idx;
+        c.classList.toggle('active', active);
+        c.setAttribute('aria-expanded', String(active));
+      });
+
+      canvasViews.forEach((v, i) => {
+        v.classList.toggle('active', i === idx);
+      });
+
+      if (canvasStatusText) {
+        canvasStatusText.textContent = WF_STAGE_LABELS[idx] || 'STAGE ACTIVE';
+      }
+
+      if (isManual) {
+        clearTimeout(wfAutoTimer);
+        startWfAutoTimer();
+      }
+    }
+
+    function startWfAutoTimer() {
+      clearTimeout(wfAutoTimer);
+      if (wfIsPaused) return;
+      wfAutoTimer = setTimeout(() => {
+        const next = (wfActiveIndex + 1) % wfCards.length;
+        switchWfStage(next, false);
+        startWfAutoTimer();
+      }, 5000);
+    }
+
+    wfCards.forEach((card, i) => {
+      card.addEventListener('click', () => switchWfStage(i, true));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          switchWfStage(i, true);
+        }
+      });
+      card.addEventListener('mouseenter', () => { wfIsPaused = true; clearTimeout(wfAutoTimer); });
+      card.addEventListener('mouseleave', () => { wfIsPaused = false; startWfAutoTimer(); });
+    });
+
+    const canvasWrap = document.querySelector('.workflow-canvas-wrap');
+    if (canvasWrap) {
+      canvasWrap.addEventListener('mouseenter', () => { wfIsPaused = true; clearTimeout(wfAutoTimer); });
+      canvasWrap.addEventListener('mouseleave', () => { wfIsPaused = false; startWfAutoTimer(); });
+    }
+
+    document.querySelectorAll('.smart-chip[data-goto-step]').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const step = parseInt(chip.getAttribute('data-goto-step'), 10);
+        if (!isNaN(step)) {
+          switchWfStage(step, true);
+        }
+      });
+    });
+
+    const wfStudio = document.querySelector('.workflow-studio');
+    if (wfStudio) {
+      const wfObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            startWfAutoTimer();
+            wfObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.25 });
+      wfObserver.observe(wfStudio);
+    }
+
     /* ── Ministry Marquee ── */
     const MINISTRIES = ['MoSPI (NSO)', 'Reserve Bank of India (RBI)', 'DGCA Tariff Directorate', 'Ministry of Civil Aviation', 'NITI Aayog', 'Department of Economic Affairs', 'Eurostat Scanner Data', 'ILO Price Statistics'];
     function renderMinistries() {
@@ -1792,17 +2577,53 @@
         metricObserver.unobserve(el);
       });
     }, { threshold: 0.4 });
-    document.querySelectorAll('.metric-num[data-count]').forEach((el) => metricObserver.observe(el));
+    /* ── Header Nav Active ScrollSpy ── */
+    const navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links .nav-link'));
+    const spySections = [
+      { id: 'pipeline', el: document.getElementById('pipeline') },
+      { id: 'capabilities', el: document.getElementById('capabilities') },
+      { id: 'faq', el: document.getElementById('faq') },
+      { id: 'auth', el: document.getElementById('auth') }
+    ];
 
-    /* ── Expandable 5-stage cascade ── */
-    document.querySelectorAll('.tier-card').forEach((card) => {
-      const toggle = card.querySelector('.tier-toggle');
-      if (toggle) {
-        toggle.addEventListener('click', () => {
-          const isOpen = card.classList.toggle('is-open');
-          toggle.setAttribute('aria-expanded', String(isOpen));
-        });
-      }
+    function updateNavScrollSpy() {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const navOffset = 160;
+      let currentActiveId = null;
+
+      spySections.forEach(item => {
+        if (!item.el) return;
+        const rect = item.el.getBoundingClientRect();
+        const top = rect.top + scrollY;
+        let height = item.el.offsetHeight;
+
+        if (item.id === 'pipeline') {
+          const pg = document.querySelector('.playground');
+          if (pg) height += pg.offsetHeight + 60;
+        }
+
+        if (scrollY + navOffset >= top && scrollY + navOffset < top + height) {
+          currentActiveId = item.id;
+        }
+      });
+
+      navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        const targetId = href ? href.replace('#', '') : '';
+        const isActive = targetId && targetId === currentActiveId;
+        link.classList.toggle('active', Boolean(isActive));
+      });
+    }
+
+    window.addEventListener('scroll', updateNavScrollSpy, { passive: true });
+    window.addEventListener('resize', updateNavScrollSpy, { passive: true });
+    updateNavScrollSpy();
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
     });
 
     /* ── FAQ accordion ── */
