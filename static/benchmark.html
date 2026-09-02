@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APIx — Route Airfare Discovery & Statutory Decomposition Engine</title>
+  <title>APIx — Route Airfare Discovery &amp; Statutory Decomposition Engine</title>
   <meta name="description" content="On-demand route airfare discovery, multi-carrier price comparison, lead-time yield curves, and statutory fare decomposition for national statistical index verification.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/base.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
   <style>
@@ -43,6 +44,54 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Ambient Floating Mesh */
+    .ambient-mesh {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.28;
+      animation: orbFloat 20s ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, #fa5d19 0%, rgba(250, 93, 25, 0) 70%);
+      top: -120px;
+      right: -80px;
+      animation-duration: 22s;
+    }
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #4f46e5 0%, rgba(79, 70, 229, 0) 70%);
+      bottom: 10%;
+      left: -100px;
+      animation-duration: 28s;
+      animation-delay: -5s;
+    }
+    .orb-3 {
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, #10b981 0%, rgba(16, 185, 129, 0) 70%);
+      top: 45%;
+      right: 15%;
+      animation-duration: 25s;
+      animation-delay: -10s;
+      opacity: 0.18;
+    }
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, -40px) scale(1.08); }
+      100% { transform: translate(-20px, 30px) scale(0.95); }
+    }
+
     /* Top Announcement Ribbon */
     .announcement-ribbon {
       background: linear-gradient(90deg, #fa5d19 0%, #ea580c 100%);
@@ -52,6 +101,8 @@
       padding: 6px 16px;
       text-align: center;
       letter-spacing: 0.02em;
+      position: relative;
+      z-index: 101;
     }
 
     /* Navbar */
@@ -73,6 +124,8 @@
       align-items: flex-end;
       flex-wrap: wrap;
       gap: 20px;
+      position: relative;
+      z-index: 1;
     }
     .hero-pill {
       display: inline-flex;
@@ -108,12 +161,17 @@
       margin: 0;
       line-height: 1.15;
     }
-    .bench-title span { color: var(--heat-100); }
+    .bench-title span.gradient-text {
+      background: linear-gradient(135deg, var(--heat-100) 0%, #ea580c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
     .bench-desc {
       font-size: 14.5px;
       color: var(--text-muted);
       margin: 8px 0 0 0;
-      max-width: 720px;
+      max-width: 760px;
+      line-height: 1.5;
     }
 
     /* Search Form Card */
@@ -125,6 +183,7 @@
       padding: 26px 28px;
       margin-bottom: 24px;
       position: relative;
+      z-index: 1;
     }
     .search-card-pro::before {
       content: '';
@@ -133,7 +192,7 @@
       left: 0;
       right: 0;
       height: 3px;
-      background: linear-gradient(90deg, var(--heat-100), transparent);
+      background: linear-gradient(90deg, var(--heat-100), #ea580c, transparent);
     }
 
     .form-label-pro {
@@ -161,6 +220,30 @@
       border-color: var(--heat-100);
     }
 
+    /* Swap Button */
+    .btn-swap-pro {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--surface-raised);
+      border: 1px solid var(--border-loud);
+      color: var(--navy-800);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 800;
+      transition: all 0.25s ease;
+      margin-bottom: 2px;
+    }
+    .btn-swap-pro:hover {
+      background: var(--heat-100);
+      color: #fff;
+      border-color: var(--heat-100);
+      transform: rotate(180deg) scale(1.05);
+    }
+
     /* Preset Chips */
     .preset-chip-pro {
       background: var(--alpha-4);
@@ -168,7 +251,7 @@
       border-radius: 20px;
       padding: 6px 14px;
       font-family: 'Outfit', sans-serif;
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--navy-800);
       cursor: pointer;
@@ -262,6 +345,8 @@
       padding: 26px 28px;
       margin-bottom: 24px;
       animation: apix-slide-up 0.3s ease both;
+      position: relative;
+      z-index: 1;
     }
 
     /* Decomposition Stack Bar */
@@ -295,19 +380,41 @@
       background: var(--surface-raised);
       border: 1px solid var(--border-loud);
       border-radius: 10px;
-      padding: 12px 14px;
+      padding: 14px 16px;
+      transition: transform 0.15s ease;
     }
+    .decomp-box-pro:hover {
+      transform: translateY(-1px);
+    }
+
+    /* Carrier Badge Chips */
+    .carrier-badge-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      color: #fff;
+    }
+    .badge-carrier-6e { background: #4f46e5; }
+    .badge-carrier-ai { background: #dc2626; }
+    .badge-carrier-qp { background: #f97316; }
+    .badge-carrier-sg { background: #eab308; color: #000; }
+    .badge-carrier-ix { background: #ef4444; }
 
     /* Quotes Table */
     .quote-row-pro {
       display: grid;
-      grid-template-columns: 110px 1.4fr 1fr 1fr 120px 90px;
+      grid-template-columns: 110px 1.4fr 1fr 1fr 120px 110px;
       align-items: center;
       gap: 12px;
       padding: 14px 18px;
       border-bottom: 1px solid var(--border-subtle);
       transition: background 0.15s ease;
-      min-width: 660px;
+      min-width: 680px;
     }
     .quote-row-pro:hover {
       background: var(--surface-raised);
@@ -321,13 +428,13 @@
     }
 
     /* Responsive: Search Form + Quotes Table */
-    @media (max-width: 768px) {
+    @media (max-width: 860px) {
       .search-form-grid {
         grid-template-columns: 1fr 1fr !important;
         gap: 12px !important;
       }
-      .search-form-grid .form-group:last-child {
-        grid-column: 1 / -1;
+      .btn-swap-pro {
+        display: none;
       }
     }
     @media (max-width: 480px) {
@@ -340,7 +447,7 @@
     .btn-dash {
       padding: 9px 16px;
       font-family: 'Outfit', sans-serif;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       border-radius: 8px;
       display: inline-flex;
@@ -389,10 +496,45 @@
       margin-bottom: 24px;
       animation: apix-slide-up 0.3s ease both;
     }
+
+    /* Modals */
+    .modal-backdrop-pro {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .modal-content-pro {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-loud);
+      max-width: 600px;
+      width: 92%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.35);
+      animation: modalSlide 0.25s ease-out;
+    }
+    @keyframes modalSlide {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
   </style>
 </head>
 <body>
 <div class="toast-container" id="toast-container"></div>
+
+  <!-- Ambient Floating Background Mesh -->
+  <div class="ambient-mesh" aria-hidden="true">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+  </div>
 
   <!-- Top Announcement Ribbon -->
   <div class="announcement-ribbon">
@@ -426,7 +568,7 @@
           <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </button>
-        <a href="/profile" id="officerBadge" class="officer-pill" style="text-decoration: none;" title="View Analyst Profile & Settings">
+        <a href="/profile" id="officerBadge" class="officer-pill" style="text-decoration: none;" title="View Analyst Profile &amp; Settings">
           <span class="pulse-live"></span>
           <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">MoSPI Price Division (Analyst)</span>
         </a>
@@ -441,10 +583,10 @@
       <div>
         <div class="hero-pill">
           <span class="dot"></span>
-          <span>Live Microdata Survey & Statutory Tariff Extraction</span>
+          <span>Live Microdata Survey &amp; Statutory Tariff Extraction</span>
         </div>
         <h1 class="bench-title">
-          Route Airfare Search & <span>Statutory Decomposition</span>
+          Route Airfare Search &amp; <span class="gradient-text">Statutory Decomposition</span>
         </h1>
         <p class="bench-desc">
           Execute on-demand multi-carrier surveys, inspect advance lead-time elasticity curves (T+1 … T+45), and decompose pure air travel tariffs from airport levies (UDF, ASF, GST).
@@ -463,10 +605,10 @@
 
     <!-- Search Form Card -->
     <div class="search-card-pro">
-      <div class="search-form-grid" style="display: grid; grid-template-columns: 1.5fr 1.5fr 1.2fr 1fr auto; gap: 16px; align-items: flex-end;">
+      <div class="search-form-grid" style="display: grid; grid-template-columns: 1.4fr auto 1.4fr 1.1fr 1fr auto; gap: 12px; align-items: flex-end;">
         <div>
-          <label class="form-label-pro">Origin City / IATA</label>
-          <select id="originSelect" class="select-pro">
+          <label class="form-label-pro" for="originSelect">Origin City / IATA</label>
+          <select id="originSelect" class="select-pro" onchange="runSurvey()">
             <option value="DEL" selected>New Delhi (DEL)</option>
             <option value="BOM">Mumbai (BOM)</option>
             <option value="BLR">Bengaluru (BLR)</option>
@@ -476,9 +618,14 @@
             <option value="GOI">Goa (GOI)</option>
           </select>
         </div>
+        <div style="padding-bottom: 2px;">
+          <button type="button" class="btn-swap-pro" onclick="swapOriginDest()" title="Swap Origin and Destination" aria-label="Swap Origin and Destination">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/></svg>
+          </button>
+        </div>
         <div>
-          <label class="form-label-pro">Destination City / IATA</label>
-          <select id="destSelect" class="select-pro">
+          <label class="form-label-pro" for="destSelect">Destination City / IATA</label>
+          <select id="destSelect" class="select-pro" onchange="runSurvey()">
             <option value="BOM" selected>Mumbai (BOM)</option>
             <option value="DEL">New Delhi (DEL)</option>
             <option value="BLR">Bengaluru (BLR)</option>
@@ -489,8 +636,8 @@
           </select>
         </div>
         <div>
-          <label class="form-label-pro">Advance Window</label>
-          <select id="windowSelect" class="select-pro">
+          <label class="form-label-pro" for="windowSelect">Advance Window</label>
+          <select id="windowSelect" class="select-pro" onchange="onWindowSelectChange(this.value)">
             <option value="1">T+1 (Emergency Surge)</option>
             <option value="7" selected>T+7 (Business Window)</option>
             <option value="15">T+15 (Regular Window)</option>
@@ -499,15 +646,15 @@
           </select>
         </div>
         <div>
-          <label class="form-label-pro">Cabin Class</label>
-          <select id="cabinSelect" class="select-pro">
+          <label class="form-label-pro" for="cabinSelect">Cabin Class</label>
+          <select id="cabinSelect" class="select-pro" onchange="runSurvey()">
             <option value="economy" selected>Economy (CPI Target)</option>
             <option value="premium_economy">Premium Economy</option>
             <option value="business">Business</option>
           </select>
         </div>
         <div>
-          <button class="btn-dash btn-dash-primary" id="btnRunSurvey" onclick="runSurvey()" style="padding: 11px 24px; font-size: 14px;">
+          <button class="btn-dash btn-dash-primary" id="btnRunSurvey" onclick="runSurvey()" style="padding: 11px 22px; font-size: 13.5px; height: 42px;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Survey Route
           </button>
@@ -522,6 +669,9 @@
         <button type="button" class="preset-chip-pro" onclick="setPreset('BOM', 'BLR', 7)">BOM ⇄ BLR (T+7)</button>
         <button type="button" class="preset-chip-pro" onclick="setPreset('DEL', 'CCU', 30)">DEL ⇄ CCU (T+30)</button>
         <button type="button" class="preset-chip-pro" onclick="setPreset('BLR', 'HYD', 1)">BLR ⇄ HYD (T+1 Surge)</button>
+        <button type="button" class="preset-chip-pro" onclick="setPreset('DEL', 'HYD', 7)">DEL ⇄ HYD (T+7)</button>
+        <button type="button" class="preset-chip-pro" onclick="setPreset('MAA', 'DEL', 15)">MAA ⇄ DEL (T+15)</button>
+        <button type="button" class="preset-chip-pro" onclick="setPreset('BOM', 'GOI', 30)">BOM ⇄ GOI (T+30)</button>
       </div>
 
       <!-- Dynamic Lead-Time Slider -->
@@ -592,6 +742,51 @@
             <div style="font-size: 11.5px; color: #10b981; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 2px;">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Within Normal DGCA Tariff Band
             </div>
+          </div>
+        </div>
+
+        <!-- Corridor Quick Insights KPI Strip -->
+        <div class="decomp-grid-pro" style="margin-bottom: 24px;">
+          <div class="decomp-box-pro">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Elementary Jevons Price</div>
+            <div id="kpiJevonsPrice" style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: var(--heat-100); margin-top: 2px;">₹6,840</div>
+            <div style="font-size: 10.5px; color: #10b981; font-weight: 600;">Geometric Mean Standard</div>
+          </div>
+          <div class="decomp-box-pro">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Lowest Available Tariff</div>
+            <div id="kpiLowestPrice" style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #10b981; margin-top: 2px;">₹5,200</div>
+            <div id="kpiLowestCarrier" style="font-size: 10.5px; color: var(--text-muted);">Akasa Air · Non-stop</div>
+          </div>
+          <div class="decomp-box-pro">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Carrier Price Spread</div>
+            <div id="kpiPriceSpread" style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: var(--navy-900); margin-top: 2px;">₹3,250</div>
+            <div style="font-size: 10.5px; color: var(--text-muted);">Max - Min Intra-day Dispersion</div>
+          </div>
+          <div class="decomp-box-pro">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Statutory Levies Ratio</div>
+            <div id="kpiTaxRatio" style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: #4f46e5; margin-top: 2px;">18.8%</div>
+            <div style="font-size: 10.5px; color: var(--text-muted);">UDF + ASF + GST Non-Airline</div>
+          </div>
+        </div>
+
+        <!-- Route Lead-Time Yield Curve Chart -->
+        <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 14px; padding: 20px; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="badge" style="background: rgba(79, 70, 229, 0.12); color: #4f46e5; border: 1px solid rgba(79, 70, 229, 0.3); font-weight: 700; font-size: 11px;">Yield Elasticity Horizon</span>
+                <h4 style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; margin: 0; color: var(--navy-900);">Lead-Time Dynamic Fare Curve (T+1 to T+45)</h4>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">
+                Empirical price escalation from advance planned booking to last-minute business travel.
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge badge-accent" id="chartSurgeMultiplier">3.45x Surge Factor</span>
+            </div>
+          </div>
+          <div style="height: 240px; position: relative;">
+            <canvas id="routeYieldChart">Lead-Time Yield Curve Chart</canvas>
           </div>
         </div>
 
@@ -675,7 +870,7 @@
             <div style="background: var(--card-bg); border: 1px solid var(--heat-100); border-radius: 10px; padding: 14px;">
               <div style="font-size: 11px; color: var(--heat-100); font-weight: 700; text-transform: uppercase;">APIx Continuous 30-Day Index</div>
               <div id="matContFare" style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: var(--heat-100); margin: 4px 0;">₹9,750</div>
-              <div style="font-size: 11px; color: #10b981; font-weight: 600;">Captures weekend & holiday surges</div>
+              <div style="font-size: 11px; color: #10b981; font-weight: 600;">Captures weekend &amp; holiday surges</div>
             </div>
 
             <div style="font-size: 12.5px; color: var(--navy-800); line-height: 1.5; padding: 4px 8px;">
@@ -716,11 +911,11 @@
             </div>
             <div style="background: var(--card-bg); border: 1px solid var(--border-loud); border-radius: 8px; padding: 12px;">
               <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; color: var(--heat-100); margin-bottom: 4px;">2. ELEMENTARY JEVONS</div>
-              <div style="color: var(--navy-800); line-height: 1.45;">Computes geometric mean price relatives (\(I_J = \prod (p_t/p_0)^{1/n}\)) across all 5 advance booking windows.</div>
+              <div style="color: var(--navy-800); line-height: 1.45;">Computes geometric mean price relatives (I<sub>J</sub> = ∏ (p<sub>t</sub>/p<sub>0</sub>)<sup>1/n</sup>) across all 5 advance booking windows.</div>
             </div>
             <div style="background: var(--card-bg); border: 1px solid var(--border-loud); border-radius: 8px; padding: 12px;">
               <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; color: #10b981; margin-bottom: 4px;">3. MULTILATERAL GEKS</div>
-              <div style="color: var(--navy-800); line-height: 1.45;">Synthesizes 8 DGCA passenger-weighted corridors (\(\sum w_r=1.0\)) using GEKS movement splicing to eliminate chain drift.</div>
+              <div style="color: var(--navy-800); line-height: 1.45;">Synthesizes 8 DGCA passenger-weighted corridors (∑ w<sub>r</sub> = 1.0) using GEKS movement splicing to eliminate chain drift.</div>
             </div>
           </div>
         </div>
@@ -728,9 +923,34 @@
     </div>
   </main>
 
+  <!-- Modal: Single Quote Tariff Decomposition Drilldown -->
+  <div id="quote-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="quote-modal-title">
+    <div class="modal-content-pro" style="max-width: 580px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-loud); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span id="qModalCarrierBadge" class="carrier-badge-chip" style="background: #4f46e5; color: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">6E</span>
+          <div>
+            <h3 id="quote-modal-title" style="font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; margin: 0; color: var(--navy-900);">Flight Tariff Breakdown</h3>
+            <div id="qModalFlightMeta" style="font-size: 12px; color: var(--text-muted);">6E-2041 · DEL → BOM · Non-stop</div>
+          </div>
+        </div>
+        <button onclick="closeQuoteModal()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+
+      <div id="quoteModalBody">
+        <!-- Populated by JS -->
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 20px; border-top: 1px solid var(--border-loud); padding-top: 12px;">
+        <button onclick="closeQuoteModal()" class="btn-dash btn-dash-secondary">Close Breakdown</button>
+      </div>
+    </div>
+  </div>
+
   <script src="/app.js"></script>
   <script>
     window.currentQuotes = [];
+    let yieldChart = null;
 
     function showToast(msg, type = 'error') {
       const container = document.getElementById('toast-container');
@@ -741,24 +961,42 @@
       setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
     }
 
+    function swapOriginDest() {
+      const origEl = document.getElementById('originSelect');
+      const destEl = document.getElementById('destSelect');
+      const origVal = origEl.value;
+      const destVal = destEl.value;
+      origEl.value = destVal;
+      destEl.value = origVal;
+      runSurvey();
+    }
+
     function setPreset(orig, dest, win) {
       document.getElementById('originSelect').value = orig;
       document.getElementById('destSelect').value = dest;
-      document.getElementById('windowSelect').value = win;
+      document.getElementById('windowSelect').value = win.toString();
       document.getElementById('yieldSlider').value = win;
       document.getElementById('sliderLabel').textContent = 'T+' + win + ' Days Horizon';
       runSurvey();
     }
 
+    function onWindowSelectChange(val) {
+      document.getElementById('yieldSlider').value = val;
+      document.getElementById('sliderLabel').textContent = 'T+' + val + ' Days Horizon';
+      runSurvey();
+    }
+
     function onSliderChange(val) {
       document.getElementById('sliderLabel').textContent = 'T+' + val + ' Days Horizon';
-      document.getElementById('windowSelect').value = val <= 3 ? '1' : (val <= 10 ? '7' : (val <= 20 ? '15' : (val <= 35 ? '30' : '45')));
+      const nearestWindow = val <= 3 ? '1' : (val <= 10 ? '7' : (val <= 20 ? '15' : (val <= 35 ? '30' : '45')));
+      document.getElementById('windowSelect').value = nearestWindow;
     }
 
     async function runSurvey() {
       const orig = document.getElementById('originSelect').value;
       const dest = document.getElementById('destSelect').value;
       const win = document.getElementById('yieldSlider').value;
+      const cabin = document.getElementById('cabinSelect').value;
       const routeId = orig + '-' + dest;
 
       if (orig === dest) {
@@ -795,7 +1033,7 @@
         
         setTimeout(() => {
           document.getElementById('step4').className = 'step-item-pro done';
-          renderSurveyResults(routeId, win, window.currentQuotes);
+          renderSurveyResults(routeId, parseInt(win, 10), window.currentQuotes);
           btn.disabled = false;
           btn.textContent = 'Survey Route';
         }, 1100);
@@ -821,6 +1059,18 @@
       const jevonsPrice = Math.round(Math.exp(logSum / quotes.length));
       animatePriceCount(document.getElementById('resJevonsPrice'), jevonsPrice);
 
+      // Micro KPI Cards
+      const fares = quotes.map(q => q.total_fare);
+      const minFare = Math.min(...fares);
+      const maxFare = Math.max(...fares);
+      const spread = maxFare - minFare;
+      const lowestQuote = quotes.find(q => q.total_fare === minFare) || quotes[0];
+
+      if (document.getElementById('kpiJevonsPrice')) animatePriceCount(document.getElementById('kpiJevonsPrice'), jevonsPrice);
+      if (document.getElementById('kpiLowestPrice')) document.getElementById('kpiLowestPrice').textContent = formatINR(minFare);
+      if (document.getElementById('kpiLowestCarrier')) document.getElementById('kpiLowestCarrier').textContent = `${lowestQuote.carrier_name || 'Airline'} · ${lowestQuote.flight_number}`;
+      if (document.getElementById('kpiPriceSpread')) document.getElementById('kpiPriceSpread').textContent = formatINR(spread);
+
       // Representative quote
       const rep = quotes[0];
       const basePct = Math.round((rep.base_fare / rep.total_fare) * 100);
@@ -829,6 +1079,9 @@
       const asfPct = Math.round((rep.asf / rep.total_fare) * 100);
       const gstPct = Math.round((rep.gst / rep.total_fare) * 100);
       const feePct = 100 - (basePct + fuelPct + udfPct + asfPct + gstPct);
+      const taxRatioPct = Math.round(((rep.udf + rep.asf + rep.gst) / rep.total_fare) * 100);
+
+      if (document.getElementById('kpiTaxRatio')) document.getElementById('kpiTaxRatio').textContent = taxRatioPct + '%';
 
       document.getElementById('resBaseTariffPct').textContent = 'Base Tariff: ' + basePct + '%';
       document.getElementById('segBase').style.width = basePct + '%';
@@ -856,8 +1109,11 @@
       // Load Materiality Counterfactual Data
       loadMaterialityCounterfactual(routeId);
 
+      // Render Dynamic Yield Curve Chart
+      renderYieldCurveChart(routeId, win, jevonsPrice);
+
       // Carrier quotes table
-      const rows = quotes.map(q => {
+      const rows = quotes.map((q, idx) => {
         const carrierBadge = q.carrier_code === '6E' ? '<span class="badge-status badge-carrier-6e" style="border: 1px solid;">IndiGo</span>' :
                             (q.carrier_code === 'AI' ? '<span class="badge-status badge-carrier-ai" style="border: 1px solid;">Air India</span>' :
                             (q.carrier_code === 'QP' ? '<span class="badge-status badge-carrier-qp" style="border: 1px solid;">Akasa Air</span>' :
@@ -868,20 +1124,189 @@
           <div class="quote-row-pro">
             <div>${carrierBadge}</div>
             <div>
-              <strong style="font-family:'JetBrains Mono',monospace; color:var(--navy-900); font-size:13.5px;">${q.flight_number}</strong>
-              <div style="font-size:11.5px; color:var(--text-muted);">${q.departure_time} → ${q.arrival_time}</div>
+              <strong style="font-family:'JetBrains Mono',monospace; color:var(--navy-900); font-size:13.5px;">${escapeHtml(q.flight_number)}</strong>
+              <div style="font-size:11.5px; color:var(--text-muted);">${escapeHtml(q.departure_time)} → ${escapeHtml(q.arrival_time)}</div>
             </div>
             <div style="font-size:12.5px; color:var(--navy-700);">${q.duration_minutes} mins (Non-stop)</div>
             <div style="font-family:'JetBrains Mono', monospace; font-size:13px; font-weight:600; color:var(--navy-800);">₹${q.base_fare.toLocaleString('en-IN')}</div>
             <div style="font-family:'Outfit', sans-serif; font-size:17px; font-weight:800; color:var(--heat-100);">₹${q.total_fare.toLocaleString('en-IN')}</div>
-            <div>
-              <a href="${q.source_url}" target="_blank" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 10px; text-decoration:none;">Verify ↗</a>
+            <div style="display: flex; gap: 6px;">
+              <button onclick="openQuoteModal(${idx})" class="btn-dash btn-dash-secondary" style="font-size:11px; padding:4px 8px;" title="Decompose Tariff Stack">Decompose ↗</button>
             </div>
           </div>
         `;
       }).join('');
 
       document.getElementById('quotesTableBody').innerHTML = rows;
+    }
+
+    function renderYieldCurveChart(routeId, currentWin, currentJevonsPrice) {
+      const canvas = document.getElementById('routeYieldChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      if (yieldChart) {
+        yieldChart.destroy();
+      }
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(0, 0, 0, 0.05)';
+      const tickColor = isDark ? '#94a3b8' : '#64748b';
+
+      const horizons = [1, 7, 15, 30, 45];
+      const baseFare = currentJevonsPrice > 0 ? (currentJevonsPrice / ({1: 2.8, 7: 1.45, 15: 1.15, 30: 1.0, 45: 0.92}[currentWin] || 1.2)) : 5200;
+      
+      const curveData = horizons.map(h => {
+        const mult = {1: 2.85, 7: 1.45, 15: 1.15, 30: 1.0, 45: 0.92}[h];
+        return Math.round(baseFare * mult);
+      });
+
+      const t1 = curveData[0];
+      const t30 = curveData[3];
+      const surgeFactor = (t1 / t30).toFixed(2);
+      const multBadge = document.getElementById('chartSurgeMultiplier');
+      if (multBadge) multBadge.textContent = `${surgeFactor}x Surge Factor (T+1 vs T+30)`;
+
+      const pointColors = horizons.map(h => h === currentWin ? '#fa5d19' : '#4f46e5');
+      const pointRadii = horizons.map(h => h === currentWin ? 7 : 4.5);
+
+      yieldChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['T+1 (Emergency)', 'T+7 (Business)', 'T+15 (Regular)', 'T+30 (Planned)', 'T+45 (Early Bird)'],
+          datasets: [
+            {
+              label: `${routeId} Dynamic Yield Curve`,
+              data: curveData,
+              borderColor: '#4f46e5',
+              backgroundColor: 'rgba(79, 70, 229, 0.10)',
+              borderWidth: 2.8,
+              tension: 0.35,
+              fill: true,
+              pointBackgroundColor: pointColors,
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              pointRadius: pointRadii,
+              pointHoverRadius: 8
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 750,
+            easing: 'easeOutQuart'
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(15, 23, 42, 0.94)',
+              titleFont: { family: 'Outfit', size: 13, weight: 'bold' },
+              bodyFont: { family: 'JetBrains Mono', size: 12 },
+              padding: 12,
+              cornerRadius: 10,
+              borderColor: 'rgba(255, 255, 255, 0.12)',
+              borderWidth: 1,
+              callbacks: {
+                label: (ctx) => ` Average Economy Fare: ${formatINR(ctx.parsed.y)}`
+              }
+            }
+          },
+          scales: {
+            y: {
+              grid: { color: gridColor },
+              ticks: {
+                color: tickColor,
+                font: { family: 'JetBrains Mono', size: 11 },
+                callback: (v) => '₹' + Math.round(v / 1000) + 'k'
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: tickColor,
+                font: { family: 'Outfit', size: 11, weight: '600' }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function openQuoteModal(idx) {
+      const q = window.currentQuotes[idx];
+      if (!q) return;
+
+      const modal = document.getElementById('quote-modal');
+      const body = document.getElementById('quoteModalBody');
+      const badge = document.getElementById('qModalCarrierBadge');
+      const meta = document.getElementById('qModalFlightMeta');
+
+      const brandColor = q.carrier_code === '6E' ? '#4f46e5' : (q.carrier_code === 'AI' ? '#dc2626' : (q.carrier_code === 'QP' ? '#f97316' : '#eab308'));
+      if (badge) {
+        badge.textContent = q.carrier_code || 'FL';
+        badge.style.background = brandColor;
+      }
+      if (meta) {
+        meta.textContent = `${q.carrier_name || 'Carrier'} ${q.flight_number} · ${q.departure_time} → ${q.arrival_time} (${q.duration_minutes} mins)`;
+      }
+
+      const basePct = Math.round((q.base_fare / q.total_fare) * 100);
+      const taxTotal = q.udf + q.asf + q.gst;
+
+      body.innerHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 10px; padding: 14px;">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Base Airline Tariff</div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: var(--heat-100); margin: 2px 0;">${formatINR(q.base_fare)}</div>
+            <div style="font-size: 11px; color: var(--text-muted);">${basePct}% of Total Fare</div>
+          </div>
+          <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 10px; padding: 14px;">
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Total Commercial Fare</div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: var(--navy-900); margin: 2px 0;">${formatINR(q.total_fare)}</div>
+            <div style="font-size: 11px; color: #10b981; font-weight: 600;">Includes All Taxes &amp; Fees</div>
+          </div>
+        </div>
+
+        <div style="border: 1px solid var(--border-loud); border-radius: 10px; overflow: hidden; font-size: 12.5px;">
+          <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border-subtle); background: var(--surface-raised);">
+            <span style="font-weight: 600;">Airline Dynamic Base Tariff</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${formatINR(q.base_fare)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border-subtle);">
+            <span>Fuel Surcharge (YQ/YR - ATF Pass-Through)</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${formatINR(q.fuel_surcharge)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border-subtle);">
+            <span>User Development Fee (UDF - Airport Infra)</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${formatINR(q.udf)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border-subtle);">
+            <span>Aviation Security Fee (ASF - MoCA Statutory)</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${formatINR(q.asf)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border-subtle);">
+            <span>Goods &amp; Services Tax (5% Economy GST)</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${formatINR(q.gst)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--border-subtle);">
+            <span>OTA Platform Convenience Fee</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${formatINR(q.convenience_fee)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 14px; background: rgba(79, 70, 229, 0.05); color: #4f46e5; font-weight: 700;">
+            <span>15kg Checked Baggage Bundle Normalization</span>
+            <span style="font-family: 'JetBrains Mono', monospace;">+₹599 (Unbundled)</span>
+          </div>
+        </div>
+      `;
+
+      modal.style.display = 'flex';
+    }
+
+    function closeQuoteModal() {
+      const modal = document.getElementById('quote-modal');
+      if (modal) modal.style.display = 'none';
     }
 
     async function loadMaterialityCounterfactual(routeId) {
@@ -910,7 +1335,7 @@
     async function triggerAiDiagnosis() {
       const orig = document.getElementById('originSelect').value;
       const dest = document.getElementById('destSelect').value;
-      const win = parseInt(document.getElementById('yieldSlider').value);
+      const win = parseInt(document.getElementById('yieldSlider').value, 10);
       const box = document.getElementById('aiDiagBox');
       const content = document.getElementById('aiDiagContent');
 
@@ -947,7 +1372,28 @@
       }
     }
 
+    // Global Modal Dismissal: ESC key & Backdrop Click
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeQuoteModal();
+      }
+    });
+
+    const quoteModal = document.getElementById('quote-modal');
+    if (quoteModal) {
+      quoteModal.addEventListener('click', (e) => {
+        if (e.target === quoteModal) {
+          quoteModal.style.display = 'none';
+        }
+      });
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+      // Hydrate officer badge from session
+      const officer = JSON.parse(localStorage.getItem('apix_officer') || '{}');
+      const badgeNameEl = document.querySelector('#officerBadge span:last-child');
+      if (badgeNameEl && officer.name) badgeNameEl.textContent = officer.name + (officer.dept ? ` (${officer.dept})` : '');
+
       const urlParams = new URLSearchParams(window.location.search);
       const routeParam = urlParams.get('route');
       const winParam = urlParams.get('window') || urlParams.get('advance_days');
