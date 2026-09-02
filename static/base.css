@@ -1775,38 +1775,51 @@ html.dark .heatmap-surge { background: rgba(239, 68, 68, 0.30); color: #fca5a5; 
 .term-tooltip:hover::after, .term-tooltip:focus::after {
   content: attr(data-tooltip);
   position: absolute;
-  top: calc(100% + 8px);
-  bottom: auto;
+  bottom: calc(100% + 8px);
+  top: auto;
   left: 0;
   transform: none;
-  padding: 10px 14px;
-  background: #171717;
-  color: #f4f4f5;
-  border: 1px solid rgba(250, 93, 25, 0.45);
-  font-family: 'Inter', sans-serif;
-  font-size: 11.5px;
+  padding: 8px 12px;
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 11px;
   font-weight: 500;
-  line-height: 1.45;
+  line-height: 1.4;
+  text-transform: none !important;
+  letter-spacing: 0.01em;
   border-radius: 8px;
   white-space: normal;
-  width: max-content;
-  max-width: 260px;
-  z-index: 9999;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  box-sizing: border-box;
+  width: 230px;
+  max-width: 240px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  z-index: 99999;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
   pointer-events: none;
-  animation: apix-fade-up 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: apix-fade-up 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 .term-tooltip:hover::before, .term-tooltip:focus::before {
   content: '';
   position: absolute;
-  top: calc(100% + 2px);
-  bottom: auto;
-  left: 18px;
+  bottom: calc(100% + 3px);
+  top: auto;
+  left: 14px;
   transform: none;
-  border-width: 0 6px 6px 6px;
+  border-width: 5px 5px 0 5px;
   border-style: solid;
-  border-color: transparent transparent #171717 transparent;
-  z-index: 10000;
+  border-color: #0f172a transparent transparent transparent;
+  z-index: 100000;
+}
+html.dark .term-tooltip:hover::after, html.dark .term-tooltip:focus::after {
+  background: #090d16;
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+html.dark .term-tooltip:hover::before, html.dark .term-tooltip:focus::before {
+  border-color: #090d16 transparent transparent transparent;
 }
 
 /* ── Live Pulsing Feed Dot ── */
