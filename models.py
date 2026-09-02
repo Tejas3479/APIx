@@ -179,6 +179,13 @@ class UserResponse(BaseModel):
     role: str
 
 
+class UserProfileUpdate(BaseModel):
+    name: str | None = Field(None, min_length=2, max_length=100)
+    department: str | None = Field(None, max_length=200)
+    organization: str | None = Field(None, max_length=200)
+    role: str | None = Field(None, max_length=50)
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"

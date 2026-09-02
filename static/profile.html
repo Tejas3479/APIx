@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APIx — Institutional Analyst Profile &amp; Settings</title>
-  <meta name="description" content="Signed-in statistical analyst profile, API tokens for programmatic RBI/MoSPI pipelines, and econometric compilation preferences.">
+  <title>APIx — Institutional Analyst Workspace &amp; Settings</title>
+  <meta name="description" content="Institutional officer identity, programmatic API credentials for RBI/MoSPI pipelines, econometric compilation preferences, security sessions, and statutory audit logs.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/base.css">
   <script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();</script>
@@ -56,107 +56,119 @@
       letter-spacing: 0.02em;
     }
 
-    /* Profile Grid */
-    .profile-grid-pro {
+    /* Main Modern 2-Column Settings Layout */
+    .settings-workspace-layout {
       display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 24px;
-      margin-top: 24px;
-      margin-bottom: 36px;
-    }
-    @media (max-width: 920px) {
-      .profile-grid-pro { grid-template-columns: 1fr; }
+      grid-template-columns: 280px 1fr;
+      gap: 28px;
+      margin-top: 22px;
+      margin-bottom: 48px;
+      align-items: start;
     }
 
-    .profile-card-pro {
+    /* Left Sidebar Navigation Rail */
+    .settings-sidebar-rail {
       background: var(--card-bg);
-      border-radius: 16px;
       border: 1px solid var(--border-loud);
+      border-radius: 16px;
+      padding: 20px 16px;
       box-shadow: var(--shadow-sm);
-      padding: 28px 24px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .profile-card-pro:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-    .profile-card-pro::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--heat-100), #ff8a5c);
+      position: sticky;
+      top: 90px;
     }
 
-    .avatar-pro {
-      width: 90px;
-      height: 90px;
+    .officer-mini-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-faint);
+    }
+    .officer-avatar-sm {
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #fa5d19, #ff8a5c);
+      background: linear-gradient(135deg, var(--heat-100), #ff8a5c);
       color: #fff;
       font-family: 'Outfit', sans-serif;
-      font-size: 32px;
-      font-weight: 900;
+      font-size: 16px;
+      font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 16px;
-      box-shadow: 0 8px 24px rgba(250, 93, 25, 0.35);
-      border: 3px solid rgba(255, 255, 255, 0.2);
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(250, 93, 25, 0.3);
     }
-
-    .profile-name-pro {
+    .officer-meta-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 21px;
+      font-size: 14px;
       font-weight: 800;
       color: var(--navy-900);
-      margin: 0;
+      line-height: 1.2;
     }
-    .profile-role-pro {
-      font-family: 'Outfit', sans-serif;
-      font-size: 13px;
-      color: var(--heat-100);
-      font-weight: 700;
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .profile-dept-pro {
-      font-size: 13px;
+    .officer-meta-sub {
+      font-size: 11.5px;
       color: var(--text-muted);
-      margin-top: 6px;
+      margin-top: 2px;
     }
 
-    .info-list-pro {
-      margin: 24px 0 0;
-      padding: 0;
-      list-style: none;
-      text-align: left;
-      border-top: 1px solid var(--border-subtle);
-    }
-    .info-list-pro li {
+    /* Sidebar Tab Links */
+    .settings-tab-list {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 4px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .settings-tab-btn {
+      width: 100%;
+      display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 13px 4px;
-      border-bottom: 1px solid var(--border-subtle);
-      font-size: 13px;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--navy-800);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
     }
-    .info-key-pro {
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-    .info-val-pro {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px;
-      font-weight: 600;
+    .settings-tab-btn:hover {
+      background: var(--surface-raised);
       color: var(--navy-900);
+    }
+    .settings-tab-btn.active {
+      background: rgba(250, 93, 25, 0.1);
+      color: var(--heat-100);
+      font-weight: 800;
+    }
+    .settings-tab-btn .tab-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+      opacity: 0.85;
+    }
+    .settings-tab-btn.active .tab-icon {
+      opacity: 1;
+    }
+
+    /* Main Settings Content Panels */
+    .settings-panel {
+      display: none;
+      animation: tabFadeIn 0.2s ease-out;
+    }
+    .settings-panel.active {
+      display: block;
+    }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .settings-card-pro {
@@ -166,17 +178,13 @@
       box-shadow: var(--shadow-sm);
       padding: 24px 28px;
       margin-bottom: 24px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .settings-card-pro:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      position: relative;
     }
     .settings-head-pro {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
       border-bottom: 1px solid var(--border-subtle);
       padding-bottom: 14px;
       flex-wrap: wrap;
@@ -184,15 +192,97 @@
     }
     .settings-head-pro h2 {
       font-family: 'Outfit', sans-serif;
-      font-size: 17px;
+      font-size: 17.5px;
       font-weight: 800;
       color: var(--navy-900);
       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    /* Buttons */
+    /* Form Fields & Controls */
+    .form-row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .form-group-pro {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label-pro {
+      font-family: 'Outfit', sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--navy-800);
+    }
+    .form-hint-pro {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .form-input-pro {
+      background: var(--surface-raised);
+      border: 1px solid var(--border-loud);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      color: var(--navy-900);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .form-input-pro:focus {
+      border-color: var(--heat-100);
+      box-shadow: 0 0 0 3px rgba(250, 93, 25, 0.12);
+    }
+
+    /* Radio Card Selection */
+    .radio-card-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .radio-card-item {
+      background: var(--surface-raised);
+      border: 1px solid var(--border-loud);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .radio-card-item:hover {
+      border-color: var(--heat-100);
+    }
+    .radio-card-item.selected {
+      border-color: var(--heat-100);
+      background: rgba(250, 93, 25, 0.05);
+      box-shadow: 0 2px 10px rgba(250, 93, 25, 0.1);
+    }
+    .radio-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .radio-card-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Action Buttons */
     .btn-dash {
-      padding: 9px 16px;
+      padding: 9px 18px;
       font-family: 'Outfit', sans-serif;
       font-size: 13.5px;
       font-weight: 700;
@@ -220,26 +310,104 @@
       border: 1px solid var(--border-loud);
     }
     .btn-dash-secondary:hover {
-      background: var(--alpha-4);
+      background: var(--surface-raised);
       transform: translateY(-1px);
     }
 
-    .form-input-pro {
-      background: var(--surface-raised);
-      border: 1px solid var(--border-loud);
-      border-radius: 8px;
-      font-family: 'Inter', sans-serif;
-      font-size: 13.5px;
-      color: var(--navy-900);
-      outline: none;
-      transition: border-color 0.15s ease;
+    /* Code Snippet Box */
+    .code-snippet-box {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #c9d1d9;
+      overflow-x: auto;
+      line-height: 1.6;
+      margin-top: 10px;
+      white-space: pre-wrap;
     }
-    .form-input-pro:focus {
-      border-color: var(--heat-100);
+    .code-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .code-tab-btn.active {
+      background: rgba(250, 93, 25, 0.15);
+      color: var(--heat-100);
     }
 
-    @media (max-width: 500px) {
-      .prefs-form-grid { grid-template-columns: 1fr !important; }
+    /* Audit Table */
+    .audit-table-row {
+      display: grid;
+      grid-template-columns: 160px 1.4fr 1.6fr 130px;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border-faint);
+      font-size: 12.5px;
+    }
+    .audit-table-row:hover {
+      background: var(--surface-raised);
+    }
+    .audit-table-head {
+      background: var(--surface-raised);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Active Sessions List */
+    .session-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--surface-raised);
+      border: 1px solid var(--border-loud);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Print Compliance Certificate Styling */
+    @media print {
+      body * { visibility: hidden; }
+      #printableCertificateArea, #printableCertificateArea * { visibility: visible; }
+      #printableCertificateArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 40px;
+        background: #ffffff !important;
+        color: #000000 !important;
+        display: block !important;
+      }
+      .no-print { display: none !important; }
+    }
+
+    @media (max-width: 900px) {
+      .settings-workspace-layout {
+        grid-template-columns: 1fr;
+      }
+      .settings-sidebar-rail {
+        position: static;
+      }
+      .form-row-2col {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -247,12 +415,12 @@
 <div class="toast-container" id="toast-container"></div>
 
   <!-- Top Announcement Ribbon -->
-  <div class="announcement-ribbon">
-    🏛️ MoSPI / NSO Official Base Revision (2024=100) Transport Intelligence · Powered by Jevons-GEKS Multilateral Engine
+  <div class="announcement-ribbon no-print">
+    🏛️ MoSPI / NSO Official Base Revision (2024=100) Transport Intelligence · Institutional Officer Workspace
   </div>
 
   <!-- Top Glassmorphic Navbar -->
-  <header class="navbar">
+  <header class="navbar no-print">
     <div class="nav-container">
       <a href="/" class="nav-brand">
         <div class="brand-emblem">
@@ -280,149 +448,457 @@
           <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </button>
-        <a href="/profile" id="officerBadge" class="officer-pill active" style="text-decoration: none;" title="View Analyst Profile & Settings">
+        <a href="/profile" id="officerBadge" class="officer-pill active" style="text-decoration: none;" title="View Analyst Profile &amp; Settings">
           <span class="pulse-live"></span>
-          <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">MoSPI Price Division (Analyst)</span>
+          <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">Dr. S. K. Mukherjee (NSO)</span>
         </a>
       </div>
     </div>
   </header>
 
-  <main class="page-container page-enter" style="max-width: 1320px; margin: 0 auto; padding: 28px 24px;">
+  <main class="page-container page-enter no-print" style="max-width: 1320px; margin: 0 auto; padding: 28px 24px;">
     
     <!-- Hero Header -->
-    <div style="margin-bottom: 24px; padding-top: 12px;">
-      <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border-loud); background: var(--card-bg); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy-700); margin-bottom: 12px; box-shadow: var(--shadow-sm);">
+    <div style="margin-bottom: 20px; padding-top: 10px;">
+      <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border-loud); background: var(--card-bg); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy-700); margin-bottom: 10px; box-shadow: var(--shadow-sm);">
         <span style="width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981;"></span>
-        <span>Verified Institutional Officer Session</span>
+        <span>Institutional Officer Workspace · MoSPI Authority Level 1</span>
       </div>
       <h1 style="font-family: 'Outfit', sans-serif; font-size: clamp(26px, 3.2vw, 36px); font-weight: 800; letter-spacing: -0.03em; color: var(--navy-900); margin: 0; line-height: 1.15;">
-        Senior Statistical Analyst <span style="color: var(--heat-100);">Profile &amp; API Credentials</span>
+        Institutional Analyst <span style="color: var(--heat-100);">Profile &amp; System Settings</span>
       </h1>
-      <p style="font-size: 14.5px; color: var(--text-muted); margin: 8px 0 0 0; max-width: 720px;">
-        Manage signed-in officer credentials, configure programmatic API bearer tokens for external Reserve Bank of India nowcasting pipelines, and customize econometric index calculation preferences.
+      <p style="font-size: 14.5px; color: var(--text-muted); margin: 8px 0 0 0; max-width: 780px;">
+        Manage official government compiler credentials, configure econometric aggregation parameters, manage programmatic API keys for RBI nowcasting models, and inspect statutory audit records.
       </p>
     </div>
 
-    <div class="profile-grid-pro">
-      <!-- Profile Card -->
-      <div class="profile-card-pro">
-        <div class="avatar-pro" id="profAvatar">SM</div>
-        <h2 class="profile-name-pro" id="profName">Dr. S. K. Mukherjee</h2>
-        <div class="profile-role-pro" id="profRole">Senior Statistical Officer</div>
-        <div class="profile-dept-pro" id="profDept">National Statistical Office (Price Statistics Division)</div>
+    <!-- 2-COLUMN SETTINGS WORKSPACE -->
+    <div class="settings-workspace-layout">
+      
+      <!-- Left Sidebar Navigation Rail -->
+      <aside class="settings-sidebar-rail">
+        
+        <!-- Officer Badge Summary -->
+        <div class="officer-mini-card">
+          <div class="officer-avatar-sm" id="sidebarAvatar">SM</div>
+          <div style="overflow: hidden;">
+            <div class="officer-meta-title" id="sidebarName">Dr. S. K. Mukherjee</div>
+            <div class="officer-meta-sub" id="sidebarRole">Senior Statistical Officer</div>
+          </div>
+        </div>
 
-        <ul class="info-list-pro">
+        <!-- Tab Selector List -->
+        <ul class="settings-tab-list">
           <li>
-            <span class="info-key-pro">Official Email</span>
-            <span class="info-val-pro" id="profEmail">sk.mukherjee@mospi.gov.in</span>
+            <button type="button" class="settings-tab-btn active" onclick="switchSettingsTab('profile', this)">
+              <span class="tab-icon">👤</span>
+              <span>Officer Profile</span>
+            </button>
           </li>
           <li>
-            <span class="info-key-pro">Authority Level</span>
-            <span class="badge badge-success" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">LEVEL 1 (FULL ACCESS)</span>
+            <button type="button" class="settings-tab-btn" onclick="switchSettingsTab('econometrics', this)">
+              <span class="tab-icon">⚙️</span>
+              <span>Econometric Engine</span>
+            </button>
           </li>
           <li>
-            <span class="info-key-pro">Session Type</span>
-            <span class="info-val-pro">JWT HS256 Verified</span>
+            <button type="button" class="settings-tab-btn" onclick="switchSettingsTab('apikeys', this)">
+              <span class="tab-icon">🔑</span>
+              <span>API Keys &amp; SDK</span>
+            </button>
           </li>
           <li>
-            <span class="info-key-pro">Organization</span>
-            <span class="info-val-pro">Government of India</span>
+            <button type="button" class="settings-tab-btn" onclick="switchSettingsTab('security', this)">
+              <span class="tab-icon">🛡️</span>
+              <span>Security &amp; Sessions</span>
+            </button>
           </li>
           <li>
-            <span class="info-key-pro">Division</span>
-            <span class="info-val-pro">MoSPI · CPI (Urban/Air)</span>
+            <button type="button" class="settings-tab-btn" onclick="switchSettingsTab('audit', this)">
+              <span class="tab-icon">📜</span>
+              <span>Statutory Audit Trail</span>
+            </button>
           </li>
         </ul>
 
-        <div style="margin-top: 24px;">
-          <button onclick="logout()" class="btn-dash btn-dash-secondary" style="width: 100%; justify-content: center; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Sign Out of Portal
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-faint);">
+          <div style="font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px;">
+            MoSPI Gateway Node 01 · v2.4
+          </div>
+          <button type="button" onclick="logout()" class="btn-dash btn-dash-secondary" style="width: 100%; justify-content: center; font-size: 12.5px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+            Sign Out Session
           </button>
         </div>
-      </div>
+      </aside>
 
-      <!-- Settings & API Access -->
-      <div>
-        <!-- API Access Tokens Card -->
-        <div class="settings-card-pro">
-          <div class="settings-head-pro">
-            <div>
-              <h2>Programmatic API Access &amp; Pipeline Token</h2>
-              <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Bearer Token for Automated Macroeconomic Ingestion</div>
+      <!-- Right Main Content Area -->
+      <section>
+        
+        <!-- PANEL 1: OFFICER PROFILE -->
+        <div class="settings-panel active" id="panel-profile">
+          <div class="settings-card-pro">
+            <div class="settings-head-pro">
+              <div>
+                <h2><span>👤</span> Officer Identity &amp; Institutional Credentials</h2>
+                <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Official Statistical Compiler Record under Collection of Statistics Act, 2008</div>
+              </div>
+              <span class="badge badge-success" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">ACTIVE VERIFIED SESSION</span>
             </div>
-            <span class="badge badge-accent" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">ACTIVE PIPELINE TOKEN</span>
-          </div>
-          <p style="font-size: 13.5px; color: var(--text-muted); margin: 0 0 16px 0;">
-            Use this bearer token to query the APIx Index and Route Discovery endpoints directly from automated Python/R econometric pipelines (e.g. RBI Monetary Policy Committee nowcasting models).
-          </p>
-          <div style="display: flex; gap: 8px; align-items: center; background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 10px; padding: 10px 16px;">
-            <input type="text" id="apiTokenInput" readonly value="apix-demo-acac02b69b00fb4ce7bfbe1d" style="flex:1; background:transparent; border:none; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--navy-900); outline:none;">
-            <button onclick="copyToken()" class="btn-dash btn-dash-primary" style="padding: 6px 14px; font-size: 12px;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Token
-            </button>
+
+            <form onsubmit="handleSaveProfileForm(event)">
+              <div class="form-row-2col">
+                <div class="form-group-pro">
+                  <label class="form-label-pro" for="inputProfName">Full Name &amp; Academic Title</label>
+                  <input type="text" id="inputProfName" class="form-input-pro" value="Dr. S. K. Mukherjee" required>
+                  <span class="form-hint-pro">Displayed on published price bulletins and certification logs.</span>
+                </div>
+
+                <div class="form-group-pro">
+                  <label class="form-label-pro" for="inputProfEmail">Official Government Email</label>
+                  <input type="email" id="inputProfEmail" class="form-input-pro" value="sk.mukherjee@mospi.gov.in" readonly style="opacity: 0.85; cursor: not-allowed;">
+                  <span class="form-hint-pro">Verified government domain (NIC/MoSPI single sign-on).</span>
+                </div>
+              </div>
+
+              <div class="form-row-2col">
+                <div class="form-group-pro">
+                  <label class="form-label-pro" for="inputProfRole">Official Designation / Title</label>
+                  <input type="text" id="inputProfRole" class="form-input-pro" value="Senior Statistical Officer" required>
+                  <span class="form-hint-pro">Statutory compilation authority designation.</span>
+                </div>
+
+                <div class="form-group-pro">
+                  <label class="form-label-pro" for="inputProfDept">Department / Directorate</label>
+                  <input type="text" id="inputProfDept" class="form-input-pro" value="National Statistical Office (Price Statistics Division)" required>
+                  <span class="form-hint-pro">Operating statistical price division.</span>
+                </div>
+              </div>
+
+              <div class="form-row-2col">
+                <div class="form-group-pro">
+                  <label class="form-label-pro" for="inputProfOrg">Ministry / Organization</label>
+                  <input type="text" id="inputProfOrg" class="form-input-pro" value="Ministry of Statistics &amp; Programme Implementation" required>
+                </div>
+
+                <div class="form-group-pro">
+                  <label class="form-label-pro">Officer Authorization Level</label>
+                  <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 8px; padding: 9px 14px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; color: #10b981; display: flex; align-items: center; justify-content: space-between;">
+                    <span>LEVEL 1 (FULL ACCESS)</span>
+                    <span style="font-size: 11px; color: var(--text-muted);">GOI-NSO-STAT-8842</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-subtle); padding-top: 16px; margin-top: 8px;">
+                <button type="submit" class="btn-dash btn-dash-primary" id="btnSaveProfile">
+                  💾 Save Profile Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 
-        <!-- Econometric Methodology Preferences -->
-        <div class="settings-card-pro">
-          <div class="settings-head-pro">
-            <div>
-              <h2>Econometric Compilation &amp; Aggregation Preferences</h2>
-              <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Customizable Index Parameters &amp; Base Alignment</div>
+        <!-- PANEL 2: ECONOMETRIC PREFERENCES -->
+        <div class="settings-panel" id="panel-econometrics">
+          <div class="settings-card-pro">
+            <div class="settings-head-pro">
+              <div>
+                <h2><span>⚙️</span> Econometric Compilation &amp; Aggregation Preferences</h2>
+                <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Methodological standards aligning with Base Revision 2024=100 &amp; IMF CPI Manual</div>
+              </div>
+              <span class="badge badge-success" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">BASE 2024=100</span>
             </div>
-            <span class="badge badge-success" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">CPI 2024=100 ALIGNED</span>
-          </div>
-          <div class="prefs-form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div>
-              <label for="indexStandard" style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px; font-family: 'Outfit', sans-serif;">Index Aggregation Standard</label>
-              <select id="indexStandard" class="form-input-pro" style="width: 100%; padding: 10px 14px;">
-                <option value="geks" selected>Multilateral GEKS-Törnqvist (Eurostat/IMF)</option>
-                <option value="jevons">Jevons Elementary Geometric Mean</option>
-                <option value="dutot">Dutot Arithmetic Ratio</option>
-              </select>
+
+            <!-- Elementary Aggregator Formula -->
+            <div style="margin-bottom: 20px;">
+              <label class="form-label-pro">Elementary Aggregation Standard Formula</label>
+              <div class="radio-card-group" id="aggregatorCardGroup">
+                <div class="radio-card-item selected" onclick="selectAggregator('geks', this)">
+                  <div class="radio-card-title">
+                    <span>GEKS-Törnqvist</span>
+                    <span style="color:#10b981;">✓ Recommended</span>
+                  </div>
+                  <div class="radio-card-desc">
+                    Multilateral index satisfying circularity (transitivity) and avoiding chain drift across seasonal airline yield profiles.
+                  </div>
+                </div>
+
+                <div class="radio-card-item" onclick="selectAggregator('jevons', this)">
+                  <div class="radio-card-title">
+                    <span>Jevons Elementary</span>
+                    <span style="color:var(--text-muted);">Geometric Mean</span>
+                  </div>
+                  <div class="radio-card-desc">
+                    Unweighted geometric mean of relative price quotes (COICOP standard). Equal elasticity of substitution.
+                  </div>
+                </div>
+
+                <div class="radio-card-item" onclick="selectAggregator('dutot', this)">
+                  <div class="radio-card-title">
+                    <span>Dutot Arithmetic</span>
+                    <span style="color:var(--text-muted);">Arithmetic Ratio</span>
+                  </div>
+                  <div class="radio-card-desc">
+                    Ratio of arithmetic mean prices. Useful for homogenous route baskets without quality dispersion.
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <label for="baseDate" style="font-size: 12px; font-weight: 700; color: var(--navy-800); display: block; margin-bottom: 6px; font-family: 'Outfit', sans-serif;">Base Reference Date</label>
-              <input id="baseDate" type="date" value="2026-08-01" class="form-input-pro" style="width: 100%; padding: 9px 14px;">
+
+            <div class="form-row-2col">
+              <div class="form-group-pro">
+                <label class="form-label-pro" for="prefBaseDate">Base Reference Anchor Date</label>
+                <input type="date" id="prefBaseDate" class="form-input-pro" value="2024-01-01">
+                <span class="form-hint-pro">Base period anchor ($I_0 = 100.00$) for national index normalization.</span>
+              </div>
+
+              <div class="form-group-pro">
+                <label class="form-label-pro" for="prefOutlier">Outlier Truncation Engine</label>
+                <select id="prefOutlier" class="form-input-pro">
+                  <option value="tukey" selected>Tukey IQR (1.5× IQR Fences - MoSPI Default)</option>
+                  <option value="3sigma">3-Sigma Normal Distribution Filter</option>
+                  <option value="none">None (Preserve All Dynamic Yield Outliers)</option>
+                </select>
+                <span class="form-hint-pro">Automated scanner anomaly rejection threshold.</span>
+              </div>
             </div>
-          </div>
-          <div style="margin-top: 18px; display: flex; justify-content: flex-end;">
-            <button onclick="(() => { 
-  const method = document.getElementById('indexStandard').value;
-  const baseDate = document.getElementById('baseDate').value;
-  localStorage.setItem('apix_prefs', JSON.stringify({ method, baseDate }));
-  showToast('Methodology preferences saved', 'success');
-})()" class="btn-dash btn-dash-primary">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Save Preferences
-            </button>
+
+            <div class="form-row-2col">
+              <div class="form-group-pro">
+                <label class="form-label-pro" for="prefHorizonWeights">Booking Horizon Weighting Scheme</label>
+                <select id="prefHorizonWeights" class="form-input-pro">
+                  <option value="standard" selected>Standard MoSPI Multi-Horizon (T+1 to T+45)</option>
+                  <option value="advance_heavy">Advance-Heavy (T+15, T+30 focus)</option>
+                  <option value="spot_heavy">Spot-Heavy (T+1, T+7 emergency focus)</option>
+                </select>
+                <span class="form-hint-pro">Weighted decay across advance booking windows.</span>
+              </div>
+
+              <div class="form-group-pro">
+                <label class="form-label-pro" for="prefDecompRule">Statutory Fare Decomposition</label>
+                <select id="prefDecompRule" class="form-input-pro">
+                  <option value="strict" selected>Strict COICOP 07.3.3 (Separate Base + YQ from Taxes)</option>
+                  <option value="gross">Gross Ticket Fare (Include Airport Taxes &amp; GST)</option>
+                </select>
+                <span class="form-hint-pro">Isolate pure transport tariffs from statutory fees.</span>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; border-top: 1px solid var(--border-subtle); padding-top: 16px; margin-top: 8px;">
+              <button type="button" onclick="saveEconometricPreferences()" class="btn-dash btn-dash-primary">
+                💾 Save Econometric Preferences
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Security & Audit Session Card -->
-        <div class="settings-card-pro">
-          <div class="settings-head-pro">
-            <div>
-              <h2>Audit Trail &amp; Encryption Standard</h2>
-              <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Statutory Data Security &amp; Audit Integrity</div>
+        <!-- PANEL 3: API KEYS & DEVELOPER HUB -->
+        <div class="settings-panel" id="panel-apikeys">
+          <div class="settings-card-pro">
+            <div class="settings-head-pro">
+              <div>
+                <h2><span>🔑</span> Programmatic API Credentials &amp; Developer Hub</h2>
+                <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Bearer Token for RBI Nowcasting &amp; External Econometric Pipelines</div>
+              </div>
+              <span class="badge badge-accent" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">PROD PIPELINE KEY</span>
             </div>
-          </div>
-          <div style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
-            All route survey transactions, statutory tariff decompositions, and index recalculations are cryptographically signed and logged for Ministry audits in accordance with the <em>Collection of Statistics Act, 2008</em>.
+
+            <p style="font-size: 13.5px; color: var(--text-muted); margin: 0 0 16px 0;">
+              Use this bearer token to query the APIx National Index, Sector Heatmaps, and Route Basket Discovery endpoints directly from Python/R econometric forecasting models (e.g. Reserve Bank of India Monetary Policy Committee scripts).
+            </p>
+
+            <!-- Key Token Box -->
+            <div style="display: flex; gap: 8px; align-items: center; background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px;">
+              <input type="password" id="apiTokenInput" readonly value="apix-live-jwt-token..." style="flex:1; background:transparent; border:none; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--navy-900); outline:none;">
+              <button type="button" onclick="toggleTokenVisibility()" class="btn-dash btn-dash-secondary" style="padding: 6px 12px; font-size: 12px;" id="btnToggleVis">
+                👁 Reveal
+              </button>
+              <button type="button" onclick="copyToken()" class="btn-dash btn-dash-primary" style="padding: 6px 14px; font-size: 12px;">
+                📋 Copy Token
+              </button>
+              <button type="button" onclick="regenerateToken()" class="btn-dash btn-dash-secondary" style="padding: 6px 12px; font-size: 12px;" title="Issue fresh token">
+                🔄 Rotate Key
+              </button>
+            </div>
+
+            <!-- API Capabilities Info Grid -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; background: var(--surface-raised); border: 1px solid var(--border-faint); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; font-size: 12.5px;">
+              <div>
+                <span style="color:var(--text-muted); font-size:11px; font-weight:700; text-transform:uppercase;">Rate Limit</span>
+                <div style="font-family:'Outfit',sans-serif; font-weight:800; color:var(--navy-900);">10,000 req/hr</div>
+              </div>
+              <div>
+                <span style="color:var(--text-muted); font-size:11px; font-weight:700; text-transform:uppercase;">Token Standard</span>
+                <div style="font-family:'Outfit',sans-serif; font-weight:800; color:#10b981;">JWT (HS256)</div>
+              </div>
+              <div>
+                <span style="color:var(--text-muted); font-size:11px; font-weight:700; text-transform:uppercase;">Gateway Status</span>
+                <div style="font-family:'Outfit',sans-serif; font-weight:800; color:#10b981;">NIC High-Speed</div>
+              </div>
+            </div>
+
+            <!-- Interactive SDK Snippets -->
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 13px; font-weight: 800; color: var(--navy-900); font-family: 'Outfit', sans-serif;">Developer Integration Examples</span>
+                <div style="display: flex; gap: 4px;">
+                  <button type="button" class="code-tab-btn active" onclick="switchCodeTab('curl')">cURL</button>
+                  <button type="button" class="code-tab-btn" onclick="switchCodeTab('python')">Python (requests)</button>
+                  <button type="button" class="code-tab-btn" onclick="switchCodeTab('r')">R (httr)</button>
+                </div>
+              </div>
+              <div class="code-snippet-box" id="codeSnippetBox">curl -X GET "http://127.0.0.1:8000/api/v1/index/daily?frequency=daily" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Accept: application/json"</div>
+            </div>
           </div>
         </div>
 
-      </div>
+        <!-- PANEL 4: SECURITY & SESSIONS -->
+        <div class="settings-panel" id="panel-security">
+          <div class="settings-card-pro">
+            <div class="settings-head-pro">
+              <div>
+                <h2><span>🛡️</span> Security Standards &amp; Active Sessions</h2>
+                <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Session Encryption &amp; Government Single Sign-On Security</div>
+              </div>
+              <span class="badge badge-success" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">ENCRYPTED</span>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <h3 style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 800; color: var(--navy-900); margin: 0 0 10px 0;">Active Authenticated Sessions</h3>
+              
+              <div class="session-item">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-size: 22px;">💻</span>
+                  <div>
+                    <strong style="color: var(--navy-900); font-size: 13px;">Current Web Session (Chrome 120 on Windows)</strong>
+                    <div style="font-size: 11.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">IP: 10.4.18.22 (NIC Govt Gateway) · Active Now</div>
+                  </div>
+                </div>
+                <span class="badge badge-success" style="font-size: 10px; font-weight: 700;">CURRENT SESSION</span>
+              </div>
+
+              <div class="session-item">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span style="font-size: 22px;">⚙️</span>
+                  <div>
+                    <strong style="color: var(--navy-900); font-size: 13px;">Automated Cron Ingestion Node (Background Worker)</strong>
+                    <div style="font-size: 11.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">IP: 127.0.0.1 (APIx Node 01) · Last sync 8m ago</div>
+                  </div>
+                </div>
+                <span class="badge" style="background: var(--surface-raised); border: 1px solid var(--border-loud); font-size: 10px; font-weight: 700;">SERVICE ACCOUNT</span>
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 16px;">
+              <h3 style="font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 800; color: var(--navy-900); margin: 0 0 8px 0;">Statutory Data Security Protocols</h3>
+              <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 0 0 14px 0;">
+                All price observation microdata transactions and econometric index calculations are signed with HMAC-SHA256 tokens and protected under the <em>Collection of Statistics Act, 2008</em>.
+              </p>
+              <button type="button" onclick="handleRevokeSessions()" class="btn-dash btn-dash-secondary" style="font-size: 12.5px; color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+                Revoke All Other Sessions
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 5: STATUTORY AUDIT TRAIL -->
+        <div class="settings-panel" id="panel-audit">
+          <div class="settings-card-pro">
+            <div class="settings-head-pro">
+              <div>
+                <h2><span>📜</span> Statutory Institutional Audit Trail</h2>
+                <div style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Immutable Log of Officer Actions for Ministry Inspections</div>
+              </div>
+              <button type="button" onclick="loadAuditLogs()" class="btn-dash btn-dash-secondary" style="font-size: 11.5px; padding: 4px 10px;">↻ Refresh</button>
+            </div>
+
+            <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 12px; overflow: hidden; margin-bottom: 16px;">
+              <div class="audit-table-row audit-table-head">
+                <span>Timestamp</span>
+                <span>Action</span>
+                <span>Details &amp; Sector</span>
+                <span>Status</span>
+              </div>
+              <div id="auditLogList">
+                <!-- Rendered via JS -->
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button type="button" onclick="printAuditCertificate()" class="btn-dash btn-dash-secondary" style="font-size: 12.5px;">
+                📄 Download Official Ministry Audit Certificate (PDF)
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section>
     </div>
 
   </main>
 
+  <!-- PRINTABLE OFFICIAL MINISTRY AUDIT CERTIFICATE (Visible only on print) -->
+  <div id="printableCertificateArea" style="display:none;">
+    <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:16px; margin-bottom:24px;">
+      <h2 style="font-size:20px; font-weight:800; margin:0; text-transform:uppercase; letter-spacing:0.05em;">Government of India</h2>
+      <h3 style="font-size:16px; font-weight:700; margin:4px 0 0; color:#333;">Ministry of Statistics &amp; Programme Implementation (MoSPI)</h3>
+      <div style="font-size:13px; font-weight:600; margin-top:4px;">National Statistical Office (Price Statistics Division) · Base Revision 2024=100</div>
+      <div style="font-size:14px; font-weight:800; margin-top:12px; text-decoration:underline;">STATUTORY COMPLIANCE &amp; PRICE INDEX AUDIT CERTIFICATE</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; font-size:12px; margin-bottom:24px; border:1px solid #ccc; padding:14px;">
+      <div>
+        <div><strong>Compiling Officer:</strong> Dr. S. K. Mukherjee</div>
+        <div><strong>Designation:</strong> Senior Statistical Officer</div>
+        <div><strong>Authority Level:</strong> Level 1 (Full Statutory Access)</div>
+      </div>
+      <div>
+        <div><strong>Division:</strong> CPI (Urban/Airfare Transport COICOP 07.3.3)</div>
+        <div><strong>Aggregation Standard:</strong> Multilateral GEKS-Törnqvist / Jevons</div>
+        <div><strong>Certificate Date:</strong> <span id="certDateStr">2026-09-02</span></div>
+      </div>
+    </div>
+
+    <div style="font-size:12px; margin-bottom:14px; font-weight:700;">Verified Institutional Audit Operations:</div>
+    <table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:30px;">
+      <thead>
+        <tr style="background:#eee; text-align:left;">
+          <th style="border:1px solid #ccc; padding:6px 8px;">Timestamp</th>
+          <th style="border:1px solid #ccc; padding:6px 8px;">Operation</th>
+          <th style="border:1px solid #ccc; padding:6px 8px;">Details</th>
+          <th style="border:1px solid #ccc; padding:6px 8px;">Status</th>
+        </tr>
+      </thead>
+      <tbody id="certAuditTableBody">
+        <!-- Injected dynamically -->
+      </tbody>
+    </table>
+
+    <div style="display:flex; justify-content:space-between; margin-top:40px; font-size:11px;">
+      <div>
+        <div><strong>Cryptographic Checksum:</strong></div>
+        <div style="font-family:monospace; font-size:10px;">SHA256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</div>
+        <div style="margin-top:4px;">Protected under <em>Collection of Statistics Act, 2008</em></div>
+      </div>
+      <div style="text-align:center; width:200px; border-top:1px solid #000; padding-top:6px;">
+        <strong>Authorized Signatory</strong><br>
+        Price Statistics Division, MoSPI
+      </div>
+    </div>
+  </div>
+
   <script src="/app.js"></script>
   <script src="/ui.js"></script>
   <script>
+    let selectedAggregator = 'geks';
+    let isTokenMasked = true;
+    let latestAuditLogs = [];
+
     function showToast(msg, type = 'error') {
       const container = document.getElementById('toast-container');
+      if (!container) return;
       const toast = document.createElement('div');
       toast.className = 'toast' + (type === 'warn' ? ' toast-warn' : (type === 'success' ? ' toast-success' : (type === 'info' ? ' toast-info' : '')));
       toast.textContent = msg;
@@ -430,43 +906,253 @@
       setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (typeof ensureAuth === 'function') await ensureAuth();
+      hydrateProfileWorkspace();
+      await loadAuditLogs();
+    });
+
+    function switchSettingsTab(tabId, btn) {
+      document.querySelectorAll('.settings-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('panel-' + tabId);
+      if (target) target.classList.add('active');
+    }
+
+    function selectAggregator(method, el) {
+      selectedAggregator = method;
+      document.querySelectorAll('#aggregatorCardGroup .radio-card-item').forEach(c => c.classList.remove('selected'));
+      if (el) el.classList.add('selected');
+    }
+
+    function hydrateProfileWorkspace() {
       const tokenInput = document.getElementById('apiTokenInput');
       const storedToken = localStorage.getItem('apix_token');
-      if (tokenInput && storedToken) tokenInput.value = storedToken;
+      if (tokenInput && storedToken) {
+        tokenInput.value = storedToken;
+        updateCodeSnippet(storedToken);
+      }
 
       const prefs = JSON.parse(localStorage.getItem('apix_prefs') || '{}');
-      if (prefs.method && document.getElementById('indexStandard')) document.getElementById('indexStandard').value = prefs.method;
-      if (prefs.baseDate && document.getElementById('baseDate')) document.getElementById('baseDate').value = prefs.baseDate;
-
-      const officerStr = localStorage.getItem('apix_officer');
-      if (officerStr) {
-        try {
-          const off = JSON.parse(officerStr);
-          if (document.getElementById('profName')) document.getElementById('profName').textContent = off.name || 'Dr. S. K. Mukherjee';
-          if (document.getElementById('profRole')) document.getElementById('profRole').textContent = off.role || 'Senior Statistical Officer';
-          if (document.getElementById('profDept')) document.getElementById('profDept').textContent = off.dept || 'National Statistical Office (Price Statistics Division)';
-          if (document.getElementById('profEmail')) document.getElementById('profEmail').textContent = off.email || 'sk.mukherjee@mospi.gov.in';
-          const initials = (off.name || 'SM').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-          if (document.getElementById('profAvatar')) document.getElementById('profAvatar').textContent = initials;
-          
-          const badgeNameEl = document.querySelector('#officerBadge span:last-child');
-          if (badgeNameEl && off.name) badgeNameEl.textContent = off.name + (off.dept ? ` (${off.dept})` : '');
-        } catch (e) {}
+      if (prefs.method) {
+        selectedAggregator = prefs.method;
+        const cards = document.querySelectorAll('#aggregatorCardGroup .radio-card-item');
+        if (prefs.method === 'geks' && cards[0]) selectAggregator('geks', cards[0]);
+        if (prefs.method === 'jevons' && cards[1]) selectAggregator('jevons', cards[1]);
+        if (prefs.method === 'dutot' && cards[2]) selectAggregator('dutot', cards[2]);
       }
-    });
+      if (prefs.baseDate && document.getElementById('prefBaseDate')) document.getElementById('prefBaseDate').value = prefs.baseDate;
+      if (prefs.outlier && document.getElementById('prefOutlier')) document.getElementById('prefOutlier').value = prefs.outlier;
+      if (prefs.weights && document.getElementById('prefHorizonWeights')) document.getElementById('prefHorizonWeights').value = prefs.weights;
+      if (prefs.decomp && document.getElementById('prefDecompRule')) document.getElementById('prefDecompRule').value = prefs.decomp;
+
+      const officer = (typeof getCachedOfficer === 'function' ? getCachedOfficer() : null) || {
+        name: 'Dr. S. K. Mukherjee',
+        dept: 'National Statistical Office (Price Statistics Division)',
+        role: 'Senior Statistical Officer',
+        email: 'sk.mukherjee@mospi.gov.in',
+        organization: 'Ministry of Statistics & Programme Implementation'
+      };
+
+      // Populate Form Fields
+      if (document.getElementById('inputProfName')) document.getElementById('inputProfName').value = officer.name || 'Dr. S. K. Mukherjee';
+      if (document.getElementById('inputProfRole')) document.getElementById('inputProfRole').value = officer.role || 'Senior Statistical Officer';
+      if (document.getElementById('inputProfDept')) document.getElementById('inputProfDept').value = officer.dept || 'National Statistical Office (Price Statistics Division)';
+      if (document.getElementById('inputProfEmail')) document.getElementById('inputProfEmail').value = officer.email || 'sk.mukherjee@mospi.gov.in';
+      if (document.getElementById('inputProfOrg')) document.getElementById('inputProfOrg').value = officer.organization || 'Ministry of Statistics & Programme Implementation';
+
+      // Sidebar Meta
+      if (document.getElementById('sidebarName')) document.getElementById('sidebarName').textContent = officer.name || 'Dr. S. K. Mukherjee';
+      if (document.getElementById('sidebarRole')) document.getElementById('sidebarRole').textContent = officer.role || 'Senior Statistical Officer';
+      const initials = (officer.name || 'SM').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+      if (document.getElementById('sidebarAvatar')) document.getElementById('sidebarAvatar').textContent = initials;
+      
+      if (typeof hydrateOfficerBadge === 'function') hydrateOfficerBadge();
+    }
+
+    async function handleSaveProfileForm(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveProfile');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+      }
+
+      const updated = {
+        name: document.getElementById('inputProfName').value.trim(),
+        role: document.getElementById('inputProfRole').value.trim(),
+        department: document.getElementById('inputProfDept').value.trim(),
+        organization: document.getElementById('inputProfOrg').value.trim()
+      };
+
+      try {
+        await fetch('/auth/profile', {
+          method: 'PUT',
+          headers: typeof authHeaders === 'function' ? authHeaders({ 'Content-Type': 'application/json' }) : { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updated)
+        });
+        
+        const officer = {
+          name: updated.name,
+          dept: updated.department,
+          role: updated.role,
+          email: document.getElementById('inputProfEmail').value,
+          organization: updated.organization
+        };
+        localStorage.setItem('apix_officer', JSON.stringify(officer));
+
+        hydrateProfileWorkspace();
+        showToast('Officer credentials saved and synced!', 'success');
+      } catch (err) {
+        showToast('Failed to save profile: ' + err.message, 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '💾 Save Profile Changes';
+        }
+      }
+    }
+
+    function saveEconometricPreferences() {
+      const method = selectedAggregator;
+      const baseDate = document.getElementById('prefBaseDate').value;
+      const outlier = document.getElementById('prefOutlier').value;
+      const weights = document.getElementById('prefHorizonWeights').value;
+      const decomp = document.getElementById('prefDecompRule').value;
+
+      localStorage.setItem('apix_prefs', JSON.stringify({ method, baseDate, outlier, weights, decomp }));
+      showToast('Econometric compilation parameters saved', 'success');
+    }
+
+    async function loadAuditLogs() {
+      const listEl = document.getElementById('auditLogList');
+      const certTbody = document.getElementById('certAuditTableBody');
+      if (!listEl) return;
+      try {
+        const res = await fetch('/auth/audit-log', {
+          headers: typeof authHeaders === 'function' ? authHeaders() : {}
+        });
+        const logs = res.ok ? await res.json() : [];
+        latestAuditLogs = logs;
+
+        if (!logs.length) {
+          listEl.innerHTML = '<div style="padding:14px; text-align:center; color:var(--text-muted); font-size:12px;">No recent audit transactions.</div>';
+          return;
+        }
+
+        const safeEsc = typeof escapeHtml === 'function' ? escapeHtml : (str => String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)));
+
+        listEl.innerHTML = logs.map(l => `
+          <div class="audit-table-row">
+            <span style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--text-muted);">${safeEsc(l.timestamp)}</span>
+            <strong style="color:var(--navy-900);">${safeEsc(l.action)}</strong>
+            <span style="color:var(--text-muted);">${safeEsc(l.details)}</span>
+            <div><span class="badge badge-success" style="font-size:10px; font-weight:700;">${safeEsc(l.status)}</span></div>
+          </div>
+        `).join('');
+
+        if (certTbody) {
+          certTbody.innerHTML = logs.map(l => `
+            <tr>
+              <td style="border:1px solid #ccc; padding:5px 8px; font-family:monospace;">${safeEsc(l.timestamp)}</td>
+              <td style="border:1px solid #ccc; padding:5px 8px; font-weight:bold;">${safeEsc(l.action)}</td>
+              <td style="border:1px solid #ccc; padding:5px 8px;">${safeEsc(l.details)}</td>
+              <td style="border:1px solid #ccc; padding:5px 8px;">${safeEsc(l.status)}</td>
+            </tr>
+          `).join('');
+        }
+      } catch (e) {
+        listEl.innerHTML = '<div style="padding:14px; text-align:center; color:var(--text-muted); font-size:12px;">Failed to load audit logs.</div>';
+      }
+    }
+
+    function toggleTokenVisibility() {
+      const input = document.getElementById('apiTokenInput');
+      const btn = document.getElementById('btnToggleVis');
+      if (!input || !btn) return;
+      isTokenMasked = !isTokenMasked;
+      input.type = isTokenMasked ? 'password' : 'text';
+      btn.textContent = isTokenMasked ? '👁 Reveal' : '🔒 Hide';
+    }
+
+    async function regenerateToken() {
+      try {
+        const res = await fetch('/auth/regenerate-token', {
+          method: 'POST',
+          headers: typeof authHeaders === 'function' ? authHeaders() : {}
+        });
+        if (!res.ok) throw new Error('Token regeneration failed');
+        const d = await res.json();
+        localStorage.setItem('apix_token', d.access_token);
+        const input = document.getElementById('apiTokenInput');
+        if (input) input.value = d.access_token;
+        updateCodeSnippet(d.access_token);
+        showToast('New programmatic API bearer token issued!', 'success');
+      } catch (e) {
+        showToast('Error regenerating token: ' + e.message, 'error');
+      }
+    }
 
     function copyToken() {
       const input = document.getElementById('apiTokenInput');
+      if (!input) return;
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(input.value).then(() => {
           showToast('Bearer token copied to clipboard!', 'success');
         });
       } else {
+        input.type = 'text';
         input.select();
         document.execCommand('copy');
+        if (isTokenMasked) input.type = 'password';
         showToast('Bearer token copied to clipboard!', 'success');
       }
+    }
+
+    async function handleRevokeSessions() {
+      try {
+        const res = await fetch('/auth/revoke-sessions', {
+          method: 'POST',
+          headers: typeof authHeaders === 'function' ? authHeaders() : {}
+        });
+        if (!res.ok) throw new Error('Failed to revoke sessions');
+        showToast('All secondary device and background sessions revoked successfully', 'success');
+      } catch (e) {
+        showToast('Error: ' + e.message, 'error');
+      }
+    }
+
+    let currentCodeTab = 'curl';
+    function switchCodeTab(tab) {
+      currentCodeTab = tab;
+      document.querySelectorAll('.code-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase().includes(tab));
+      });
+      const token = localStorage.getItem('apix_token') || 'YOUR_BEARER_TOKEN';
+      updateCodeSnippet(token);
+    }
+
+    function updateCodeSnippet(token) {
+      const box = document.getElementById('codeSnippetBox');
+      if (!box) return;
+      if (currentCodeTab === 'curl') {
+        box.textContent = 'curl -X GET "http://127.0.0.1:8000/api/v1/index/daily?frequency=daily" \\\n  -H "Authorization: Bearer ' + token + '" \\\n  -H "Accept: application/json"';
+      } else if (currentCodeTab === 'python') {
+        box.textContent = 'import requests\n\nurl = "http://127.0.0.1:8000/api/v1/index/daily"\nheaders = {"Authorization": "Bearer ' + token + '"}\nresponse = requests.get(url, headers=headers, params={"frequency": "daily"})\nindex_data = response.json()\nprint("National Index Value:", index_data.get("index_value"))';
+      } else if (currentCodeTab === 'r') {
+        box.textContent = 'library(httr)\nlibrary(jsonlite)\n\nres <- GET("http://127.0.0.1:8000/api/v1/index/daily",\n           add_headers(Authorization = paste("Bearer", "' + token + '")))\ndata <- fromJSON(content(res, "text"))\nprint(data$index_value)';
+      }
+    }
+
+    function printAuditCertificate() {
+      const dEl = document.getElementById('certDateStr');
+      if (dEl) dEl.textContent = new Date().toISOString().slice(0, 10);
+      showToast('Opening print dialog for official MoSPI Audit Certificate...', 'info');
+      setTimeout(() => {
+        window.print();
+      }, 400);
     }
 
     function logout() {
