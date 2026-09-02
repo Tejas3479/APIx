@@ -656,7 +656,7 @@
         </button>
         <a href="/profile" id="officerBadge" class="officer-pill" style="text-decoration: none;" title="View Analyst Profile & Settings">
           <span class="pulse-live"></span>
-          <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">MoSPI Price Division (Analyst)</span>
+          <span style="font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;">Dr. S. K. Mukherjee (NSO)</span>
         </a>
       </div>
     </div>
@@ -1316,8 +1316,7 @@
     }
 
     function copyTerminalLogs() {
-      const text = rawLogBuffer.map(l => `[${l.time || '00:00:00'}] [${l.type}] ${l.text}`).join('
-');
+      const text = rawLogBuffer.map(l => `[${l.time || '00:00:00'}] [${l.type}] ${l.text}`).join('\n');
       navigator.clipboard.writeText(text).then(() => {
         const icon = document.getElementById('copyBtnIcon');
         icon.textContent = '✔';
@@ -1329,8 +1328,7 @@
     }
 
     function downloadTerminalLogs() {
-      const text = rawLogBuffer.map(l => `[${l.time || '00:00:00'}] [${l.type}] ${l.text}`).join('
-');
+      const text = rawLogBuffer.map(l => `[${l.time || '00:00:00'}] [${l.type}] ${l.text}`).join('\n');
       const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');

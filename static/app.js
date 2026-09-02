@@ -188,11 +188,29 @@ async function ensureAuth() {
       email: 'sk.mukherjee@mospi.gov.in'
     };
     localStorage.setItem('apix_officer', JSON.stringify(officer));
+    hydrateOfficerBadge();
     return officer;
   } catch (e) {
     return null;
   }
 }
+
+/* Hydrate officer identity across top navbar badge consistently. */
+function hydrateOfficerBadge() {
+  const badgeNameEl = document.querySelector('#officerBadge span:last-child');
+  if (!badgeNameEl) return;
+  const officer = getCachedOfficer();
+  if (officer && officer.name) {
+    const deptTag = (officer.dept && (officer.dept.includes('NSO') || officer.dept.includes('National Statistical'))) ? 'NSO' : (officer.dept ? officer.dept.slice(0, 10) : 'NSO');
+    badgeNameEl.textContent = `${officer.name} (${deptTag})`;
+  } else {
+    badgeNameEl.textContent = 'Dr. S. K. Mukherjee (NSO)';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  hydrateOfficerBadge();
+});
 
 /* Integer count-up animation for integer metrics. */
 function animateInteger(el, targetInt, duration = 800) {
