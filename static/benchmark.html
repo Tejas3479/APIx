@@ -221,6 +221,12 @@
       background: var(--heat-4);
       transform: translateY(-1px);
     }
+    .preset-chip-pro.active {
+      border-color: var(--heat-100);
+      color: var(--heat-100);
+      background: rgba(250, 93, 25, 0.12);
+      box-shadow: 0 0 0 1px var(--heat-100);
+    }
 
     /* Dynamic Yield Slider */
     .yield-slider-pro {
@@ -281,6 +287,12 @@
       background: #10b981;
       color: #fff;
     }
+    .step-item-pro.error .step-icon-pro {
+      border-color: #dc2626;
+      background: #dc2626;
+      color: #fff;
+      box-shadow: 0 0 16px rgba(220, 38, 38, 0.45);
+    }
     .step-label-pro {
       font-family: 'Outfit', sans-serif;
       font-size: 12px;
@@ -289,6 +301,9 @@
     }
     .step-item-pro.active .step-label-pro {
       color: var(--navy-900);
+    }
+    .step-item-pro.error .step-label-pro {
+      color: #dc2626;
     }
 
     /* Results Card */
@@ -487,6 +502,14 @@
       transform: translateY(-1px);
     }
 
+    .spin {
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
     /* AI Anomaly Box */
     .ai-box-pro {
       background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(124, 58, 237, 0.1) 100%);
@@ -494,7 +517,12 @@
       border-radius: 14px;
       padding: 20px 24px;
       margin-bottom: 24px;
-      animation: apix-slide-up 0.3s ease both;
+      animation: modalSlide 0.25s ease-out;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    .ai-box-pro.is-closing {
+      opacity: 0;
+      transform: scale(0.98) translateY(6px);
     }
 
     /* Modals */
@@ -507,6 +535,11 @@
       align-items: center;
       justify-content: center;
       z-index: 2000;
+      opacity: 1;
+      transition: opacity 0.18s ease;
+    }
+    .modal-backdrop-pro.is-closing {
+      opacity: 0;
     }
     .modal-content-pro {
       background: var(--card-bg);
@@ -519,10 +552,24 @@
       padding: 28px;
       box-shadow: 0 20px 48px rgba(0,0,0,0.35);
       animation: modalSlide 0.25s ease-out;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    .modal-content-pro.is-closing {
+      opacity: 0;
+      transform: scale(0.96) translateY(8px);
     }
     @keyframes modalSlide {
       from { opacity: 0; transform: scale(0.96) translateY(8px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Vestibular Protection */
+    @media (prefers-reduced-motion: reduce) {
+      .spin { animation: none !important; }
+      .modal-content-pro { animation: none !important; transition: none !important; }
+      .modal-backdrop-pro { transition: none !important; }
+      .ai-box-pro { animation: none !important; transition: none !important; }
+      .step-icon-pro { transition: none !important; }
     }
 
     /* Print-Only Header (Hidden on Screen) */
@@ -834,7 +881,7 @@
       <div class="search-form-grid" style="display: grid; grid-template-columns: 1.4fr auto 1.4fr 1.1fr 1fr auto; gap: 12px; align-items: flex-end;">
         <div>
           <label class="form-label-pro" for="originSelect">Origin City / IATA</label>
-          <select id="originSelect" class="select-pro" onchange="runSurvey()">
+          <select id="originSelect" class="select-pro" onchange="updateActivePresetChip(); runSurvey()">
             <option value="DEL" selected>New Delhi (DEL)</option>
             <option value="BOM">Mumbai (BOM)</option>
             <option value="BLR">Bengaluru (BLR)</option>
@@ -851,7 +898,7 @@
         </div>
         <div>
           <label class="form-label-pro" for="destSelect">Destination City / IATA</label>
-          <select id="destSelect" class="select-pro" onchange="runSurvey()">
+          <select id="destSelect" class="select-pro" onchange="updateActivePresetChip(); runSurvey()">
             <option value="BOM" selected>Mumbai (BOM)</option>
             <option value="DEL">New Delhi (DEL)</option>
             <option value="BLR">Bengaluru (BLR)</option>
@@ -890,14 +937,14 @@
       <!-- Quick Preset City Pairs -->
       <div style="margin-top: 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
         <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">High-Density Corridors:</span>
-        <button type="button" class="preset-chip-pro" onclick="setPreset('DEL', 'BOM', 7)">DEL ⇄ BOM (T+7)</button>
-        <button type="button" class="preset-chip-pro" onclick="setPreset('DEL', 'BLR', 15)">DEL ⇄ BLR (T+15)</button>
-        <button type="button" class="preset-chip-pro" onclick="setPreset('BOM', 'BLR', 7)">BOM ⇄ BLR (T+7)</button>
-        <button type="button" class="preset-chip-pro" onclick="setPreset('DEL', 'CCU', 30)">DEL ⇄ CCU (T+30)</button>
-        <button type="button" class="preset-chip-pro" onclick="setPreset('BLR', 'HYD', 1)">BLR ⇄ HYD (T+1 Surge)</button>
-        <button type="button" class="preset-chip-pro" onclick="setPreset('DEL', 'HYD', 7)">DEL ⇄ HYD (T+7)</button>
-        <button type="button" class="preset-chip-pro" onclick="setPreset('MAA', 'DEL', 15)">MAA ⇄ DEL (T+15)</button>
-        <button type="button" class="preset-chip-pro" onclick="setPreset('BOM', 'GOI', 30)">BOM ⇄ GOI (T+30)</button>
+        <button type="button" class="preset-chip-pro" data-orig="DEL" data-dest="BOM" data-win="7" onclick="setPreset('DEL', 'BOM', 7)">DEL ⇄ BOM (T+7)</button>
+        <button type="button" class="preset-chip-pro" data-orig="DEL" data-dest="BLR" data-win="15" onclick="setPreset('DEL', 'BLR', 15)">DEL ⇄ BLR (T+15)</button>
+        <button type="button" class="preset-chip-pro" data-orig="BOM" data-dest="BLR" data-win="7" onclick="setPreset('BOM', 'BLR', 7)">BOM ⇄ BLR (T+7)</button>
+        <button type="button" class="preset-chip-pro" data-orig="DEL" data-dest="CCU" data-win="30" onclick="setPreset('DEL', 'CCU', 30)">DEL ⇄ CCU (T+30)</button>
+        <button type="button" class="preset-chip-pro" data-orig="BLR" data-dest="HYD" data-win="1" onclick="setPreset('BLR', 'HYD', 1)">BLR ⇄ HYD (T+1 Surge)</button>
+        <button type="button" class="preset-chip-pro" data-orig="DEL" data-dest="HYD" data-win="7" onclick="setPreset('DEL', 'HYD', 7)">DEL ⇄ HYD (T+7)</button>
+        <button type="button" class="preset-chip-pro" data-orig="MAA" data-dest="DEL" data-win="15" onclick="setPreset('MAA', 'DEL', 15)">MAA ⇄ DEL (T+15)</button>
+        <button type="button" class="preset-chip-pro" data-orig="BOM" data-dest="GOI" data-win="30" onclick="setPreset('BOM', 'GOI', 30)">BOM ⇄ GOI (T+30)</button>
       </div>
 
       <!-- Dynamic Lead-Time Slider -->
@@ -945,7 +992,7 @@
         <div style="display: flex; align-items: center; gap: 8px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; color: #4f46e5;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> AI Statistical &amp; Tariff Anomaly Diagnostic
         </div>
-        <button type="button" onclick="document.getElementById('aiDiagBox').style.display='none'" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:18px; line-height:1;" title="Dismiss Diagnosis">&times;</button>
+        <button type="button" onclick="dismissAiDiagBox()" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:18px; line-height:1;" title="Dismiss Diagnosis">&times;</button>
       </div>
       <div id="aiDiagContent" style="font-size: 13.5px; color: var(--navy-900); line-height: 1.65;"></div>
     </div>
@@ -1222,6 +1269,24 @@
       setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 4000);
     }
 
+    function updateActivePresetChip() {
+      const curOrig = document.getElementById('originSelect')?.value;
+      const curDest = document.getElementById('destSelect')?.value;
+      const curWin = parseInt(document.getElementById('yieldSlider')?.value, 10);
+
+      document.querySelectorAll('.preset-chip-pro').forEach(chip => {
+        const orig = chip.dataset.orig;
+        const dest = chip.dataset.dest;
+        const win = parseInt(chip.dataset.win, 10);
+        const match = ((orig === curOrig && dest === curDest) || (orig === curDest && dest === curOrig)) && win === curWin;
+        if (match) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+    }
+
     function swapOriginDest() {
       const origEl = document.getElementById('originSelect');
       const destEl = document.getElementById('destSelect');
@@ -1229,6 +1294,7 @@
       const destVal = destEl.value;
       origEl.value = destVal;
       destEl.value = origVal;
+      updateActivePresetChip();
       runSurvey();
     }
 
@@ -1238,12 +1304,14 @@
       document.getElementById('windowSelect').value = win.toString();
       document.getElementById('yieldSlider').value = win;
       document.getElementById('sliderLabel').textContent = 'T+' + win + ' Days Horizon';
+      updateActivePresetChip();
       runSurvey();
     }
 
     function onWindowSelectChange(val) {
       document.getElementById('yieldSlider').value = val;
       document.getElementById('sliderLabel').textContent = 'T+' + val + ' Days Horizon';
+      updateActivePresetChip();
       runSurvey();
     }
 
@@ -1251,6 +1319,14 @@
       document.getElementById('sliderLabel').textContent = 'T+' + val + ' Days Horizon';
       const nearestWindow = val <= 3 ? '1' : (val <= 10 ? '7' : (val <= 20 ? '15' : (val <= 35 ? '30' : '45')));
       document.getElementById('windowSelect').value = nearestWindow;
+      updateActivePresetChip();
+    }
+
+    let stepperTimers = [];
+
+    function clearStepperTimers() {
+      stepperTimers.forEach(t => clearTimeout(t));
+      stepperTimers = [];
     }
 
     async function runSurvey() {
@@ -1259,6 +1335,8 @@
       const win = document.getElementById('yieldSlider').value;
       const cabin = document.getElementById('cabinSelect').value;
       const routeId = orig + '-' + dest;
+
+      updateActivePresetChip();
 
       if (orig === dest) {
         showToast('Origin and Destination cannot be the same airport.', 'warn');
@@ -1269,36 +1347,82 @@
       const results = document.getElementById('surveyResults');
       const btn = document.getElementById('btnRunSurvey');
       
+      clearStepperTimers();
+
       stepper.style.display = 'flex';
       results.style.display = 'none';
       btn.disabled = true;
       btn.textContent = 'Surveying…';
 
-      // Step animations
-      document.getElementById('step1').className = 'step-item-pro active';
-      document.getElementById('step2').className = 'step-item-pro';
-      document.getElementById('step3').className = 'step-item-pro';
-      document.getElementById('step4').className = 'step-item-pro';
+      const s1 = document.getElementById('step1');
+      const s2 = document.getElementById('step2');
+      const s3 = document.getElementById('step3');
+      const s4 = document.getElementById('step4');
 
-      setTimeout(() => { document.getElementById('step1').className = 'step-item-pro done'; document.getElementById('step2').className = 'step-item-pro active'; }, 300);
-      setTimeout(() => { document.getElementById('step2').className = 'step-item-pro done'; document.getElementById('step3').className = 'step-item-pro active'; }, 600);
-      setTimeout(() => { document.getElementById('step3').className = 'step-item-pro done'; document.getElementById('step4').className = 'step-item-pro active'; }, 900);
+      s1.className = 'step-item-pro active';
+      s2.className = 'step-item-pro';
+      s3.className = 'step-item-pro';
+      s4.className = 'step-item-pro';
+
+      const isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const startTime = performance.now();
+
+      if (!isReduced) {
+        stepperTimers.push(setTimeout(() => {
+          if (s1.classList.contains('active')) {
+            s1.className = 'step-item-pro done';
+            s2.className = 'step-item-pro active';
+          }
+        }, 160));
+
+        stepperTimers.push(setTimeout(() => {
+          if (s2.classList.contains('active') || s1.classList.contains('done')) {
+            s1.className = 'step-item-pro done';
+            s2.className = 'step-item-pro done';
+            s3.className = 'step-item-pro active';
+          }
+        }, 320));
+
+        stepperTimers.push(setTimeout(() => {
+          if (s3.classList.contains('active') || s2.classList.contains('done')) {
+            s1.className = 'step-item-pro done';
+            s2.className = 'step-item-pro done';
+            s3.className = 'step-item-pro done';
+            s4.className = 'step-item-pro active';
+          }
+        }, 480));
+      }
 
       try {
         const res = await fetch('/api/v1/scraper/survey-instant?route=' + encodeURIComponent(routeId) + '&advance_days=' + win, {
           method: 'POST',
           headers: typeof authHeaders === 'function' ? authHeaders() : {}
         });
+        if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to survey route`);
         const quotes = await res.json();
         window.currentQuotes = quotes || [];
-        
+
+        clearStepperTimers();
+
+        const elapsed = performance.now() - startTime;
+        const remainingFloor = isReduced ? 0 : Math.max(0, 600 - elapsed);
+
         setTimeout(() => {
-          document.getElementById('step4').className = 'step-item-pro done';
+          s1.className = 'step-item-pro done';
+          s2.className = 'step-item-pro done';
+          s3.className = 'step-item-pro done';
+          s4.className = 'step-item-pro done';
+
           renderSurveyResults(routeId, parseInt(win, 10), window.currentQuotes);
           btn.disabled = false;
           btn.textContent = 'Survey Route';
-        }, 1100);
+        }, remainingFloor);
       } catch (err) {
+        clearStepperTimers();
+        const activeStep = document.querySelector('.step-item-pro.active') || s1;
+        if (activeStep) {
+          activeStep.className = 'step-item-pro error';
+        }
         showToast('Survey failed: ' + err.message, 'error');
         btn.disabled = false;
         btn.textContent = 'Survey Route';
@@ -1475,7 +1599,42 @@
 
     function closeQuoteModal() {
       const modal = document.getElementById('quote-modal');
-      if (modal) modal.style.display = 'none';
+      if (!modal || modal.style.display === 'none') return;
+      if (modal.classList.contains('is-closing')) return;
+
+      const content = modal.querySelector('.modal-content-pro');
+      const isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (isReduced) {
+        modal.style.display = 'none';
+        return;
+      }
+
+      modal.classList.add('is-closing');
+      if (content) content.classList.add('is-closing');
+
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('is-closing');
+        if (content) content.classList.remove('is-closing');
+      }, 180);
+    }
+
+    function dismissAiDiagBox() {
+      const box = document.getElementById('aiDiagBox');
+      if (!box || box.style.display === 'none') return;
+      if (box.classList.contains('is-closing')) return;
+
+      const isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (isReduced) {
+        box.style.display = 'none';
+        return;
+      }
+
+      box.classList.add('is-closing');
+      setTimeout(() => {
+        box.style.display = 'none';
+        box.classList.remove('is-closing');
+      }, 180);
     }
 
     async function loadMaterialityCounterfactual(routeId) {
@@ -1621,6 +1780,7 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeQuoteModal();
+        dismissAiDiagBox();
       }
     });
 
@@ -1628,7 +1788,7 @@
     if (quoteModal) {
       quoteModal.addEventListener('click', (e) => {
         if (e.target === quoteModal) {
-          quoteModal.style.display = 'none';
+          closeQuoteModal();
         }
       });
     }

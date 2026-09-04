@@ -328,7 +328,11 @@
       box-shadow: 0 6px 20px rgba(250, 93, 25, 0.5);
     }
     .btn-dash-primary svg {
-      animation: lightning-pulse 2.2s infinite ease-in-out;
+      animation: lightning-pulse 2.2s ease-in-out 3;
+    }
+    .btn-dash-primary:hover svg,
+    .btn-dash-primary:focus-visible svg {
+      animation: lightning-pulse 2.2s ease-in-out infinite;
     }
     @keyframes lightning-pulse {
       0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
@@ -360,6 +364,10 @@
       animation: spin-once 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes spin-once {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spin {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
@@ -835,9 +843,15 @@
       padding-bottom: 6px;
     }
     .heatmap-row-pro {
-      transition: background 0.15s ease;
+      transition: background 0.15s ease, opacity 0.15s ease, transform 0.15s ease;
       border-radius: 10px;
       padding: 3px 0;
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    .heatmap-row-pro.row-visible {
+      opacity: 1;
+      transform: translateY(0);
     }
     .heatmap-row-pro:hover {
       background: var(--alpha-4);
@@ -1015,6 +1029,11 @@
       align-items: center;
       justify-content: center;
       z-index: 2000;
+      opacity: 1;
+      transition: opacity 0.18s ease;
+    }
+    .modal-backdrop-pro.is-closing {
+      opacity: 0;
     }
     .modal-content-pro {
       background: var(--card-bg);
@@ -1027,6 +1046,11 @@
       padding: 28px;
       box-shadow: 0 20px 48px rgba(0,0,0,0.3);
       animation: modalSlide 0.25s ease-out;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    .modal-content-pro.is-closing {
+      opacity: 0;
+      transform: scale(0.96) translateY(8px);
     }
     @keyframes modalSlide {
       from { opacity: 0; transform: scale(0.96) translateY(8px); }
@@ -1036,10 +1060,19 @@
     /* Vestibular Protection */
     @media (prefers-reduced-motion: reduce) {
       .ambient-orb { animation: none !important; }
-      .dash-title .gradient-text { animation: none !important; }
-      .hero-pill::after { animation: none !important; }
-      .btn-dash-primary::after { animation: none !important; }
-      .btn-dash-ai { animation: none !important; }
+      .apix-pulse-ring .ring { animation: none !important; }
+      .btn-dash-primary svg { animation: none !important; }
+      .btn-dash-recompute.spinning svg { animation: none !important; }
+      .pulse-updating { animation: none !important; }
+      .modal-content-pro { animation: none !important; transition: none !important; }
+      .modal-backdrop-pro { transition: none !important; }
+      .toast { animation: none !important; }
+      .spinner { animation: none !important; }
+      .pulse-live { animation: none !important; }
+      .carrier-fill-pro,
+      .inflation-bar-fill-pos,
+      .inflation-bar-fill-neg { transition: none !important; }
+      .heatmap-row-pro { opacity: 1 !important; transform: none !important; transition: none !important; }
     }
   </style>
 </head>
@@ -1338,6 +1371,7 @@
           </div>
         </div>
         <div style="height: 310px; position: relative;">
+          <div id="index-chart-skeleton" class="skeleton" style="position: absolute; inset: 0; border-radius: 12px; pointer-events: none;"></div>
           <canvas id="indexTimeSeriesChart">Multi-frequency airfare index time series chart</canvas>
         </div>
       </div>
@@ -1362,6 +1396,7 @@
           </select>
         </div>
         <div style="height: 310px; position: relative;">
+          <div id="elasticity-chart-skeleton" class="skeleton" style="position: absolute; inset: 0; border-radius: 12px; pointer-events: none;"></div>
           <canvas id="elasticityChart">Lead-time yield elasticity curve chart</canvas>
         </div>
       </div>
@@ -1443,7 +1478,14 @@
       </div>
 
       <div id="heatmap-container" class="heatmap-matrix-pro">
-        <!-- Populated dynamically by JS -->
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 0;">
+          <div class="skeleton" style="height: 26px; width: 100%;"></div>
+          <div class="skeleton" style="height: 38px; width: 100%;"></div>
+          <div class="skeleton" style="height: 38px; width: 100%;"></div>
+          <div class="skeleton" style="height: 38px; width: 100%;"></div>
+          <div class="skeleton" style="height: 38px; width: 100%;"></div>
+          <div class="skeleton" style="height: 38px; width: 100%;"></div>
+        </div>
       </div>
     </div>
 
@@ -1465,7 +1507,12 @@
             <span class="badge" style="background: rgba(250, 93, 25, 0.1); color: var(--heat-100); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;">DGCA Weights</span>
           </div>
           <div id="carrier-bars-container">
-            <!-- Populated by JS -->
+            <div style="display: flex; flex-direction: column; gap: 14px; padding: 10px 0;">
+              <div class="skeleton" style="height: 28px; width: 100%;"></div>
+              <div class="skeleton" style="height: 28px; width: 100%;"></div>
+              <div class="skeleton" style="height: 28px; width: 100%;"></div>
+              <div class="skeleton" style="height: 28px; width: 100%;"></div>
+            </div>
           </div>
         </div>
 
@@ -1516,7 +1563,11 @@
         </div>
 
         <div id="methodology-compare-container" class="method-compare-card">
-          <!-- Populated by JS -->
+          <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+            <div class="skeleton" style="height: 72px; width: 100%; border-radius: 10px;"></div>
+            <div class="skeleton" style="height: 72px; width: 100%; border-radius: 10px;"></div>
+            <div class="skeleton" style="height: 72px; width: 100%; border-radius: 10px;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1563,6 +1614,7 @@
       <!-- ATF Chart Grid -->
       <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; align-items: center;">
         <div style="height: 290px; position: relative;">
+          <div id="atf-chart-skeleton" class="skeleton" style="position: absolute; inset: 0; border-radius: 12px; pointer-events: none;"></div>
           <canvas id="atfCrossValidationChart">PPAC ATF vs Airline Fuel Surcharge Correlation Chart</canvas>
         </div>
         <div style="background: var(--surface-raised); border: 1px solid var(--border-loud); border-radius: 12px; padding: 20px;">
@@ -1591,7 +1643,12 @@
       </div>
       
       <div id="inflation-contribution-container">
-        <!-- Populated by JS -->
+        <div style="display: flex; flex-direction: column; gap: 10px; padding: 10px 0;">
+          <div class="skeleton" style="height: 22px; width: 100%;"></div>
+          <div class="skeleton" style="height: 34px; width: 100%;"></div>
+          <div class="skeleton" style="height: 34px; width: 100%;"></div>
+          <div class="skeleton" style="height: 34px; width: 100%;"></div>
+        </div>
       </div>
     </div>
 
@@ -1785,6 +1842,63 @@
     let baseKpiIndex = 103.7;
     let baseKpiFare = 7840;
 
+    let livePollingInterval = null;
+    let lastPolledStats = null;
+
+    async function pollLiveDashboard() {
+      try {
+        const res = await fetch('/api/v1/dashboard/stats');
+        if (!res.ok) return;
+        const data = await res.json();
+        const newIndex = data.today_index || 103.7;
+        const newFare = data.avg_fare_today || 7840;
+        const newRoutes = data.active_routes_count;
+        const newQuotes = data.total_quotes_count;
+
+        if (lastPolledStats) {
+          const changed = lastPolledStats.index !== newIndex ||
+                          lastPolledStats.fare !== newFare ||
+                          lastPolledStats.routes !== newRoutes ||
+                          lastPolledStats.quotes !== newQuotes;
+          if (changed) {
+            baseKpiIndex = newIndex;
+            baseKpiFare = newFare;
+            pingKpiElements();
+            animateIndex(document.getElementById('kpi-today-index'), baseKpiIndex, 1);
+            animateInteger(document.getElementById('kpi-active-routes'), newRoutes);
+            animateInteger(document.getElementById('kpi-total-quotes'), newQuotes);
+            animatePriceCount(document.getElementById('kpi-avg-fare'), baseKpiFare);
+            loadCarriers();
+            loadInflationContribution();
+          }
+        }
+        lastPolledStats = { index: newIndex, fare: newFare, routes: newRoutes, quotes: newQuotes };
+      } catch (e) {
+        // Silently skip background poll errors
+      }
+    }
+
+    function startLivePolling() {
+      if (livePollingInterval) return;
+      livePollingInterval = setInterval(pollLiveDashboard, 45000);
+    }
+
+    function stopLivePolling() {
+      if (livePollingInterval) {
+        clearInterval(livePollingInterval);
+        livePollingInterval = null;
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopLivePolling();
+      } else {
+        pollLiveDashboard();
+        startLivePolling();
+      }
+    });
+
     document.addEventListener('DOMContentLoaded', async () => {
       // Hydrate officer name from session
       const officer = JSON.parse(localStorage.getItem('apix_officer') || '{}');
@@ -1800,6 +1914,16 @@
       await loadCarriers();
       await loadMethodologyComparison('DEL-BOM');
       await loadInflationContribution();
+
+      if (!lastPolledStats) {
+        lastPolledStats = {
+          index: baseKpiIndex,
+          fare: baseKpiFare,
+          routes: parseInt(document.getElementById('kpi-active-routes')?.textContent) || 0,
+          quotes: parseInt(document.getElementById('kpi-total-quotes')?.textContent) || 0
+        };
+      }
+      startLivePolling();
     });
 
     async function loadDashboardStats() {
@@ -1809,6 +1933,12 @@
         const data = await res.json();
         baseKpiIndex = data.today_index || 103.7;
         baseKpiFare = data.avg_fare_today || 7840;
+        lastPolledStats = {
+          index: baseKpiIndex,
+          fare: baseKpiFare,
+          routes: data.active_routes_count,
+          quotes: data.total_quotes_count
+        };
         animateIndex(document.getElementById('kpi-today-index'), baseKpiIndex, 1);
         animateInteger(document.getElementById('kpi-active-routes'), data.active_routes_count);
         animateInteger(document.getElementById('kpi-total-quotes'), data.total_quotes_count);
@@ -1915,6 +2045,7 @@
         const tickColor = isDark ? '#94a3b8' : '#64748b';
 
         const ctx = document.getElementById('indexTimeSeriesChart').getContext('2d');
+        document.getElementById('index-chart-skeleton')?.remove();
         if (timeSeriesChart) timeSeriesChart.destroy();
 
         const gradient = ctx.createLinearGradient(0, 0, 0, 290);
@@ -2040,7 +2171,10 @@
     async function loadAtfCrossValidation() {
       try {
         const res = await fetch('/api/v1/index/atf-cross-validation');
-        if (!res.ok) return;
+        if (!res.ok) {
+          document.getElementById('atf-chart-skeleton')?.remove();
+          return;
+        }
         const data = await res.json();
 
         if (data.correlation_coefficient != null) {
@@ -2058,12 +2192,16 @@
           }
         }
 
-        const series = data.monthly_series || [];
+        const series = data.series_comparison || data.monthly_series || [];
+        document.getElementById('atf-chart-skeleton')?.remove();
         if (!series.length) return;
 
-        const labels = series.map(s => s.month ? s.month.slice(5) : '');
-        const atfPrices = series.map(s => s.avg_metro_atf_price_inr_kl);
-        const fuelSurcharges = series.map(s => s.avg_extracted_fuel_surcharge_inr);
+        const labels = series.map(s => {
+          const d = s.effective_date || s.month || '';
+          return d.length > 5 ? d.slice(5) : d;
+        });
+        const atfPrices = series.map(s => s.ppac_atf_inr_per_kl != null ? s.ppac_atf_inr_per_kl : s.avg_metro_atf_price_inr_kl);
+        const fuelSurcharges = series.map(s => s.extracted_fuel_surcharge_inr != null ? s.extracted_fuel_surcharge_inr : s.avg_extracted_fuel_surcharge_inr);
 
         const canvas = document.getElementById('atfCrossValidationChart');
         if (!canvas) return;
@@ -2167,6 +2305,7 @@
           }
         });
       } catch (err) {
+        document.getElementById('atf-chart-skeleton')?.remove();
         console.error('ATF cross-validation chart error:', err);
       }
     }
@@ -2183,6 +2322,7 @@
 
     function updateElasticityChart(selectedRoute) {
       const ctx = document.getElementById('elasticityChart').getContext('2d');
+      document.getElementById('elasticity-chart-skeleton')?.remove();
       if (elasticityChart) elasticityChart.destroy();
 
       const labels = ['T+1 (1 Day)', 'T+7 (1 Wk)', 'T+15 (2 Wk)', 'T+30 (1 Mo)', 'T+45 (1.5 Mo)'];
@@ -2588,6 +2728,16 @@
       });
 
       container.innerHTML = html;
+      const rows = container.querySelectorAll('.heatmap-row-pro');
+      const isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (isReduced) {
+        rows.forEach(r => r.classList.add('row-visible'));
+      } else {
+        const delayStep = Math.min(20, rows.length > 1 ? Math.floor(250 / rows.length) : 0);
+        rows.forEach((row, i) => {
+          setTimeout(() => row.classList.add('row-visible'), i * delayStep);
+        });
+      }
     }
 
     function openHeatmapDrilldown(routeId, date, avgFare, minFare, maxFare, level) {
@@ -2731,13 +2881,73 @@
         }
       }
 
+      pendingCrossFilterPing = true;
       modal.style.display = 'flex';
       modal.onclick = (e) => { if (e.target === modal) closeHeatmapDrilldown(); };
     }
 
+    let pendingCrossFilterPing = false;
+
+    function pingElement(el) {
+      if (!el) return;
+      el.classList.remove('pulse-updating');
+      void el.offsetWidth; // trigger reflow
+      el.classList.add('pulse-updating');
+      setTimeout(() => el.classList.remove('pulse-updating'), 450);
+    }
+
+    function closeModalAnimated(modalId) {
+      const modal = document.getElementById(modalId);
+      if (!modal || modal.style.display === 'none') return;
+      if (modal.classList.contains('is-closing')) return;
+
+      const content = modal.querySelector('.modal-content-pro');
+      const isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (isReduced) {
+        modal.style.display = 'none';
+        return;
+      }
+
+      modal.classList.add('is-closing');
+      if (content) content.classList.add('is-closing');
+
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('is-closing');
+        if (content) content.classList.remove('is-closing');
+      }, 180);
+    }
+
     function closeHeatmapDrilldown() {
-      const modal = document.getElementById('heatmap-drilldown-modal');
-      if (modal) modal.style.display = 'none';
+      closeModalAnimated('heatmap-drilldown-modal');
+      if (pendingCrossFilterPing) {
+        pendingCrossFilterPing = false;
+        setTimeout(() => {
+          const elasticityHeader = document.querySelector('#elasticity-route-select')?.closest('.card-pro')?.querySelector('.card-header-pro');
+          const methodologyHeader = document.querySelector('#methodology-route-select')?.closest('.card-pro')?.querySelector('.card-header-pro');
+          pingElement(elasticityHeader);
+          pingElement(methodologyHeader);
+        }, 190);
+      }
+    }
+
+    function animateBarsIn(container, selector) {
+      if (!container) return;
+      const bars = container.querySelectorAll(selector);
+      if (!bars.length) return;
+      const isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (isReduced) {
+        bars.forEach(bar => {
+          if (bar.dataset.targetWidth) bar.style.width = bar.dataset.targetWidth;
+        });
+        return;
+      }
+      void container.offsetWidth; // force reflow at 0 width
+      requestAnimationFrame(() => {
+        bars.forEach(bar => {
+          if (bar.dataset.targetWidth) bar.style.width = bar.dataset.targetWidth;
+        });
+      });
     }
 
     async function loadCarriers() {
@@ -2758,7 +2968,7 @@
                 <span>${escapeHtml(c.carrier_name)}</span>
               </div>
               <div class="carrier-track-pro" title="${escapeHtml(c.carrier_name)}: ${c.market_share_pct}% market share">
-                <div class="carrier-fill-pro" style="width: ${c.market_share_pct}%; background: ${brandColor};"></div>
+                <div class="carrier-fill-pro" style="width: 0%; background: ${brandColor};" data-target-width="${c.market_share_pct}%"></div>
               </div>
               <div class="carrier-share-label">${c.market_share_pct}%</div>
               <div class="carrier-val-pro">${formatINR(c.avg_fare_inr)}</div>
@@ -2766,6 +2976,7 @@
           `;
         });
         container.innerHTML = html;
+        animateBarsIn(container, '.carrier-fill-pro');
       } catch (e) {
         console.error('Carriers error:', e);
       }
@@ -2878,8 +3089,8 @@
               <div class="inflation-bar-track" title="${escapeHtml(r.route_id)}: ${sign}${val.toFixed(3)} pp contribution">
                 <div class="inflation-bar-center"></div>
                 ${isPos 
-                  ? `<div class="inflation-bar-fill-pos" style="width: ${pctOfHalf}%;"></div>`
-                  : `<div class="inflation-bar-fill-neg" style="width: ${pctOfHalf}%;"></div>`
+                  ? `<div class="inflation-bar-fill-pos" style="width: 0%;" data-target-width="${pctOfHalf}%"></div>`
+                  : `<div class="inflation-bar-fill-neg" style="width: 0%;" data-target-width="${pctOfHalf}%"></div>`
                 }
               </div>
 
@@ -2900,6 +3111,7 @@
         }
 
         container.innerHTML = html;
+        animateBarsIn(container, '.inflation-bar-fill-pos, .inflation-bar-fill-neg');
       } catch (e) {
         console.error('Inflation contribution error:', e);
       }
@@ -2909,7 +3121,7 @@
       document.getElementById('scrape-modal').style.display = 'flex';
     }
     function closeScrapeModal() {
-      document.getElementById('scrape-modal').style.display = 'none';
+      closeModalAnimated('scrape-modal');
     }
 
     async function downloadMicrodataCsv() {
@@ -3031,7 +3243,7 @@
       }
     }
     function closeBulletinModal() {
-      document.getElementById('bulletin-modal').style.display = 'none';
+      closeModalAnimated('bulletin-modal');
     }
 
     async function openAiDiagnosticModal() {
@@ -3068,7 +3280,7 @@
       }
     }
     function closeAiModal() {
-      document.getElementById('ai-modal').style.display = 'none';
+      closeModalAnimated('ai-modal');
     }
 
     async function handleScrapeSubmit(e) {
@@ -3133,8 +3345,7 @@
       if (modal) modal.style.display = 'flex';
     }
     function closeShortcutsModal() {
-      const modal = document.getElementById('shortcuts-modal');
-      if (modal) modal.style.display = 'none';
+      closeModalAnimated('shortcuts-modal');
     }
 
     /* ── Economist Keyboard Shortcuts Controller ── */
@@ -3193,12 +3404,19 @@
       }
     });
 
-    ['scrape-modal', 'bulletin-modal', 'ai-modal', 'heatmap-drilldown-modal', 'shortcuts-modal'].forEach(id => {
+    const modalCloseMap = {
+      'scrape-modal': closeScrapeModal,
+      'bulletin-modal': closeBulletinModal,
+      'ai-modal': closeAiModal,
+      'heatmap-drilldown-modal': closeHeatmapDrilldown,
+      'shortcuts-modal': closeShortcutsModal
+    };
+    Object.keys(modalCloseMap).forEach(id => {
       const modal = document.getElementById(id);
       if (modal) {
         modal.addEventListener('click', (e) => {
           if (e.target === modal) {
-            modal.style.display = 'none';
+            modalCloseMap[id]();
           }
         });
       }

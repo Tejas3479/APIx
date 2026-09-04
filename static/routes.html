@@ -273,6 +273,11 @@
       align-items: center;
       justify-content: center;
       z-index: 2000;
+      opacity: 1;
+      transition: opacity 0.18s ease;
+    }
+    .modal-backdrop-pro.is-closing {
+      opacity: 0;
     }
     .modal-content-pro {
       background: var(--card-bg);
@@ -283,10 +288,22 @@
       padding: 28px;
       box-shadow: 0 20px 48px rgba(0,0,0,0.3);
       animation: modalSlide 0.25s ease-out;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    .modal-content-pro.is-closing {
+      opacity: 0;
+      transform: scale(0.96) translateY(8px);
     }
     @keyframes modalSlide {
       from { opacity: 0; transform: scale(0.96) translateY(8px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Vestibular Protection */
+    @media (prefers-reduced-motion: reduce) {
+      .modal-content-pro { animation: none !important; transition: none !important; }
+      .modal-backdrop-pro { transition: none !important; }
+      .weight-fill-pro, .weight-stack-seg { transition: none !important; }
     }
 
     /* Print Stylesheet for Routes Basket */
@@ -384,7 +401,7 @@
       </div>
 
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="btn-dash btn-dash-secondary" onclick="rebalanceWeights()" title="Proportionally rebalance active route weights to sum to 1.000">
+        <button id="btnRebalance" class="btn-dash btn-dash-secondary" onclick="openRebalanceModal()" title="Proportionally rebalance active route weights to sum to 1.000">
           ⚖ Rebalance (1.000)
         </button>
         <button class="btn-dash btn-dash-secondary" onclick="exportBasketJson()">
@@ -439,7 +456,7 @@
           Registered Route Basket Specifications
         </div>
         <div style="display: flex; gap: 10px; align-items: center;">
-          <input type="text" id="routeSearchInput" oninput="filterRoutes()" placeholder="Search city or IATA (e.g. BOM, Pune)..." style="height: 38px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border-loud); font-size: 13.5px; width: 260px; background: var(--card-bg); color: var(--navy-900); box-sizing: border-box;">
+          <input type="text" id="routeSearchInput" oninput="debouncedFilterRoutes()" placeholder="Search city or IATA (e.g. BOM, Pune)..." style="height: 38px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border-loud); font-size: 13.5px; width: 260px; background: var(--card-bg); color: var(--navy-900); box-sizing: border-box;">
           <select id="statusFilterSelect" onchange="filterRoutes()" style="height: 38px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-loud); font-size: 13.5px; background: var(--card-bg); color: var(--navy-900); box-sizing: border-box;">
             <option value="all">All Sectors</option>
             <option value="active">Active Only</option>
@@ -504,7 +521,7 @@
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-loud); padding-top: 16px;">
           <button type="button" onclick="closeAddModal()" class="btn-dash btn-dash-secondary">Cancel</button>
-          <button type="submit" class="btn-dash btn-dash-primary">Add Sector</button>
+          <button type="submit" id="btnAddRouteSubmit" class="btn-dash btn-dash-primary">Add Sector</button>
         </div>
       </form>
     </div>
@@ -540,15 +557,62 @@
           </label>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-loud); padding-top: 16px;">
-          <button type="button" onclick="handleDeleteRouteDirect()" class="btn-dash" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3);">
+          <button type="button" onclick="openDeleteModalFromEdit()" class="btn-dash" style="background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3);">
             Delete Sector
           </button>
           <div style="display: flex; gap: 10px;">
             <button type="button" onclick="closeEditModal()" class="btn-dash btn-dash-secondary">Cancel</button>
-            <button type="submit" class="btn-dash btn-dash-primary">Save Changes</button>
+            <button type="submit" id="btnEditRouteSubmit" class="btn-dash btn-dash-primary">Save Changes</button>
           </div>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Rebalance Confirmation Modal -->
+  <div id="rebalance-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="rebalance-modal-title">
+    <div class="modal-content-pro" style="max-width: 580px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-loud); padding-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 18px;">⚖</span>
+          <h3 id="rebalance-modal-title" style="font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; margin: 0; color: var(--navy-900);">Rebalance National Weights</h3>
+        </div>
+        <button onclick="closeRebalanceModal()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      <p style="font-size: 13.5px; color: var(--text-muted); margin: 0 0 14px; line-height: 1.5;">
+        This action normalizes all active sectors proportionally so that <span style="font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--navy-900);">∑w<sub>r</sub> = 1.0000 (100.0%)</span>. Review the proposed adjustments below:
+      </p>
+      <div id="rebalancePreviewContainer" style="max-height: 280px; overflow-y: auto; border: 1px solid var(--border-loud); border-radius: 10px; margin-bottom: 18px; background: var(--surface-raised);">
+        <!-- Populated dynamically by openRebalanceModal() -->
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-loud); padding-top: 16px;">
+        <button type="button" onclick="closeRebalanceModal()" class="btn-dash btn-dash-secondary">Cancel</button>
+        <button type="button" id="btnConfirmRebalance" onclick="executeRebalanceWeights()" class="btn-dash btn-dash-primary">Confirm Rebalance (1.000)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Route Confirmation Modal -->
+  <div id="delete-modal" class="modal-backdrop-pro" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <div class="modal-content-pro" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-loud); padding-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="badge" style="background: rgba(220, 38, 38, 0.12); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.3); font-size: 11px; font-weight: 800;">⚠️ Statutory Impact</span>
+          <h3 id="delete-modal-title" style="font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 800; margin: 0; color: var(--navy-900);">Delete Sector</h3>
+        </div>
+        <button onclick="closeDeleteModal()" aria-label="Close" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted);">&times;</button>
+      </div>
+      <input type="hidden" id="delete-route-id">
+      <p style="font-size: 13.5px; color: var(--navy-900); margin: 0 0 12px; line-height: 1.5;">
+        Are you sure you want to permanently remove sector <strong id="delete-route-name" style="font-family:'JetBrains Mono', monospace; color: #dc2626;"></strong> from the national basket?
+      </p>
+      <div style="background: rgba(220, 38, 38, 0.06); border: 1px solid rgba(220, 38, 38, 0.25); border-radius: 8px; padding: 12px; font-size: 12.5px; color: #991b1b; line-height: 1.5; margin-bottom: 18px;">
+        <strong>Consequence:</strong> All quotes, pricing microdata, and passenger weighting for this corridor will be permanently excluded from future official Jevons-GEKS index runs.
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-loud); padding-top: 16px;">
+        <button type="button" onclick="closeDeleteModal()" class="btn-dash btn-dash-secondary">Cancel</button>
+        <button type="button" id="btnConfirmDelete" onclick="executeDeleteRouteDirect()" class="btn-dash" style="background: #dc2626; color: #fff; border: 1px solid #dc2626; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);">Permanently Delete Sector</button>
+      </div>
     </div>
   </div>
 
@@ -634,6 +698,14 @@
       }
     }
 
+    let filterDebounceTimer = null;
+    function debouncedFilterRoutes() {
+      clearTimeout(filterDebounceTimer);
+      filterDebounceTimer = setTimeout(() => {
+        filterRoutes();
+      }, 180);
+    }
+
     function filterRoutes() {
       const q = (document.getElementById('routeSearchInput').value || '').toLowerCase().trim();
       const status = document.getElementById('statusFilterSelect').value;
@@ -656,6 +728,20 @@
       renderBasketTable(filtered, true);
     }
 
+    function animateBarsIn(container, selector) {
+      if (!container) return;
+      const bars = container.querySelectorAll(selector);
+      if (!bars.length) return;
+      // Force browser reflow while width is 0%
+      bars.forEach(bar => void bar.offsetWidth);
+      requestAnimationFrame(() => {
+        bars.forEach(bar => {
+          const target = bar.getAttribute('data-target-width');
+          if (target) bar.style.width = target;
+        });
+      });
+    }
+
     function renderBasketTable(routes, isFiltered = false) {
       if (!isFiltered) {
         document.getElementById('totalRoutesVal').textContent = routes.filter(r => r.is_active).length + ' Active / ' + routes.length + ' Total';
@@ -673,8 +759,10 @@
           const pax = DGCA_PAX_VOLUME[r.id] || '0.85M pax';
           const isActive = r.is_active !== false;
           const statusBadge = isActive
-            ? `<button onclick="toggleRouteStatus('${escapeHtml(r.id)}')" class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px; cursor: pointer;" title="Click to Pause Tracking">ACTIVE</button>`
-            : `<button onclick="toggleRouteStatus('${escapeHtml(r.id)}')" class="badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.25); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px; cursor: pointer;" title="Click to Activate Tracking">PAUSED</button>`;
+            ? `<button onclick="toggleRouteStatus('${escapeHtml(r.id)}', this)" class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px; cursor: pointer;" title="Click to Pause Tracking">ACTIVE</button>`
+            : `<button onclick="toggleRouteStatus('${escapeHtml(r.id)}', this)" class="badge" style="background: rgba(100, 116, 139, 0.1); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.25); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px; cursor: pointer;" title="Click to Activate Tracking">PAUSED</button>`;
+
+          const fillPct = Math.min(100, (r.dgca_weight || 0) * 100 * 3.2);
 
           return `
           <div class="basket-row-pro" style="${isActive ? '' : 'opacity: 0.6;'}">
@@ -689,7 +777,7 @@
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--navy-800);">${r.daily_flights || 0} flt/day</div>
             <div class="weight-meter-pro">
               <div class="weight-track-pro">
-                <div class="weight-fill-pro" style="width: ${((r.dgca_weight || 0) * 100 * 3.2)}%;"></div>
+                <div class="weight-fill-pro" style="width: 0%;" data-target-width="${fillPct}%"></div>
               </div>
               <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--heat-100); width: 45px; text-align: right;">${((r.dgca_weight || 0) * 100).toFixed(1)}%</span>
             </div>
@@ -703,6 +791,8 @@
           </div>
         `;
         }).join('');
+
+        animateBarsIn(container, '.weight-fill-pro');
       }
 
       // Update dynamic weight stack bar
@@ -715,8 +805,9 @@
         barContainer.innerHTML = activeList.map((r, i) => {
           const color = colors[i % colors.length];
           const pct = ((r.dgca_weight || 0) * 100).toFixed(1);
-          return `<div class="weight-stack-seg" style="width: ${pct}%; background: ${color};" title="${escapeHtml(r.id)} (${pct}%)"></div>`;
+          return `<div class="weight-stack-seg" style="width: 0%; background: ${color};" data-target-width="${pct}%" title="${escapeHtml(r.id)} (${pct}%)"></div>`;
         }).join('');
+        animateBarsIn(barContainer, '.weight-stack-seg');
       }
 
       if (legendContainer) {
@@ -731,8 +822,30 @@
       window.location.href = '/benchmark?route=' + encodeURIComponent(routeId) + '&window=7';
     }
 
+    function closeModalAnimated(modalId) {
+      const modal = document.getElementById(modalId);
+      if (!modal || modal.style.display === 'none') return;
+      if (modal.classList.contains('is-closing')) return;
+
+      const content = modal.querySelector('.modal-content-pro');
+      const isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (isReduced) {
+        modal.style.display = 'none';
+        return;
+      }
+
+      modal.classList.add('is-closing');
+      if (content) content.classList.add('is-closing');
+
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('is-closing');
+        if (content) content.classList.remove('is-closing');
+      }, 180);
+    }
+
     function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
-    function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; }
+    function closeAddModal() { closeModalAnimated('add-modal'); }
 
     function openEditModal(routeId) {
       const r = currentRoutes.find(x => x.id === routeId);
@@ -744,11 +857,82 @@
       document.getElementById('edit-is-active').checked = r.is_active !== false;
       document.getElementById('edit-modal').style.display = 'flex';
     }
+    function closeEditModal() { closeModalAnimated('edit-modal'); }
 
-    function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
+    function openRebalanceModal() {
+      const active = currentRoutes.filter(r => r.is_active !== false);
+      const container = document.getElementById('rebalancePreviewContainer');
+      const curSum = active.reduce((acc, r) => acc + (r.dgca_weight || 0), 0);
+
+      if (!active.length || curSum <= 0) {
+        container.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted);">No active routes to rebalance.</div>';
+        document.getElementById('btnConfirmRebalance').disabled = true;
+      } else {
+        document.getElementById('btnConfirmRebalance').disabled = false;
+        // Compute projected normalized weights matching backend algorithm
+        const projected = active.map(r => ({
+          ...r,
+          newWeight: Number((r.dgca_weight / curSum).toFixed(4))
+        }));
+        const newSum = projected.reduce((acc, r) => acc + r.newWeight, 0);
+        const discrepancy = Number((1.0 - newSum).toFixed(4));
+        if (discrepancy !== 0 && projected.length > 0) {
+          let largest = projected[0];
+          projected.forEach(p => { if (p.newWeight > largest.newWeight) largest = p; });
+          largest.newWeight = Number((largest.newWeight + discrepancy).toFixed(4));
+        }
+
+        const rows = projected.map(r => {
+          const delta = r.newWeight - r.dgca_weight;
+          const deltaColor = Math.abs(delta) < 0.0001 ? 'var(--text-muted)' : (delta > 0 ? '#10b981' : '#f59e0b');
+          const deltaSign = delta > 0 ? '+' : '';
+          return `
+            <div style="display: grid; grid-template-columns: 100px 1fr 85px 85px 75px; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border-subtle); align-items: center; font-size: 12.5px;">
+              <strong style="font-family: 'JetBrains Mono', monospace; color: var(--navy-900);">${escapeHtml(r.id)}</strong>
+              <span style="color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(r.origin_city)} ⇄ ${escapeHtml(r.destination_city)}</span>
+              <span style="font-family: 'JetBrains Mono', monospace; color: var(--navy-700);">${r.dgca_weight.toFixed(4)}</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #4f46e5;">${r.newWeight.toFixed(4)}</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: ${deltaColor}; text-align: right;">${deltaSign}${delta.toFixed(4)}</span>
+            </div>
+          `;
+        }).join('');
+
+        container.innerHTML = `
+          <div style="display: grid; grid-template-columns: 100px 1fr 85px 85px 75px; gap: 8px; padding: 8px 14px; background: var(--card-bg); border-bottom: 1px solid var(--border-loud); font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+            <span>Sector</span>
+            <span>Corridor</span>
+            <span>Current</span>
+            <span>New (w<sub>r</sub>)</span>
+            <span style="text-align: right;">Δ Net</span>
+          </div>
+          ${rows}
+          <div style="display: flex; justify-content: space-between; padding: 10px 14px; background: var(--card-bg); font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;">
+            <span style="color: var(--text-muted);">SUM: ${active.length} ACTIVE SECTORS</span>
+            <span style="color: #10b981;">1.0000 (100.0%)</span>
+          </div>
+        `;
+      }
+      document.getElementById('rebalance-modal').style.display = 'flex';
+    }
+    function closeRebalanceModal() { closeModalAnimated('rebalance-modal'); }
+
+    function openDeleteModalFromEdit() {
+      const routeId = document.getElementById('edit-route-id').value;
+      const r = currentRoutes.find(x => x.id === routeId);
+      const displayName = r ? `${r.id} (${r.origin_city} ⇄ ${r.destination_city})` : routeId;
+      document.getElementById('delete-route-id').value = routeId;
+      document.getElementById('delete-route-name').textContent = displayName;
+      closeEditModal();
+      document.getElementById('delete-modal').style.display = 'flex';
+    }
+    function closeDeleteModal() { closeModalAnimated('delete-modal'); }
 
     async function handleAddRoute(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnAddRouteSubmit');
+      const origText = btn ? btn.textContent : 'Add Sector';
+      if (btn) { btn.disabled = true; btn.textContent = 'Adding Sector…'; }
+
       const orig = document.getElementById('add-orig-iata').value.toUpperCase();
       const dest = document.getElementById('add-dest-iata').value.toUpperCase();
       const routeId = orig + '-' + dest;
@@ -779,11 +963,17 @@
         await loadRoutes();
       } catch (err) {
         showToast('Error adding route: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = origText; }
       }
     }
 
     async function handleEditRoute(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnEditRouteSubmit');
+      const origText = btn ? btn.textContent : 'Save Changes';
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving Changes…'; }
+
       const routeId = document.getElementById('edit-route-id').value;
       const payload = {
         dgca_weight: parseFloat(document.getElementById('edit-weight').value),
@@ -803,10 +993,17 @@
         await loadRoutes();
       } catch (err) {
         showToast('Error updating route: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = origText; }
       }
     }
 
-    async function toggleRouteStatus(routeId) {
+    async function toggleRouteStatus(routeId, btnEl) {
+      if (btnEl) {
+        btnEl.disabled = true;
+        btnEl.dataset.origText = btnEl.textContent;
+        btnEl.textContent = 'Updating…';
+      }
       try {
         const res = await fetch('/api/v1/routes/' + encodeURIComponent(routeId) + '/toggle', {
           method: 'POST',
@@ -818,12 +1015,18 @@
         await loadRoutes();
       } catch (err) {
         showToast('Error toggling route status: ' + err.message, 'error');
+        if (btnEl) {
+          btnEl.disabled = false;
+          if (btnEl.dataset.origText) btnEl.textContent = btnEl.dataset.origText;
+        }
       }
     }
 
-    async function handleDeleteRouteDirect() {
-      const routeId = document.getElementById('edit-route-id').value;
-      if (!confirm(`Are you sure you want to permanently remove sector ${routeId} from the national index basket?`)) return;
+    async function executeDeleteRouteDirect() {
+      const routeId = document.getElementById('delete-route-id').value;
+      const btn = document.getElementById('btnConfirmDelete');
+      const origText = btn ? btn.textContent : 'Permanently Delete Sector';
+      if (btn) { btn.disabled = true; btn.textContent = 'Deleting…'; }
 
       try {
         const res = await fetch('/api/v1/routes/' + encodeURIComponent(routeId), {
@@ -832,14 +1035,22 @@
         });
         if (!res.ok) throw new Error('Failed to delete route');
         showToast(`Route ${routeId} removed from national basket`, 'success');
-        closeEditModal();
+        closeDeleteModal();
         await loadRoutes();
       } catch (err) {
         showToast('Error deleting route: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = origText; }
       }
     }
 
-    async function rebalanceWeights() {
+    async function executeRebalanceWeights() {
+      const btn = document.getElementById('btnConfirmRebalance');
+      const headerBtn = document.getElementById('btnRebalance');
+      const origText = btn ? btn.textContent : 'Confirm Rebalance (1.000)';
+      if (btn) { btn.disabled = true; btn.textContent = 'Rebalancing…'; }
+      if (headerBtn) { headerBtn.disabled = true; headerBtn.textContent = '⚖ Rebalancing…'; }
+
       try {
         const res = await fetch('/api/v1/routes/rebalance', {
           method: 'POST',
@@ -848,11 +1059,34 @@
         if (!res.ok) throw new Error('Rebalance request failed');
         const data = await res.json();
         showToast(data.message || 'Route weights rebalanced to sum to 1.000', 'success');
+        closeRebalanceModal();
         await loadRoutes();
       } catch (err) {
         showToast('Error rebalancing weights: ' + err.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = origText; }
+        if (headerBtn) { headerBtn.disabled = false; headerBtn.textContent = '⚖ Rebalance (1.000)'; }
       }
     }
+
+    // Global Escape Key listener
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        ['add-modal', 'edit-modal', 'rebalance-modal', 'delete-modal'].forEach(id => closeModalAnimated(id));
+      }
+    });
+
+    // Modal Backdrop clicks
+    ['add-modal', 'edit-modal', 'rebalance-modal', 'delete-modal'].forEach(id => {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            closeModalAnimated(id);
+          }
+        });
+      }
+    });
 
     function exportBasketJson() {
       const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(currentRoutes, null, 2));

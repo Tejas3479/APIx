@@ -77,6 +77,7 @@
       padding: 5px 12px;
       border-radius: 999px;
       white-space: nowrap;
+      transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
     }
     .nav-status .status-dot {
       width: 7px;
@@ -85,6 +86,26 @@
       border-radius: 50%;
       box-shadow: 0 0 8px #22c55e;
       animation: apix-blink 1.8s steps(1) infinite;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .nav-status.status-degraded {
+      color: #fde047;
+      background: rgba(234, 179, 8, 0.14);
+      border-color: rgba(234, 179, 8, 0.35);
+    }
+    .nav-status.status-degraded .status-dot {
+      background: #eab308;
+      box-shadow: 0 0 8px #eab308;
+    }
+    .nav-status.status-offline {
+      color: #fca5a5;
+      background: rgba(239, 68, 68, 0.14);
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+    .nav-status.status-offline .status-dot {
+      background: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+      animation: none;
     }
 
     /* Hero Header */
@@ -557,6 +578,7 @@
       word-break: break-word;
       padding: 1px 4px;
       border-radius: 4px;
+      transition: background-color 1.2s ease-out;
     }
     .log-line:hover { background: rgba(255,255,255,0.04); }
     .log-time { color: #6e7681; font-size: 11.5px; flex-shrink: 0; user-select: none; }
@@ -592,11 +614,19 @@
       border: 1px solid #388bfd;
       box-shadow: 0 8px 20px rgba(0,0,0,0.5);
       cursor: pointer;
-      display: none;
+      display: flex;
       align-items: center;
       gap: 6px;
       z-index: 10;
-      animation: toastIn 0.2s ease-out;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .btn-scroll-bottom-floating.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
     }
 
     /* Jobs History Table */
@@ -639,6 +669,10 @@
       align-items: center;
       justify-content: center;
       z-index: 2000;
+      transition: opacity 0.18s ease;
+    }
+    .modal-backdrop-pro.is-closing {
+      opacity: 0;
     }
     .modal-content-pro {
       background: var(--card-bg);
@@ -649,10 +683,34 @@
       padding: 26px;
       box-shadow: 0 20px 48px rgba(0,0,0,0.3);
       animation: modalSlide 0.25s ease-out;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    .modal-content-pro.is-closing {
+      opacity: 0;
+      transform: scale(0.96) translateY(8px);
     }
     @keyframes modalSlide {
       from { opacity: 0; transform: scale(0.96) translateY(8px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Data Refresh Pulse Ping */
+    .pulse-updating {
+      animation: statDataPing 0.4s ease-out;
+    }
+    @keyframes statDataPing {
+      0% { opacity: 0.6; transform: scale(0.98); }
+      50% { opacity: 1; transform: scale(1.02); filter: brightness(1.15); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Vestibular Protection */
+    @media (prefers-reduced-motion: reduce) {
+      .modal-backdrop-pro { transition: none !important; }
+      .modal-content-pro { animation: none !important; transition: none !important; }
+      .pulse-updating { animation: none !important; }
+      .log-line { transition: none !important; }
+      .btn-scroll-bottom-floating { transition: none !important; }
     }
   </style>
 </head>
@@ -686,7 +744,7 @@
       </nav>
 
       <div class="nav-right">
-        <div class="nav-status">
+        <div class="nav-status" id="nav-health-badge">
           <span class="status-dot"></span>
           <span id="nav-health-status">ENGINE ACTIVE</span>
         </div>
@@ -804,78 +862,78 @@
     <div class="telemetry-grid-pro">
       
       <!-- Feed 1: IndiGo -->
-      <div class="feed-card-pro">
+      <div class="feed-card-pro" id="feed-card-6E" data-carrier="6E">
         <div class="feed-top-pro">
           <div class="feed-name-pro">
             <span class="badge-status badge-carrier-6e">IndiGo</span>
             <span>6E Direct API</span>
           </div>
-          <span class="badge badge-success" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">OPERATIONAL</span>
+          <span class="badge badge-success" id="feed-status-6E" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">OPERATIONAL</span>
         </div>
         <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0;">
           Direct &amp; GDS aggregate feed collecting all 8 domestic corridors across T+1 to T+45 booking windows.
         </p>
         <div class="feed-stats-row-pro">
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">680 ms</div></div>
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.9%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div id="feed-coverage-6E" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div id="feed-latency-6E" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">680 ms</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div id="feed-reliability-6E" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.9%</div></div>
         </div>
       </div>
 
       <!-- Feed 2: Air India -->
-      <div class="feed-card-pro">
+      <div class="feed-card-pro" id="feed-card-AI" data-carrier="AI">
         <div class="feed-top-pro">
           <div class="feed-name-pro">
             <span class="badge-status badge-carrier-ai">Air India</span>
             <span>AI Full-Service</span>
           </div>
-          <span class="badge badge-success" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">OPERATIONAL</span>
+          <span class="badge badge-success" id="feed-status-AI" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">OPERATIONAL</span>
         </div>
         <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0;">
           Full-service carrier dynamic tariff parser with automatic baggage and statutory UDF/ASF decomposition.
         </p>
         <div class="feed-stats-row-pro">
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">790 ms</div></div>
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.7%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div id="feed-coverage-AI" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div id="feed-latency-AI" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">790 ms</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div id="feed-reliability-AI" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.7%</div></div>
         </div>
       </div>
 
       <!-- Feed 3: Akasa Air -->
-      <div class="feed-card-pro">
+      <div class="feed-card-pro" id="feed-card-QP" data-carrier="QP">
         <div class="feed-top-pro">
           <div class="feed-name-pro">
             <span class="badge-status badge-carrier-qp">Akasa Air</span>
             <span>QP Navitaire</span>
           </div>
-          <span class="badge badge-success" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">OPERATIONAL</span>
+          <span class="badge badge-success" id="feed-status-QP" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">OPERATIONAL</span>
         </div>
         <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0;">
           Next-gen LCC inventory probe with real-time base fare and convenience fee isolation.
         </p>
         <div class="feed-stats-row-pro">
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">710 ms</div></div>
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.8%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div id="feed-coverage-QP" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div id="feed-latency-QP" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">710 ms</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div id="feed-reliability-QP" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.8%</div></div>
         </div>
       </div>
 
       <!-- Feed 4: SpiceJet -->
-      <div class="feed-card-pro">
+      <div class="feed-card-pro" id="feed-card-SG" data-carrier="SG">
         <div class="feed-top-pro">
           <div class="feed-name-pro">
             <span class="badge-status badge-carrier-sg">SpiceJet</span>
             <span>SG Direct Feed</span>
           </div>
-          <span class="badge badge-success" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">OPERATIONAL</span>
+          <span class="badge badge-success" id="feed-status-SG" style="font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;">OPERATIONAL</span>
         </div>
         <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0;">
           Dynamic economy fare scraper with fuel surcharge (YQ) extraction and baggage surcharge normalization.
         </p>
         <div class="feed-stats-row-pro">
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">820 ms</div></div>
-          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.5%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Coverage</div><div id="feed-coverage-SG" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">100%</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Latency</div><div id="feed-latency-SG" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--navy-900);">820 ms</div></div>
+          <div><div style="font-size: 12px; font-weight: 700; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">Reliability</div><div id="feed-reliability-SG" style="font-family: 'Outfit', sans-serif; font-size: 13.5px; font-weight: 800; color: #10b981;">99.5%</div></div>
         </div>
       </div>
 
@@ -1129,17 +1187,124 @@
       await fetchLiveTelemetry();
     });
 
+    function pingElement(el) {
+      if (!el) return;
+      el.classList.remove('pulse-updating');
+      void el.offsetWidth;
+      el.classList.add('pulse-updating');
+      setTimeout(() => el.classList.remove('pulse-updating'), 450);
+    }
+
+    function updateEngineHealth(status, label) {
+      const badge = document.getElementById('nav-health-badge') || document.querySelector('.nav-status');
+      const labelEl = document.getElementById('nav-health-status');
+      if (!badge || !labelEl) return;
+
+      badge.classList.remove('status-active', 'status-degraded', 'status-offline');
+      if (status === 'degraded') {
+        badge.classList.add('status-degraded');
+        labelEl.textContent = label || 'ENGINE DEGRADED';
+      } else if (status === 'offline') {
+        badge.classList.add('status-offline');
+        labelEl.textContent = label || 'ENGINE OFFLINE';
+      } else {
+        badge.classList.add('status-active');
+        labelEl.textContent = label || 'ENGINE ACTIVE';
+      }
+    }
+
     async function fetchMetrics() {
       try {
         const res = await fetch('/api/v1/scraper/metrics');
-        if (!res.ok) return;
+        if (!res.ok) {
+          updateEngineHealth('offline', 'ENGINE OFFLINE');
+          return;
+        }
         const d = await res.json();
-        if (d.total_fare_quotes) document.getElementById('kpi-quotes-val').textContent = d.total_fare_quotes.toLocaleString() + '+';
-        if (d.mean_latency_ms) document.getElementById('kpi-latency-val').textContent = d.mean_latency_ms + ' ms';
-        if (d.success_rate_pct) document.getElementById('kpi-success-val').textContent = d.success_rate_pct + '%';
-        if (d.worker_slots_free !== undefined) document.getElementById('kpi-slots-val').textContent = d.worker_slots_free + '/' + d.worker_slots_total + ' Ready';
+
+        // 1. Live Engine Health Derivation
+        const isDegraded = (d.success_rate_pct !== undefined && d.success_rate_pct < 95) ||
+                           (d.worker_slots_free !== undefined && d.worker_slots_free === 0) ||
+                           (d.latest_job_status === 'failed');
+        if (isDegraded) {
+          updateEngineHealth('degraded', 'ENGINE DEGRADED');
+        } else {
+          updateEngineHealth('active', 'ENGINE ACTIVE');
+        }
+
+        // 2. Cluster KPIs (flash only when values differ)
+        const quotesEl = document.getElementById('kpi-quotes-val');
+        const latencyEl = document.getElementById('kpi-latency-val');
+        const successEl = document.getElementById('kpi-success-val');
+        const slotsEl = document.getElementById('kpi-slots-val');
+
+        if (d.total_fare_quotes && quotesEl) {
+          const newQuotes = d.total_fare_quotes.toLocaleString() + '+';
+          if (quotesEl.textContent !== newQuotes) {
+            quotesEl.textContent = newQuotes;
+            pingElement(quotesEl);
+          }
+        }
+        if (d.mean_latency_ms && latencyEl) {
+          const newLatency = d.mean_latency_ms + ' ms';
+          if (latencyEl.textContent !== newLatency) {
+            latencyEl.textContent = newLatency;
+            pingElement(latencyEl);
+          }
+        }
+        if (d.success_rate_pct && successEl) {
+          const newSuccess = d.success_rate_pct + '%';
+          if (successEl.textContent !== newSuccess) {
+            successEl.textContent = newSuccess;
+            pingElement(successEl);
+          }
+        }
+        if (d.worker_slots_free !== undefined && slotsEl) {
+          const newSlots = d.worker_slots_free + '/' + d.worker_slots_total + ' Ready';
+          if (slotsEl.textContent !== newSlots) {
+            slotsEl.textContent = newSlots;
+            pingElement(slotsEl);
+          }
+        }
+
+        // 3. Carrier Ingestion Feeds Dynamic Telemetry
+        if (d.carrier_metrics) {
+          Object.entries(d.carrier_metrics).forEach(([code, metric]) => {
+            const statusEl = document.getElementById(`feed-status-${code}`);
+            const covEl = document.getElementById(`feed-coverage-${code}`);
+            const latEl = document.getElementById(`feed-latency-${code}`);
+            const relEl = document.getElementById(`feed-reliability-${code}`);
+
+            if (statusEl && metric.status) {
+              statusEl.textContent = metric.status;
+              statusEl.className = `badge ${metric.status === 'OPERATIONAL' ? 'badge-success' : 'badge-warn'}`;
+            }
+            if (covEl && metric.coverage_pct !== undefined) {
+              const newCov = `${metric.coverage_pct.toFixed(0)}%`;
+              if (covEl.textContent !== newCov) {
+                covEl.textContent = newCov;
+                pingElement(covEl);
+              }
+            }
+            if (latEl && metric.latency_ms !== undefined) {
+              const newLat = `${metric.latency_ms} ms`;
+              if (latEl.textContent !== newLat) {
+                latEl.textContent = newLat;
+                pingElement(latEl);
+              }
+            }
+            if (relEl && metric.reliability_pct !== undefined) {
+              const newRel = `${metric.reliability_pct.toFixed(1)}%`;
+              if (relEl.textContent !== newRel) {
+                relEl.textContent = newRel;
+                pingElement(relEl);
+              }
+            }
+          });
+        }
       } catch (e) {
         console.debug('Metrics error:', e);
+        updateEngineHealth('offline', 'ENGINE OFFLINE');
       }
     }
 
@@ -1210,13 +1375,30 @@
           if (isAutoScrollEnabled && !isUserScrolledUp) {
             container.scrollTop = container.scrollHeight;
           } else if (isUserScrolledUp) {
-            document.getElementById('btnJumpBottom').style.display = 'flex';
+            showJumpBottomBtn();
           }
         }
       } catch (e) {
         console.debug('Telemetry poll error:', e);
       }
     }
+
+    const logTagHighlightColors = {
+      'tag-error': 'rgba(248, 81, 73, 0.22)',
+      'tag-warn': 'rgba(210, 153, 34, 0.2)',
+      'tag-init': 'rgba(56, 139, 253, 0.18)',
+      'tag-survey': 'rgba(163, 113, 247, 0.18)',
+      'tag-extract': 'rgba(63, 185, 80, 0.18)',
+      'tag-decomp': 'rgba(46, 160, 67, 0.18)',
+      'tag-dispatch': 'rgba(210, 153, 34, 0.18)',
+      'tag-robots': 'rgba(86, 211, 100, 0.18)',
+      'tag-probe': 'rgba(250, 93, 25, 0.18)',
+      'tag-tls': 'rgba(56, 139, 253, 0.22)',
+      'tag-stealth': 'rgba(163, 113, 247, 0.22)',
+      'tag-index': 'rgba(250, 93, 25, 0.2)',
+      'tag-complete': 'rgba(63, 185, 80, 0.22)',
+      'tag-ready': 'rgba(56, 139, 253, 0.18)'
+    };
 
     function appendSingleLogToDOM(log, container) {
       const div = document.createElement('div');
@@ -1237,6 +1419,17 @@
 
       if (!isLogVisible(div)) {
         div.style.display = 'none';
+      }
+
+      // Subtle entrance background highlight in the tag's color
+      const isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!isReduced) {
+        div.style.backgroundColor = logTagHighlightColors[tagClass] || 'rgba(56, 139, 253, 0.18)';
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            div.style.backgroundColor = 'transparent';
+          }, 40);
+        });
       }
 
       container.appendChild(div);
@@ -1302,14 +1495,22 @@
       }
     }
 
+    function showJumpBottomBtn() {
+      const btn = document.getElementById('btnJumpBottom');
+      if (btn) btn.classList.add('is-visible');
+    }
+    function hideJumpBottomBtn() {
+      const btn = document.getElementById('btnJumpBottom');
+      if (btn) btn.classList.remove('is-visible');
+    }
+
     function handleTerminalScroll() {
       const container = document.getElementById('consoleBody');
       const atBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 30;
       isUserScrolledUp = !atBottom;
 
-      const jumpBtn = document.getElementById('btnJumpBottom');
       if (atBottom) {
-        jumpBtn.style.display = 'none';
+        hideJumpBottomBtn();
       }
     }
 
@@ -1317,7 +1518,7 @@
       const container = document.getElementById('consoleBody');
       container.scrollTop = container.scrollHeight;
       isUserScrolledUp = false;
-      document.getElementById('btnJumpBottom').style.display = 'none';
+      hideJumpBottomBtn();
     }
 
     function toggleAutoScroll() {
@@ -1345,7 +1546,7 @@
       const container = document.getElementById('consoleBody');
       container.innerHTML = '';
       document.getElementById('logCountBadge').textContent = '0 events recorded';
-      document.getElementById('btnJumpBottom').style.display = 'none';
+      hideJumpBottomBtn();
 
       const initialEvent = { id: 'init-local', time: new Date().toLocaleTimeString(), type: 'READY', level: 'info', text: 'Telemetry stream reset. Listening for live ingestion events...' };
       seenLogIds.add(initialEvent.id);
@@ -1353,8 +1554,6 @@
       appendSingleLogToDOM(initialEvent, container);
 
       showToast('Telemetry stream cleared', 'info');
-    }
-
     function copyTerminalLogs() {
       const text = rawLogBuffer.map(l => `[${l.time || '00:00:00'}] [${l.type}] ${l.text}`).join('\n');
       navigator.clipboard.writeText(text).then(() => {
@@ -1447,14 +1646,55 @@
     }
 
     /* ── MODALS & DISPATCH WORKFLOWS ── */
+    function closeModalAnimated(modalId) {
+      const modal = document.getElementById(modalId);
+      if (!modal || modal.style.display === 'none') return;
+      if (modal.classList.contains('is-closing')) return;
+
+      const content = modal.querySelector('.modal-content-pro');
+      const isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (isReduced) {
+        modal.style.display = 'none';
+        return;
+      }
+
+      modal.classList.add('is-closing');
+      if (content) content.classList.add('is-closing');
+
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('is-closing');
+        if (content) content.classList.remove('is-closing');
+      }, 180);
+    }
+
     function openDispatchModal() { document.getElementById('dispatch-modal').style.display = 'flex'; }
-    function closeDispatchModal() { document.getElementById('dispatch-modal').style.display = 'none'; }
+    function closeDispatchModal() { closeModalAnimated('dispatch-modal'); }
 
     function openInstantProbeModal() { 
       document.getElementById('probeResultsBox').style.display = 'none';
       document.getElementById('probe-modal').style.display = 'flex'; 
     }
-    function closeInstantProbeModal() { document.getElementById('probe-modal').style.display = 'none'; }
+    function closeInstantProbeModal() { closeModalAnimated('probe-modal'); }
+
+    // Global Escape Key listener
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        ['dispatch-modal', 'probe-modal'].forEach(id => closeModalAnimated(id));
+      }
+    });
+
+    // Modal Backdrop clicks
+    ['dispatch-modal', 'probe-modal'].forEach(id => {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            closeModalAnimated(id);
+          }
+        });
+      }
+    });
 
     function toggleAllRoutes(checked) {
       document.querySelectorAll('input[name="dispatchRoute"]').forEach(el => el.checked = checked);
