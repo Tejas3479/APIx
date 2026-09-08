@@ -58,7 +58,8 @@ async def trigger_scrape(req: ScrapeRequest):
 async def run_single_survey_instant(
     route: str = "DEL-BOM",
     advance_days: int = 7,
-    force_live: bool = False,
+    force_live: bool = True,
+    source: str = "google_flights",
 ):
     """Synchronously run a single fare survey for a route and advance window and return quotes."""
     quotes = await run_fare_survey(
@@ -66,6 +67,7 @@ async def run_single_survey_instant(
         advance_days=advance_days,
         save_to_db=True,
         force_live=force_live,
+        source_id=source,
     )
     return quotes
 
@@ -101,6 +103,13 @@ async def reset_live_logs():
     """Clear server-side in-memory telemetry ring buffer."""
     clear_telemetry_logs()
     return {"status": "cleared", "message": "Telemetry stream reset successfully."}
+
+
+@router.get("/sources")
+async def get_scraper_sources():
+    """Retrieve the list of configured airline portals and OTA scraper sources."""
+    from services.source_registry import AIRLINE_SOURCES
+    return AIRLINE_SOURCES
 
 
 @router.get("/metrics")

@@ -166,7 +166,12 @@ class FareQuote(SQLModel, table=True):  # type: ignore[call-arg]
         default=None
     )  # Constant-quality economy bundle (with bag)
     includes_checked_bag: bool = Field(default=False)
-    source_confidence: float = Field(default=0.8, ge=0.0, le=1.0)
+    source_confidence: float = Field(
+        default=0.8, 
+        ge=0.0, 
+        le=1.0, 
+        schema_extra={"description": "Illustrative default weights, not empirically calibrated."}
+    )
     fare_class: str | None = Field(
         default=None, max_length=5
     )  # RBD bucket: U, T, L, V, Q

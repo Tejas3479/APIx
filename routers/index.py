@@ -178,6 +178,22 @@ async def get_materiality_gap(
         return result
 
 
+@router.get("/backtest")
+async def get_backtest_report():
+    """Retrieve the full 30-day directional backtesting dataset comparing against DGCA benchmarks."""
+    result = await AirfareIndexEngine.compute_backtest_report()
+    return result
+
+
+@router.get("/dgca-benchmarks")
+async def get_dgca_benchmarks():
+    """Serve the static raw data from official DGCA monthly benchmarks."""
+    from database import DgcaBenchmark
+    async with async_session_maker() as session:
+        stmt = select(DgcaBenchmark)
+        results = (await session.execute(stmt)).scalars().all()
+        return results
+
 @router.post("/compute", dependencies=[Depends(verify_api_key)])
 async def force_compute_index(
     target_date: date | None = None,

@@ -139,8 +139,6 @@ async def search_google_flights(
                     carrier_code = "QP"
                 elif "spicejet" in c_lower:
                     carrier_code = "SG"
-                elif "vistara" in c_lower:
-                    carrier_code = "UK"
 
                 results.append(
                     {

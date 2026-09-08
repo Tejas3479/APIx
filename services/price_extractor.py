@@ -83,6 +83,7 @@ def decompose_fare(
     cabin_class: str = "economy",
     carrier_code: str = "6E",
     includes_bag: bool = False,
+    ota_fee: float | None = None,
 ) -> dict[str, float]:
     """Decompose total retail fare into economic, statutory, and quality-adjusted components.
 
@@ -105,7 +106,7 @@ def decompose_fare(
     origin = origin_iata.upper()
     udf = AIRPORT_UDF_MAP.get(origin, DEFAULT_UDF)
     asf = STATUTORY_ASF
-    convenience_fee = 350.0  # standard OTA / web booking convenience charge
+    convenience_fee = ota_fee if ota_fee is not None else 350.0  # standard OTA / web booking convenience charge
 
     # Taxes and statutory fees non-dependent on base
     fixed_fees = udf + asf + convenience_fee

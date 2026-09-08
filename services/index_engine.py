@@ -17,7 +17,7 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Any, cast
 
 import numpy as np
-from sqlalchemy import desc, select
+from sqlalchemy import desc, select, delete
 
 from database import DailyIndex, FareQuote, RouteConfig, RouteIndex, async_session_maker
 from services.data_cleaner import DataCleaner
@@ -148,23 +148,18 @@ class AirfareIndexEngine:
         }
 
     @staticmethod
-    def compute_geks_tornqvist_window(
+    def compute_geks_jevons_window(
         price_matrix: dict[str, dict[str, float]],  # {date_str: {item_id: price}}
-        weights_matrix: dict[str, float]
-        | None = None,  # {item_id: quantity_or_traffic_weight}
+        weights_matrix: dict[str, float] | None = None,  # {item_id: fixed_traffic_weight}
     ) -> dict[str, float]:
-        """Compute Multilateral GEKS-Törnqvist indices over a multi-period rolling window.
-
-        Implements true multilateral transitivisation with DGCA expenditure weighting
-        (s_r^t = w_r * p_r^t / sum(w_k * p_k^t)) to eliminate chain drift and handle
-        asymmetric flight schedules across booking horizons.
+        """Compute Multilateral GEKS-Jevons indices over a multi-period rolling window.
+        Uses FIXED DGCA traffic weights to prevent pseudo-expenditure distortion.
         """
         dates = sorted(price_matrix.keys())
         T = len(dates)
         if T <= 1:
             return {d: 100.0 for d in dates}
 
-        # Step 1: Compute bilateral Törnqvist indices between all period pairs (i, j)
         bilateral = np.zeros((T, T))
         for i in range(T):
             for j in range(T):
@@ -175,8 +170,7 @@ class AirfareIndexEngine:
                 prices_i = price_matrix[dates[i]]
                 prices_j = price_matrix[dates[j]]
                 common_keys = [
-                    k
-                    for k in set(prices_i.keys()) & set(prices_j.keys())
+                    k for k in set(prices_i.keys()) & set(prices_j.keys())
                     if prices_i[k] > 0 and prices_j[k] > 0
                 ]
 
@@ -185,33 +179,17 @@ class AirfareIndexEngine:
                     continue
 
                 if weights_matrix:
-                    # True Törnqvist bilateral with expenditure shares:
-                    # expenditure = quantity_weight * price
-                    exp_i = {
-                        k: weights_matrix.get(k, 1.0) * prices_i[k] for k in common_keys
-                    }
-                    exp_j = {
-                        k: weights_matrix.get(k, 1.0) * prices_j[k] for k in common_keys
-                    }
-                    tot_exp_i = sum(exp_i.values()) or 1.0
-                    tot_exp_j = sum(exp_j.values()) or 1.0
-
-                    log_tornqvist = 0.0
+                    # Weighted Jevons using FIXED DGCA weights (no price multiplication)
+                    tot_weight = sum(weights_matrix.get(k, 1.0) for k in common_keys) or 1.0
+                    log_jevons = 0.0
                     for k in common_keys:
-                        share_i = exp_i[k] / tot_exp_i
-                        share_j = exp_j[k] / tot_exp_j
-                        avg_weight = (share_i + share_j) / 2.0
-                        log_tornqvist += avg_weight * math.log(
-                            prices_j[k] / prices_i[k]
-                        )
-
-                    bilateral[i, j] = math.exp(log_tornqvist)
+                        normalized_w = weights_matrix.get(k, 1.0) / tot_weight
+                        log_jevons += normalized_w * math.log(prices_j[k] / prices_i[k])
+                    bilateral[i, j] = math.exp(log_jevons)
                 else:
                     # Unweighted geometric mean (Jevons bilateral fallback)
                     relatives = [prices_j[k] / prices_i[k] for k in common_keys]
-                    bilateral[i, j] = math.exp(
-                        sum(math.log(r) for r in relatives) / len(relatives)
-                    )
+                    bilateral[i, j] = math.exp(sum(math.log(r) for r in relatives) / len(relatives))
 
         # Step 2: GEKS aggregation (geometric mean of all indirect bilateral paths)
         geks_values = {}
@@ -273,6 +251,27 @@ class AirfareIndexEngine:
             "insufficient_sample": False,
         }
 
+    @staticmethod
+    def extract_weekly_seasonality(daily_indices: list[float]) -> dict[str, list[float]]:
+        """Decomposes index using STL, strictly limited to a weekly period (7)."""
+        if len(daily_indices) < 14:  # Require at least 2 full weeks
+            return {}
+        try:
+            from statsmodels.tsa.seasonal import STL
+            import pandas as pd
+            
+            series = pd.Series(daily_indices)
+            res = STL(series, period=7, robust=True).fit()
+            
+            return {
+                "trend": res.trend.tolist(),
+                "seasonal": res.seasonal.tolist(),
+                "residual": res.resid.tolist()
+            }
+        except ImportError:
+            # Graceful fallback if statsmodels is not installed in the environment
+            return {}
+
     @classmethod
     async def compute_daily_index(
         cls,
@@ -297,7 +296,8 @@ class AirfareIndexEngine:
 
             # 2. Fetch all quotes for target date
             quotes_stmt = select(FareQuote).where(
-                FareQuote.departure_date == target_date
+                FareQuote.scrape_date == target_date,
+                FareQuote.cabin_class == "economy"
             )
             quotes = (await session.execute(quotes_stmt)).scalars().all()
 
@@ -493,7 +493,7 @@ class AirfareIndexEngine:
                 }
 
                 if len(price_matrix) >= 2:
-                    geks_dict = cls.compute_geks_tornqvist_window(
+                    geks_dict = cls.compute_geks_jevons_window(
                         price_matrix, weights_matrix=route_weights
                     )
                     if target_str in geks_dict:
@@ -530,6 +530,12 @@ class AirfareIndexEngine:
 
             # 5. Save to DB if requested
             if save_to_db:
+                # Idempotency: remove previous records for this date
+                del_stmt_daily = delete(DailyIndex).where(DailyIndex.index_date == target_date)
+                await session.execute(del_stmt_daily)
+                del_stmt_route = delete(RouteIndex).where(RouteIndex.index_date == target_date)
+                await session.execute(del_stmt_route)
+
                 daily_row = DailyIndex(
                     index_date=target_date,
                     frequency="daily",
@@ -899,6 +905,61 @@ class AirfareIndexEngine:
             ),
         }
 
+
+    @classmethod
+    async def compute_backtest_report(cls) -> dict[str, Any]:
+        """Calculate the 30-day sector-by-sector backtest metrics against DGCA benchmarks."""
+        import json
+        from pathlib import Path
+
+        dgca_file = Path("data/dgca_benchmark.json")
+        if not dgca_file.exists():
+            return {"error": "DGCA benchmark data not found."}
+
+        with open(dgca_file, "r") as f:
+            benchmarks = json.load(f)
+
+        # Get our monthly averages by route from RouteIndex
+        async with async_session_maker() as session:
+            stmt = select(RouteIndex)
+            all_indices = (await session.execute(stmt)).scalars().all()
+
+        route_month_map: dict[str, list[float]] = {}
+        for ri in all_indices:
+            ym = ri.index_date.strftime("%Y-%m")
+            key = f"{ri.route_id}_{ym}"
+            route_month_map.setdefault(key, []).append(ri.avg_fare)
+
+        results = []
+        total_gap = 0.0
+
+        for bench in benchmarks:
+            key = f"{bench['route_id']}_{bench['year_month']}"
+            our_fares = route_month_map.get(key, [])
+            if our_fares:
+                apix_avg = round(sum(our_fares) / len(our_fares), 2)
+                diff_inr = round(apix_avg - bench["dgca_avg_fare"], 2)
+                diff_pct = round((diff_inr / bench["dgca_avg_fare"]) * 100.0, 2)
+                results.append(
+                    {
+                        "route_id": bench["route_id"],
+                        "year_month": bench["year_month"],
+                        "dgca_avg_fare": bench["dgca_avg_fare"],
+                        "apix_avg_fare": apix_avg,
+                        "difference_inr": diff_inr,
+                        "difference_pct": diff_pct,
+                        "days_sampled": len(our_fares),
+                    }
+                )
+                total_gap += diff_pct
+
+        avg_gap_pct = round(total_gap / len(results), 2) if results else 0.0
+
+        return {
+            "overall_materiality_gap_pct": avg_gap_pct,
+            "routes_analyzed": len(results),
+            "backtest_results": results,
+        }
 
 # Top-level helper functions
 def compute_geks_tornqvist_matrix(

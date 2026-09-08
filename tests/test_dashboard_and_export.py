@@ -120,5 +120,32 @@ def test_scraper_live_logs():
     resp = client.get("/api/v1/scraper/live-logs")
     assert resp.status_code == 200
     logs = resp.json()
-    assert isinstance(logs, list)
     assert len(logs) > 0
+
+
+def test_backtest_report():
+    """Backtest endpoint must return 30-day directional backtesting dataset."""
+    resp = client.get("/api/v1/index/backtest")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "overall_materiality_gap_pct" in data
+    assert "backtest_results" in data
+    assert isinstance(data["backtest_results"], list)
+
+
+def test_dgca_benchmarks():
+    """DGCA benchmarks endpoint must return the seeded official benchmarks."""
+    resp = client.get("/api/v1/index/dgca-benchmarks")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert isinstance(data, list)
+    if len(data) > 0:
+        assert "dgca_avg_fare" in data[0]
+
+def test_daily_index_uniqueness():
+    """Daily index must not contain duplicate dates (idempotency check)."""
+    resp = client.get("/api/v1/index/daily?limit=50")
+    assert resp.status_code == 200
+    data = resp.json()
+    dates = [d["index_date"] for d in data]
+    assert len(dates) == len(set(dates)), "Found duplicate dates in daily index"

@@ -250,13 +250,50 @@ async def seed_dgca_benchmarks() -> int:
         return added
 
 
+async def seed_daily_indices() -> int:
+    """Compute and persist daily APIx index series for 30 consecutive days."""
+    from services.index_engine import AirfareIndexEngine
+    from datetime import date, timedelta
+    
+    # 30 day series from 2026-07-27 to 2026-08-25
+    start_date = date(2026, 7, 27)
+    days_to_seed = 30
+    computed = 0
+    
+    for i in range(days_to_seed):
+        target = start_date + timedelta(days=i)
+        try:
+            await AirfareIndexEngine.compute_daily_index(
+                target_date=target,
+                save_to_db=True,
+                apply_outlier_filter=True
+            )
+            computed += 1
+        except Exception as e:
+            logger.error("Failed to seed index for %s: %s", target, e)
+            
+    logger.info("Seeded %d daily index points into database.", computed)
+    return computed
+
+
 async def seed_airfare_database() -> dict[str, int]:
     """Main seeder entrypoint called during application startup."""
     routes_count = await seed_route_basket()
     fares_count = await seed_demo_fares()
     dgca_count = await seed_dgca_benchmarks()
+    
+    # Check if indices are already seeded to avoid recomputing 30 days every boot
+    from database import DailyIndex
+    async with async_session_maker() as session:
+        count = (await session.execute(select(func.count()).select_from(DailyIndex))).scalar() or 0
+        if count < 30:
+            indices_count = await seed_daily_indices()
+        else:
+            indices_count = count
+
     return {
         "routes": routes_count,
         "fare_quotes": fares_count,
         "dgca_benchmarks": dgca_count,
+        "daily_indices": indices_count,
     }
