@@ -962,8 +962,8 @@ class AirfareIndexEngine:
         }
 
 # Top-level helper functions
-def compute_geks_tornqvist_matrix(
+def compute_geks_jevons_matrix(
     price_matrix: dict[str, dict[str, float]],
 ) -> dict[str, float]:
-    """Top-level helper for multilateral GEKS-Törnqvist window calculation."""
-    return AirfareIndexEngine.compute_geks_tornqvist_window(price_matrix)
+    """Top-level helper for multilateral GEKS-Jevons window calculation."""
+    return AirfareIndexEngine.compute_geks_jevons_window(price_matrix)

@@ -2,9 +2,8 @@
 
 from services.index_engine import (
     AirfareIndexEngine,
-    compute_geks_tornqvist_matrix,
+    compute_geks_jevons_matrix,
 )
-
 
 def test_jevons_index_identical_prices():
     """Identical current and base prices must yield index exactly 100.0."""
@@ -55,14 +54,14 @@ def test_methodology_comparison():
     assert diag["recommended_standard"] == "jevons"
 
 
-def test_geks_tornqvist_multilateral_consistency():
+def test_geks_jevons_multilateral_consistency():
     """GEKS multilateral index must start at 100.0 on base date and be transitive."""
     matrix = {
         "2026-08-01": {"DEL-BOM-6E": 5000.0, "DEL-BLR-AI": 6000.0},
         "2026-08-02": {"DEL-BOM-6E": 5500.0, "DEL-BLR-AI": 6300.0},
         "2026-08-03": {"DEL-BOM-6E": 6000.0, "DEL-BLR-AI": 6600.0},
     }
-    geks = compute_geks_tornqvist_matrix(matrix)
+    geks = compute_geks_jevons_matrix(matrix)
     assert geks["2026-08-01"] == 100.0
     assert geks["2026-08-02"] > 100.0
     assert geks["2026-08-03"] > geks["2026-08-02"]
