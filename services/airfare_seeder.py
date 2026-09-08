@@ -252,8 +252,9 @@ async def seed_dgca_benchmarks() -> int:
 
 async def seed_daily_indices() -> int:
     """Compute and persist daily APIx index series for 30 consecutive days."""
-    from services.index_engine import AirfareIndexEngine
     from datetime import date, timedelta
+
+    from services.index_engine import AirfareIndexEngine
     
     # 30 day series from 2026-07-27 to 2026-08-25
     start_date = date(2026, 7, 27)

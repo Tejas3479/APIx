@@ -5,13 +5,10 @@ real-time multi-carrier domestic fares, flight times, stops, and durations.
 Guarantees numbers match live Google Flights when audited by MoSPI/RBI evaluators.
 """
 
-import asyncio
 import logging
 import re
 from datetime import date, datetime, timedelta, timezone
 from typing import Any
-
-from playwright.async_api import BrowserContext
 
 logger = logging.getLogger("apix.google_flights_live")
 

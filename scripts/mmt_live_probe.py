@@ -1,6 +1,6 @@
 import asyncio
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 try:
     from playwright.async_api import async_playwright
@@ -11,14 +11,14 @@ except ImportError as e:
 
 async def run_mmt_stealth_probe(origin, destination, advance_days=7):
     # Calculate date
-    target_date = datetime.now() + timedelta(days=advance_days)
+    target_date = datetime.now(timezone.utc) + timedelta(days=advance_days)
     date_str = target_date.strftime("%d/%m/%Y") # MMT format: DD/MM/YYYY
     
     url = f"https://www.makemytrip.com/flight/search?itinerary={origin}-{destination}-{date_str}&tripType=O&paxType=A-1_C-0_I-0&intl=false&cabinClass=E"
     
-    print(f"[*] Initializing APIx Stealth Node...")
+    print("[*] Initializing APIx Stealth Node...")
     print(f"[*] Target URL: {url}")
-    print(f"[*] Simulating Residential Chrome Context to bypass Akamai/Cloudflare...\n")
+    print("[*] Simulating Residential Chrome Context to bypass Akamai/Cloudflare...\n")
     
     async with async_playwright() as p:
         try:
@@ -30,7 +30,7 @@ async def run_mmt_stealth_probe(origin, destination, advance_days=7):
                     "--no-sandbox"
                 ]
             )
-        except Exception as e:
+        except Exception:
             print("[X] Chromium not installed. Run: python -m playwright install chromium")
             return
 
@@ -56,7 +56,7 @@ async def run_mmt_stealth_probe(origin, destination, advance_days=7):
                     if response.status == 200 and "application/json" in response.headers.get("content-type", ""):
                         data = await response.json()
                         captured_data.append(data)
-                except:
+                except Exception:
                     pass
 
         page.on("response", handle_response)
@@ -70,7 +70,7 @@ async def run_mmt_stealth_probe(origin, destination, advance_days=7):
             if "ERR_HTTP2_PROTOCOL_ERROR" in str(e):
                 print("[!] HTTP2 Protocol Error detected (Akamai strict mode). Falling back to XHR capture...")
             else:
-                raise e
+                raise
             
         print("[*] Extracting internal SSR __NEXT_DATA__ payload...")
         
@@ -80,7 +80,7 @@ async def run_mmt_stealth_probe(origin, destination, advance_days=7):
                 const el = document.getElementById('__NEXT_DATA__');
                 return el ? JSON.parse(el.textContent) : null;
             }''')
-        except:
+        except Exception:
             next_data = None
             
         print("\n" + "="*60)

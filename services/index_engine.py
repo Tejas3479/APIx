@@ -17,7 +17,7 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Any, cast
 
 import numpy as np
-from sqlalchemy import desc, select, delete
+from sqlalchemy import delete, desc, select
 
 from database import DailyIndex, FareQuote, RouteConfig, RouteIndex, async_session_maker
 from services.data_cleaner import DataCleaner
@@ -257,8 +257,8 @@ class AirfareIndexEngine:
         if len(daily_indices) < 14:  # Require at least 2 full weeks
             return {}
         try:
-            from statsmodels.tsa.seasonal import STL
             import pandas as pd
+            from statsmodels.tsa.seasonal import STL
             
             series = pd.Series(daily_indices)
             res = STL(series, period=7, robust=True).fit()
@@ -916,7 +916,7 @@ class AirfareIndexEngine:
         if not dgca_file.exists():
             return {"error": "DGCA benchmark data not found."}
 
-        with open(dgca_file, "r") as f:
+        with open(dgca_file, "r") as f:  # noqa: ASYNC230
             benchmarks = json.load(f)
 
         # Get our monthly averages by route from RouteIndex
