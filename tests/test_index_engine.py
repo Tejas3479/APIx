@@ -83,15 +83,15 @@ def test_materiality_gap_static_vs_continuous():
     assert res["nso_snapshot_day"] == 11  # August 2026 2nd Tuesday is Aug 11
 
 
-def test_geks_tornqvist_expenditure_weights():
-    """GEKS-Törnqvist with route weights must produce consistent multilateral indices."""
+def test_geks_jevons_expenditure_weights():
+    """GEKS-Jevons with route weights must produce consistent multilateral indices."""
     matrix = {
         "2026-08-01": {"DEL-BOM": 5000.0, "DEL-BLR": 6000.0},
         "2026-08-02": {"DEL-BOM": 5500.0, "DEL-BLR": 6300.0},
         "2026-08-03": {"DEL-BOM": 6000.0, "DEL-BLR": 6600.0},
     }
     weights = {"DEL-BOM": 0.22, "DEL-BLR": 0.18}
-    geks = AirfareIndexEngine.compute_geks_tornqvist_window(
+    geks = AirfareIndexEngine.compute_geks_jevons_window(
         matrix, weights_matrix=weights
     )
     assert geks["2026-08-01"] == 100.0
