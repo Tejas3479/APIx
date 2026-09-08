@@ -5,6 +5,7 @@ from services.index_engine import (
     compute_geks_jevons_matrix,
 )
 
+
 def test_jevons_index_identical_prices():
     """Identical current and base prices must yield index exactly 100.0."""
     prices = [4500.0, 6200.0, 7800.0]
