@@ -194,7 +194,8 @@ async def get_route_heatmap(days: int = 14):
                         dow_mult += 0.08
 
                     # Deterministic micro-variation (+/- 2.5%) based on route and date for audit reproducibility
-                    date_seed = abs(hash(f"{r_id}-{target_d.isoformat()}")) % 60 - 30
+                    import hashlib
+                    date_seed = int(hashlib.sha256(f"{r_id}-{target_d.isoformat()}".encode()).hexdigest(), 16) % 60 - 30
                     micro_mult = 1.0 + (date_seed / 1000.0)
 
                     avg_f = base_tariff * dow_mult * micro_mult

@@ -97,7 +97,8 @@ def _synthesize_route_quotes(
             arr_time_str = f"{(arr_total_min // 60) % 24:02d}:{arr_total_min % 60:02d}"
 
             # Deterministic noise per flight/carrier/window/route
-            flight_seed = abs(hash(f"{route_id}-{advance_days}-{code}-{flt_num}")) % 300 - 150
+            import hashlib
+            flight_seed = int(hashlib.sha256(f"{route_id}-{advance_days}-{code}-{flt_num}".encode()).hexdigest(), 16) % 300 - 150
             total_fare = round(base_calc * car_mult + flight_seed, 2)
             total_fare = max(total_fare, 1800.0)
 

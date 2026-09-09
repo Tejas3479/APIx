@@ -227,7 +227,8 @@ class AirfareIndexEngine:
             }
 
         # Deterministic seed per date + route for audit reproducibility
-        seed_int = abs(hash(f"{target_date.isoformat()}-{route_id}")) % (2**31 - 1)
+        import hashlib
+        seed_int = int(hashlib.sha256(f"{target_date.isoformat()}-{route_id}".encode()).hexdigest(), 16) % (2**31 - 1)
         rng = np.random.default_rng(seed_int)
 
         fares_arr = np.array(fares, dtype=float)

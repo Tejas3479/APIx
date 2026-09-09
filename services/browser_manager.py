@@ -114,7 +114,7 @@ class PlaywrightManager:
                     "is_mobile": False,
                     "has_touch": False,
                     "locale": "en-US",
-                    "timezone_id": "America/New_York",
+                    "timezone_id": "Asia/Kolkata",
                 }
             )
 
