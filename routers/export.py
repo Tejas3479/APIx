@@ -81,9 +81,14 @@ async def export_microdata_csv(limit: int = 5000):
                 q.is_sold_out,
             ]
         )
-
     today_str = datetime.now(timezone.utc).date().isoformat()
     csv_content = output.getvalue()
+    
+    import hashlib
+    content_hash = hashlib.sha256(csv_content.encode("utf-8")).hexdigest()
+    timestamp = datetime.now(timezone.utc).isoformat()
+    csv_content += f"\n# --- APIx TAMPER-PROOF GAZETTE SEAL ---\n# SHA-256 SIGNATURE: {content_hash}\n# GENERATED_AT: {timestamp}\n"
+    
     filename = f"APIx_NSO_Airfare_Microdata_{today_str}.csv"
 
     return Response(
@@ -129,9 +134,14 @@ async def export_index_series_csv(limit: int = 365):
                 idx.computed_at.isoformat() if idx.computed_at else "",
             ]
         )
-
     today_str = datetime.now(timezone.utc).date().isoformat()
     csv_content = output.getvalue()
+    
+    import hashlib
+    content_hash = hashlib.sha256(csv_content.encode("utf-8")).hexdigest()
+    timestamp = datetime.now(timezone.utc).isoformat()
+    csv_content += f"\n# --- APIx TAMPER-PROOF GAZETTE SEAL ---\n# SHA-256 SIGNATURE: {content_hash}\n# GENERATED_AT: {timestamp}\n"
+    
     filename = f"APIx_National_Index_Series_{today_str}.csv"
 
     return Response(
