@@ -4,7 +4,7 @@ Implements international statistical standards for dynamic price aggregation:
   1. Jevons Geometric Mean Elementary Aggregates (ILO/IMF CPI Manual Chapter 10)
   2. Dutot (Ratio of Arithmetic Means) & Carli (Arithmetic Mean of Relatives) Diagnostics
   3. DGCA Passenger Traffic-Weighted Route Basket Aggregation
-  4. Multilateral GEKS-Törnqvist Rolling-Window Index (eliminates chain drift)
+  4. Multilateral GEKS-Jevons Rolling-Window Index (eliminates chain drift)
   5. Multi-frequency Aggregation: Daily, Weekly (7-day rolling), and Monthly series
   6. Inflation Contribution Breakdown (Route percentage point contribution)
   7. Advance Purchase Window Yield Elasticity Curves (T+1 to T+45)
@@ -434,7 +434,7 @@ class AirfareIndexEngine:
             national_index = round(weighted_index, 2)
             methodology_used = "jevons_dgca_weighted"
 
-            # 4. Multilateral GEKS-Törnqvist rolling window with Movement Splicing
+            # 4. Multilateral GEKS-Jevons rolling window with Movement Splicing
             national_se: float | None = None
             national_ci_lower: float | None = None
             national_ci_upper: float | None = None
@@ -518,13 +518,13 @@ class AirfareIndexEngine:
                                 national_index = round(
                                     prev_published.index_value * splice_ratio, 2
                                 )
-                                methodology_used = "geks_tornqvist_movement_splice"
+                                methodology_used = "geks_jevons_movement_splice"
                             else:
                                 national_index = round(geks_dict[target_str], 2)
-                                methodology_used = "geks_tornqvist_direct_window"
+                                methodology_used = "geks_jevons_direct_window"
                         else:
                             national_index = round(geks_dict[target_str], 2)
-                            methodology_used = "geks_tornqvist_direct_window"
+                            methodology_used = "geks_jevons_direct_window"
             except Exception as geks_err:
                 logger.warning(f"GEKS window computation warning: {geks_err}")
 

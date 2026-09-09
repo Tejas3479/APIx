@@ -321,7 +321,7 @@ class IndexQueryParams(BaseModel):
     to_date: date | None = None
     route_id: str | None = None
     frequency: Literal["daily", "weekly", "monthly"] = "daily"
-    methodology: Literal["jevons", "geks_tornqvist"] = "jevons"
+    methodology: Literal["jevons", "geks_jevons"] = "jevons"
 
 
 class DailyIndexResponse(BaseModel):

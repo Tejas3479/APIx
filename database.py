@@ -201,7 +201,7 @@ class DailyIndex(SQLModel, table=True):  # type: ignore[call-arg]
     base_period_value: float = Field(default=100.0)  # Reference base (100.0)
     methodology: str = Field(
         default="jevons", max_length=50
-    )  # "jevons", "geks_tornqvist_movement_splice"
+    )  # "jevons", "geks_jevons_movement_splice"
     route_coverage: int = Field(default=0, ge=0)  # Number of routes with live data
     quote_count: int = Field(default=0, ge=0)  # Total quotes aggregated
     missing_routes: list[str] = Field(default=[], sa_column=Column(JSON))

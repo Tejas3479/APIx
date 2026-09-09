@@ -1,7 +1,7 @@
 """Official MoSPI / NSO Statistical Bulletin Generator for APIx.
 
 Compiles comprehensive macroeconomic publication bulletins with Jevons,
-GEKS-Törnqvist series, lead-time yield spreads, and materiality gap proofs.
+GEKS-Jevons series, lead-time yield spreads, and materiality gap proofs.
 """
 
 from datetime import datetime, timezone
@@ -114,7 +114,7 @@ async def generate_statistical_bulletin(year_month: str = "2026-08") -> dict[str
             "dgca_official_benchmarks": dgca_summary,
             "methodology_notes": [
                 "Elementary aggregates compiled using Jevons geometric mean of price relatives with bootstrap uncertainty quantification.",
-                "Multilateral GEKS-Törnqvist rolling-window matrix with DGCA passenger expenditure weighting and movement splicing applied to eliminate chain drift.",
+                "Multilateral GEKS-Jevons rolling-window matrix with DGCA passenger expenditure weighting and movement splicing applied to eliminate chain drift.",
                 "Statutory airline base tariffs decomposed from Airport UDF, Aviation Security Fee (₹200), and 5% GST, cross-validated against PPAC domestic ATF benchmark rates.",
                 "Constant-quality economy bundle normalization applied to correct for unbundled baggage fee bias.",
             ],

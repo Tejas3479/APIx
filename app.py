@@ -150,7 +150,7 @@ app_kwargs = {
         "National Statistical Office (NSO) / MoSPI Real-Time Airfare Price Index Platform. "
         "Phase 1 prototype: aggregates multi-carrier domestic fares across 8 DGCA-weighted corridors "
         "and 5 advance horizons (T+1 to T+45), decomposes statutory base tariffs from airport taxes, "
-        "and constructs multilateral GEKS-Törnqvist price indices."
+        "and constructs multilateral GEKS-Jevons price indices."
     ),
     "version": "1.0.0",
     "lifespan": lifespan,
