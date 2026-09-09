@@ -29,7 +29,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Transformed APIx into a specialized Airfare Price Index engine.
 
 ### Added
-- **Airfare Price Index engine** with Jevons + GEKS-Törnqvist multilateral index computation
+- **Airfare Price Index engine** with Jevons + GEKS-Jevons multilateral index computation
 - **8-route DGCA-weighted basket** with CRUD management
 - **SerpAPI Google Flights integration** with demo cache fallback
 - **Statutory fare decomposition** (Base, Fuel YQ, UDF, ASF, GST)

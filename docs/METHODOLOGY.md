@@ -24,7 +24,7 @@ National statistical institutes across the globe have studied and implemented au
 |:---|:---|:---|
 | **Istat (Italy)** | *Polidoro, F., Giannini, R., Lo Conte, R., & Rossetti, S. (2015).* "Web scraping techniques to collect data on consumer prices and compile the HICP in Italy." *Statistical Journal of the IAOS.* | Direct template for daily multi-carrier airfare web scraping, elementary aggregation, and missing price handling. |
 | **INE (Portugal)** | *Statistics Portugal (2018).* "Implementation of Web Scraping for Airfares in the Portuguese HICP." | Proof of operational viability replacing manual collection with automated scrapers for national inflation. |
-| **Eurostat** | *Eurostat Task Force on Multilateral Methods (2020).* "Practical Guide on Web Scraping in the Harmonised Index of Consumer Prices (HICP)." | Standard guidelines on multilateral GEKS-Törnqvist rolling windows, missing item imputation, and scanner data cleaning. |
+| **Eurostat** | *Eurostat Task Force on Multilateral Methods (2020).* "Practical Guide on Web Scraping in the Harmonised Index of Consumer Prices (HICP)." | Standard guidelines on multilateral GEKS-Jevons rolling windows, missing item imputation, and scanner data cleaning. |
 | **IBGE (Brazil)** | *Brazilian Institute of Geography and Statistics (2019).* "Web-Scraped Airfares in the Extended National Consumer Price Index (IPCA)." | Replicated dynamic pricing measurement across advance-purchase windows in emerging market aviation. |
 | **US BLS** | *U.S. Bureau of Labor Statistics (2021).* "Airline Fares in the Consumer Price Index." | Utilizes Department of Transportation Form 41 / O&D structured data feeds (the model for APIx Phase 2). |
 | **MIT Billion Prices Project** | *Cavallo, A., & Rigobon, R. (2016).* "The Billion Prices Project: Using Online Data for Measurement and Research." *Journal of Economic Perspectives.* | Demonstrated that high-frequency scraped prices anticipate official CPI turning points by 2–4 weeks. |
@@ -58,14 +58,14 @@ APIx includes automated diagnostic endpoints (`GET /api/v1/index/methodology-com
 
 ---
 
-## 3. Multilateral GEKS-Törnqvist Rolling-Window Index
+## 3. Multilateral GEKS-Jevons Rolling-Window Index
 
 Airlines constantly introduce and cancel flight numbers across seasonal schedules, leading to "item churn." Bilateral chaining over high-frequency daily data suffers from **chain drift** (Ivancic, Diewert, and Fox, 2011). 
 
-APIx implements the multilateral **GEKS-Törnqvist** (Gini-Eltetö-Köves-Szulc) method across a rolling window $T$:
+APIx implements the multilateral **GEKS-Jevons** (Gini-Eltetö-Köves-Szulc) method across a rolling window $T$:
 
-### Step 1: Bilateral Törnqvist Pairwise Index
-For any two time periods $t$ and $k$, the bilateral Törnqvist index across common flights $S(t, k)$ is:
+### Step 1: Bilateral Jevons Pairwise Index
+For any two time periods $t$ and $k$, the bilateral Jevons index across common flights $S(t, k)$ is:
 
 $$\ln P_T^{k,t} = \sum_{i \in S(t, k)} \frac{s_{i}^k + s_{i}^t}{2} \ln\left(\frac{p_i^t}{p_i^k}\right)$$
 

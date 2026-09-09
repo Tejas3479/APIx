@@ -8,7 +8,7 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-60a5fa.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111+-34d399.svg)](https://fastapi.tiangolo.com/)
 [![Target: MoSPI / NSO](https://img.shields.io/badge/Agency-MoSPI%20%2F%20NSO-059669.svg)](https://mospi.gov.in)
-[![Mathematical Index: GEKS-Törnqvist](https://img.shields.io/badge/Methodology-GEKS--T%C3%B6rnqvist-blueviolet.svg)](#-mathematical-methodology)
+[![Mathematical Index: GEKS-Jevons](https://img.shields.io/badge/Methodology-GEKS--Jevons-blueviolet.svg)](#-mathematical-methodology)
 [![SIH 2026](https://img.shields.io/badge/Smart%20India%20Hackathon-2026-f59e0b.svg)](#)
 
 </div>
@@ -34,11 +34,11 @@ Under the new CPI 2024=100 base revision, statistical investigators collect airf
 
 Sampling once a month on a single mid-month date fails to capture intra-month dynamic pricing, creating a **materiality distortion of +18% to +25%** in transport inflation metrics.
 
-APIx solves this by implementing **continuous, multi-carrier digital scraping** across **5 advance booking horizons (T+1, T+7, T+15, T+30, T+45)** and computing a chained **GEKS-Törnqvist / Jevons multilateral index**.
+APIx solves this by implementing **continuous, multi-carrier digital scraping** across **5 advance booking horizons (T+1, T+7, T+15, T+30, T+45)** and computing a chained **GEKS-Jevons / Jevons multilateral index**.
 
 ### Methodological Foundation & Precedents
 APIx adapts established econometric standards from international statistical agencies and academic literature:
-- **Eurostat HICP Guidance (2020 & 2022/2023):** Scanner data and multilateral GEKS-Törnqvist index construction for high-frequency pricing.
+- **Eurostat HICP Guidance (2020 & 2022/2023):** Scanner data and multilateral GEKS-Jevons index construction for high-frequency pricing.
 - **Istat (Italy) Airfare Scraping Pilot (*Polidoro et al., 2015, Statistical Journal of the IAOS*):** Established the methodological blueprint for scraping multi-window airline tariffs to compile consumer price indices.
 - **INE (Portugal) & IBGE (Brazil):** Operational precedents for automated airline web scraping in official national CPI.
 - **MIT Billion Prices Project (*Cavallo & Rigobon, 2016, Journal of Economic Perspectives*):** Validated that high-frequency online price scraping provides robust, real-time inflation nowcasting.
@@ -48,7 +48,7 @@ APIx adapts established econometric standards from international statistical age
 
 | Module | Purpose | Method / Standard |
 |:---|:---|:---|
-| **GEKS-Törnqvist Index** | Chained multilateral price index | Eliminates chain drift; Eurostat / IMF CPI standard |
+| **GEKS-Jevons Index** | Chained multilateral price index | Eliminates chain drift; Eurostat / IMF CPI standard |
 | **Jevons Elementary Aggregates** | Geometric mean of price relatives | ILO CPI Manual Ch. 10 |
 | **Lead-Time Yield Curves** | Dynamic pricing measurement | Compares T+1, T+7, T+15, T+30, T+45 booking spreads |
 | **Statutory Decomposition** | Isolates airline tariffs from fees | Decomposes Base Tariff, Fuel (YQ), UDF, ASF (₹200), GST |
@@ -78,7 +78,7 @@ flowchart TD
 
     subgraph MathematicalEngine["3. Econometric Index Construction"]
         JEV["Jevons Elementary Aggregates<br/>Geometric Mean of Relatives"]
-        GEKS["Multilateral GEKS-Törnqvist<br/>Rolling Window Chaining"]
+        GEKS["Multilateral GEKS-Jevons<br/>Rolling Window Chaining"]
         DGCA_W["DGCA Traffic Weighting<br/>Sector Passenger Weights"]
     end
 
@@ -124,12 +124,12 @@ Elementary price relatives within each city-pair are aggregated using the **geom
 
 $$I_{\text{Jevons}} = \prod_{i=1}^{n} \left(\frac{p_i^t}{p_i^0}\right)^{1/n}$$
 
-### GEKS-Törnqvist Multilateral Index
-To eliminate chain drift across time windows, APIx constructs a **GEKS-Törnqvist matrix** across a rolling window of periods:
+### GEKS-Jevons Multilateral Index
+To eliminate chain drift across time windows, APIx constructs a **GEKS-Jevons matrix** across a rolling window of periods:
 
 $$\text{GEKS}^{t/0} = \prod_{k=1}^{T} \left( P_T^{t/k} \cdot P_T^{k/0} \right)^{1/T}$$
 
-Where $P_T^{t/k}$ is the bilateral Törnqvist index between periods $t$ and $k$, computed with DGCA traffic share weights.
+Where $P_T^{t/k}$ is the bilateral Jevons index between periods $t$ and $k$, computed with DGCA traffic share weights.
 
 ---
 
@@ -244,7 +244,7 @@ docker compose up --build
 | **Scraping** | Playwright (Chromium) · curl-cffi · SerpAPI |
 | **Caching** | Redis (with fakeredis fallback) |
 | **AI/ML** | Google Gemini 3.7 Flash |
-| **Math** | NumPy · SciPy (Jevons + GEKS-Törnqvist) |
+| **Math** | NumPy · SciPy (Jevons + GEKS-Jevons) |
 | **Auth** | PyJWT · Argon2 (pwdlib) |
 | **Frontend** | Vanilla HTML/CSS/JS · Chart.js |
 | **Deployment** | Docker · docker-compose |
@@ -274,7 +274,7 @@ APIx/
 │   ├── export.py              # Audit-ready CSV microdata & index exports
 │   ├── fetch.py               # Low-level web fetch & extraction endpoint
 │   ├── health.py              # Health check & system telemetry probe
-│   ├── index.py               # GEKS-Törnqvist & Jevons index engine endpoints
+│   ├── index.py               # GEKS-Jevons & Jevons index engine endpoints
 │   ├── routes.py              # DGCA route basket configuration CRUD
 │   └── scraper.py             # Multi-source scrape job dispatch & live logs
 ├── services/                  # Business logic & econometric layer
@@ -283,7 +283,7 @@ APIx/
 │   ├── data_cleaner.py        # Tukey IQR outlier trimming & Eurostat imputation
 │   ├── fetch_engine.py        # Resilient HTTP/Playwright execution engine
 │   ├── gemini_grounding.py    # Google Gemini 3.7 Flash econometric diagnosis
-│   ├── index_engine.py        # GEKS-Törnqvist & Jevons mathematical computation
+│   ├── index_engine.py        # GEKS-Jevons & Jevons mathematical computation
 │   ├── price_extractor.py     # Statutory fare decomposition (Base, Fuel, UDF, ASF, GST)
 │   ├── scrape_scheduler.py    # Multi-window scrape matrix & async cron loops
 │   ├── search_orchestrator.py # Multi-source survey coordination (Google Flights/Ixigo/SpiceJet)

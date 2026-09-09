@@ -18,7 +18,7 @@ flowchart LR
         
         subgraph Inside["Internal Components"]
             FASTAPI["FastAPI Application"]
-            INDEX["Jevons & GEKS-Törnqvist Engine"]
+            INDEX["Jevons & GEKS-Jevons Engine"]
             DECOMP["Statutory Fare Decomposer"]
             SEEDER["Route & Quote Database Seeder"]
             PW["Playwright Chromium Stealth Pool"]

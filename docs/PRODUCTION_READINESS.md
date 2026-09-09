@@ -30,7 +30,7 @@ flowchart TD
     subgraph Core["APIx National Econometric Engine"]
         CLEAN["Data Cleaning & Normalization Pipeline<br/>Tukey IQR · SHA-256 Deduplication"]
         AUDIT["Discrepancy & Anomaly Cross-Validator<br/>Mandate Feed vs. Public Scrape Check"]
-        INDEX["Multilateral GEKS-Törnqvist Engine<br/>Daily · Weekly · Monthly CPI Series"]
+        INDEX["Multilateral GEKS-Jevons Engine<br/>Daily · Weekly · Monthly CPI Series"]
     end
 
     subgraph Output["National Policy Consumers"]
