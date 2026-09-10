@@ -2235,7 +2235,9 @@
 
         const labels = series.map(s => {
           const d = s.effective_date || s.month || '';
-          return d.length > 5 ? d.slice(5) : d;
+          if (!d) return '';
+          const dObj = new Date(d);
+          return dObj.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
         });
         const atfPrices = series.map(s => s.ppac_atf_inr_per_kl != null ? s.ppac_atf_inr_per_kl : s.avg_metro_atf_price_inr_kl);
         const fuelSurcharges = series.map(s => s.extracted_fuel_surcharge_inr != null ? s.extracted_fuel_surcharge_inr : s.avg_extracted_fuel_surcharge_inr);
