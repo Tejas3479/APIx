@@ -165,6 +165,14 @@ async def get_route_heatmap(days: int = 14):
                             by_horizon[1] = [avg_t7 * 1.78]
                         if 15 not in by_horizon:
                             by_horizon[15] = [avg_t7 * 0.77]
+                    elif 30 in by_horizon:
+                        avg_t30 = sum(by_horizon[30]) / len(by_horizon[30])
+                        if 15 not in by_horizon:
+                            by_horizon[15] = [avg_t30 * 1.14]
+                        if 7 not in by_horizon:
+                            by_horizon[7] = [avg_t30 * 1.48]
+                        if 1 not in by_horizon:
+                            by_horizon[1] = [avg_t30 * 2.61]
 
                     weighted_sum = 0.0
                     tot_w = 0.0
