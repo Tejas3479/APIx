@@ -1212,7 +1212,7 @@
               <span class="stat-label-icon">📊</span>
               <span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="National airfare index compiled using Jevons geometric mean and DGCA passenger traffic weights.">National APIx Index</span>
             </span>
-            <span class="stat-badge orange">
+            <span class="stat-badge orange" id="kpi-index-24h">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
               +1.2% 24h
             </span>
@@ -1234,7 +1234,7 @@
           </div>
           <div class="stat-meta-pro">
             <span>Base: Aug 1, 2026 = 100.0</span>
-            <span class="kpi-meta-tag accent">+3.7% MoM</span>
+            <span class="kpi-meta-tag accent" id="kpi-index-mom">+3.7% MoM</span>
           </div>
         </div>
       </div>
@@ -1317,7 +1317,7 @@
               <span class="stat-label-icon">🏷️</span>
               <span class="term-tooltip" tabindex="0" onclick="showToast(this.dataset.tooltip, 'info')" data-tooltip="Weighted mean economy airfare across surveyed sectors and carriers.">Avg Economy Fare</span>
             </span>
-            <span class="stat-badge red">
+            <span class="stat-badge red" id="kpi-surge-badge">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
               3.85x Surge
             </span>
@@ -1338,8 +1338,8 @@
             <div class="bar" style="height: 20%;" data-tip="T+90 Base Floor: ₹3,650"></div>
           </div>
           <div class="stat-meta-pro">
-            <span>T+1 (₹16.8k) vs T+30 (₹3.9k)</span>
-            <span class="kpi-meta-tag warn">+385%</span>
+            <span id="kpi-surge-text">T+1 (₹16.8k) vs T+30 (₹3.9k)</span>
+            <span class="kpi-meta-tag warn" id="kpi-surge-pct">+385%</span>
           </div>
         </div>
       </div>
@@ -1868,6 +1868,7 @@
             animateInteger(document.getElementById('kpi-active-routes'), newRoutes);
             animateInteger(document.getElementById('kpi-total-quotes'), newQuotes);
             animatePriceCount(document.getElementById('kpi-avg-fare'), baseKpiFare);
+            updateKpiBadges(data);
             loadCarriers();
             loadInflationContribution();
           }
@@ -1926,6 +1927,41 @@
       startLivePolling();
     });
 
+    function updateKpiBadges(data) {
+      if (data.index_change_pct_24h !== undefined) {
+        const chg = data.index_change_pct_24h;
+        const b24 = document.getElementById('kpi-index-24h');
+        if (b24) {
+          b24.innerHTML = chg >= 0 
+            ? `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg> +${chg.toFixed(1)}% 24h`
+            : `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg> ${chg.toFixed(1)}% 24h`;
+          b24.className = chg > 0 ? "stat-badge orange" : (chg < 0 ? "stat-badge green" : "stat-badge neutral");
+        }
+      }
+      
+      const bMom = document.getElementById('kpi-index-mom');
+      if (bMom) {
+        const momChg = ((baseKpiIndex - 100.0) / 100.0) * 100;
+        bMom.textContent = momChg > 0 ? `+${momChg.toFixed(1)}% MoM` : `${momChg.toFixed(1)}% MoM`;
+        bMom.className = momChg > 0 ? "kpi-meta-tag warn" : "kpi-meta-tag success";
+      }
+
+      const ratio = data.lead_time_spread_ratio || 3.85;
+      const bSurge = document.getElementById('kpi-surge-badge');
+      if (bSurge) {
+        bSurge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> ${ratio.toFixed(2)}x Surge`;
+      }
+      const bText = document.getElementById('kpi-surge-text');
+      const bPct = document.getElementById('kpi-surge-pct');
+      if (bText && bPct) {
+        const t30 = baseKpiFare * 0.65;
+        const t1 = t30 * ratio;
+        const pct = ((ratio - 1) * 100).toFixed(0);
+        bText.innerHTML = `T+1 (₹${(t1/1000).toFixed(1)}k) vs T+30 (₹${(t30/1000).toFixed(1)}k)`;
+        bPct.innerHTML = `+${pct}%`;
+      }
+    }
+
     async function loadDashboardStats() {
       try {
         const res = await fetch('/api/v1/dashboard/stats');
@@ -1943,6 +1979,7 @@
         animateInteger(document.getElementById('kpi-active-routes'), data.active_routes_count);
         animateInteger(document.getElementById('kpi-total-quotes'), data.total_quotes_count);
         animatePriceCount(document.getElementById('kpi-avg-fare'), baseKpiFare);
+        updateKpiBadges(data);
       } catch (e) {
         console.error('Stats error:', e);
       }
